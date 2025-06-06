@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+
+  students Student[]
+}
+
+model Student {
+  id              String   @id @default(cuid())
+  firstName       String
+  lastName        String
+  birthDate       DateTime
+  address         String
+  hasHealthIssues Boolean
+  healthDetails   String?
+  canLeaveAlone   Boolean
+  parentId        String
+  parent          User     @relation(fields: [parentId], references: [id])
+  createdAt       DateTime @default(now())
+}
+
+model Class {
+  id           String     @id @default(cuid())
+  name         String
+  monthlyFee   Float
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  schoolYearId String
+  createdAt    DateTime   @default(now())
+  subjects     Subject[]
+  teachers     Teacher[] // 👈 ajoute cette ligne
+}
+
+model Subject {
+  id        String   @id @default(cuid())
+  name      String
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   String
+  createdAt DateTime @default(now())
+
+  teachers Teacher[]
+}
+
+model Teacher {
+  id        String   @id @default(uuid())
+  firstName       String
+  lastName        String
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  subjectId String
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   String
+}
+
+model SchoolYear {
+  id        String   @id @default(cuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+
+  classes Class[]
+}
+
+enum Role {
+  PARENT
+  TEACHER
+  DIRECTOR
+}
