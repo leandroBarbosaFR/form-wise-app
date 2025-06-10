@@ -47,6 +47,7 @@ export default function StudentList({
             <Button
               variant="destructive"
               onClick={() => handleDelete(student.id)}
+              className="cursor-pointer"
             >
               Supprimer <UserX className="ml-2 w-4 h-4" />
             </Button>

@@ -45,6 +45,10 @@ export default function RegisterPage() {
     setLoading(false);
   };
 
+  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRole(e.target.value as "PARENT" | "TEACHER" | "DIRECTOR");
+  };
+
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
       <h1 className="text-2xl font-bold mb-4">Créer un compte</h1>
@@ -93,7 +97,7 @@ export default function RegisterPage() {
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 cursor-pointer"
             aria-label="Afficher ou masquer le mot de passe"
           >
             {showPassword ? (
@@ -105,7 +109,7 @@ export default function RegisterPage() {
         </div>
         <select
           value={role}
-          onChange={(e) => setRole(e.target.value as any)}
+          onChange={handleRoleChange}
           className="border p-2 w-full rounded"
         >
           <option value="PARENT">Parent</option>
@@ -113,7 +117,11 @@ export default function RegisterPage() {
           <option value="DIRECTOR">Directeur</option>
         </select>
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit" disabled={loading} className="w-full">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full cursor-pointer"
+        >
           {loading ? "Chargement..." : "S’inscrire"}
         </Button>
       </form>

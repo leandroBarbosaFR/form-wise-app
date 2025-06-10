@@ -8,55 +8,79 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
-import { signOut } from "next-auth/react";
-import { DashboardSection } from "../types/types"; // Add this import
+import { signOut, useSession } from "next-auth/react";
+import { DashboardSection } from "../types/types";
+import { LogOut } from "lucide-react";
 
 type Section = {
-  key: DashboardSection; // Change from string to DashboardSection
+  key: DashboardSection;
   label: string;
 };
 
-const sections: Section[] = [
-  { key: "schoolYear", label: "Année scolaire" },
-  { key: "classes", label: "Classes" },
-  { key: "subjects", label: "Matières" },
-  { key: "teachers", label: "Professeurs" },
-  { key: "notification", label: "Notification" },
-  // Tu pourras ajouter ici : { key: "teachers", label: "Professeurs" }
-];
+const getSections = (role?: string): Section[] => {
+  if (role === "PARENT") {
+    return [
+      { key: "children", label: "Mes enfants" },
+      { key: "notification", label: "Notifications" },
+      { key: "rib", label: "Coordonnées bancaires" },
+    ];
+  }
+
+  if (role === "DIRECTOR") {
+    return [
+      { key: "schoolYear", label: "Année scolaire" },
+      { key: "classes", label: "Classes" },
+      { key: "subjects", label: "Matières" },
+      { key: "teachers", label: "Professeurs" },
+      { key: "notification", label: "Notification" },
+    ];
+  }
+
+  if (role === "TEACHER") {
+    return [{ key: "myClass", label: "Ma classe" }];
+  }
+
+  return [];
+};
 
 export default function MobileSidebar({
   activeSection,
   setActiveSection,
 }: {
-  activeSection: DashboardSection; // Change from string to DashboardSection
-  setActiveSection: Dispatch<SetStateAction<DashboardSection>>; // Change from string to DashboardSection
+  activeSection: DashboardSection;
+  setActiveSection: Dispatch<SetStateAction<DashboardSection>>;
 }) {
+  const { data: session } = useSession();
+  const role = session?.user?.role;
+  const sections = getSections(role);
+
   return (
     <div className="fixed top-4 left-4 z-50 md:hidden">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline">☰ Menu</Button>
+          <Button variant="outline" className="cursor-pointer">
+            ☰ Menu
+          </Button>
         </SheetTrigger>
         <SheetContent side="left">
-          <SheetTitle className="text-lg font-semibold mb-4">
-            📂 Menu
-          </SheetTitle>
+          <SheetTitle className="text-lg font-semibold mb-4">Menu</SheetTitle>
           <div className="flex flex-col gap-4 mt-4">
             {sections.map((section) => (
               <Button
                 key={section.key}
                 variant={activeSection === section.key ? "default" : "ghost"}
                 onClick={() => setActiveSection(section.key)}
+                className="cursor-pointer"
               >
                 {section.label}
               </Button>
             ))}
             <Button
               variant="outline"
+              className="cursor-pointer"
               onClick={() => signOut({ callbackUrl: "/login" })}
             >
-              Se déconnecter
+              Se déconnecter <LogOut />
             </Button>
           </div>
         </SheetContent>

@@ -14,10 +14,12 @@ model User {
   role      Role
   createdAt DateTime @default(now())
 
-  firstName String
-  lastName  String
-  phone     String
-
+  firstName        String
+  lastName         String
+  phone            String
+  iban             String?
+  bic              String?
+  bankName         String?
   students         Student[]
   NotificationRead NotificationRead[]
 }
@@ -33,6 +35,8 @@ model Student {
   canLeaveAlone   Boolean
   parentId        String
   parent          User           @relation(fields: [parentId], references: [id])
+  classId         String?
+  class           Class?         @relation(fields: [classId], references: [id])
   createdAt       DateTime       @default(now())
   notifications   Notification[]
 }
@@ -46,6 +50,7 @@ model Class {
   createdAt    DateTime   @default(now())
   subjects     Subject[]
   teachers     Teacher[]
+  Student      Student[]
 }
 
 model Subject {
@@ -78,13 +83,13 @@ model SchoolYear {
 }
 
 model Notification {
-  id        String             @id @default(uuid())
+  id        String             @id @default(cuid())
   title     String
   message   String
-  createdAt DateTime           @default(now())
-  student   Student?           @relation(fields: [studentId], references: [id])
+  isGlobal  Boolean
   studentId String?
-  isGlobal  Boolean            @default(false)
+  student   Student?           @relation(fields: [studentId], references: [id])
+  createdAt DateTime           @default(now())
   readBy    NotificationRead[]
 }
 

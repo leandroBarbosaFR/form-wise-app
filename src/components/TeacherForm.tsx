@@ -68,8 +68,8 @@ export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
     if (data.success) {
       setSuccess(
         teacher?.id
-          ? `✅ Professeur mis à jour avec succès`
-          : `✅ Professeur ${data.teacher.firstName} ajouté`
+          ? `Professeur mis à jour avec succès`
+          : `Professeur ${data.teacher.firstName} ajouté`
       );
       setFirstName("");
       setLastName("");
@@ -87,7 +87,7 @@ export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
         </div>
       )}
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Prénom</Label>
         <Input
           value={firstName}
@@ -96,7 +96,7 @@ export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Nom</Label>
         <Input
           value={lastName}
@@ -105,7 +105,7 @@ export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Matière enseignée</Label>
         <Select value={subjectId} onValueChange={setSubjectId}>
           <SelectTrigger>
@@ -121,7 +121,7 @@ export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
         </Select>
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Classe</Label>
         <Select value={classId} onValueChange={setClassId}>
           <SelectTrigger>
@@ -137,7 +137,7 @@ export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
         </Select>
       </div>
 
-      <Button type="submit">
+      <Button type="submit" className="cursor-pointer">
         {teacher?.id ? "Mettre à jour le professeur" : "Créer le professeur"}
       </Button>
     </form>

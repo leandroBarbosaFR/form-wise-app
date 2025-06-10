@@ -16,7 +16,6 @@ type Class = {
 
 export default function ClassList() {
   const [classes, setClasses] = useState<Class[]>([]);
-  const [loading, setLoading] = useState(false);
 
   const fetchClasses = async () => {
     const res = await fetch("/api/classes", { credentials: "include" });
@@ -64,6 +63,7 @@ export default function ClassList() {
                 variant="destructive"
                 size="sm"
                 onClick={() => handleDelete(cls.id)}
+                className="cursor-pointer"
               >
                 Supprimer <UserX />
               </Button>

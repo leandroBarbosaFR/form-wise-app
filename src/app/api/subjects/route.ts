@@ -1,10 +1,8 @@
-// api/subjects/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../lib/authOptions";
 
-// POST /api/subjects
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "DIRECTOR") {
@@ -35,7 +33,6 @@ export async function POST(req: Request) {
   }
 }
 
-// GET /api/subjects
 export async function GET() {
   const subjects = await prisma.subject.findMany({
     include: {

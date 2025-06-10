@@ -9,10 +9,9 @@ export default function RedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return; // wait for loading section
-    // will check the section, will find the user and then the role to be able to redirect to the right path /
+    if (status === "loading") return;
     const role = session?.user?.role;
-    // if the role is not valid then redirect to the login page
+
     if (!role) {
       router.push("/login");
       return;

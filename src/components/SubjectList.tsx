@@ -53,7 +53,7 @@ export default function SubjectList() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Choisir une classe</Label>
         <Select onValueChange={setSelectedClassId}>
           <SelectTrigger>

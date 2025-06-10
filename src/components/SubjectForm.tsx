@@ -1,4 +1,3 @@
-// SubjectForm.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -44,7 +43,7 @@ export default function SubjectForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+    <form onSubmit={handleSubmit} className=" flex flex-col gap-2 max-w-md">
       <Label>Classe</Label>
       <Select value={selectedClassId} onValueChange={setSelectedClassId}>
         <SelectTrigger>
@@ -58,8 +57,7 @@ export default function SubjectForm() {
           ))}
         </SelectContent>
       </Select>
-
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Nom de la matière</Label>
         <Input
           value={subjectName}
@@ -67,8 +65,7 @@ export default function SubjectForm() {
           required
         />
       </div>
-
-      <Button type="submit">
+      <Button type="submit" className="cursor-pointer">
         Ajouter la matière <Plus />
       </Button>
     </form>

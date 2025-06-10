@@ -57,8 +57,10 @@ export default function DirectorDashboardContent() {
 
         {activeSection === "subjects" && (
           <>
-            <SubjectForm />
-            <SubjectList />
+            <div className="flex flex-col gap-4">
+              <SubjectForm />
+              <SubjectList />
+            </div>
           </>
         )}
 

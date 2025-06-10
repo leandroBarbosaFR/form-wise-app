@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../lib/authOptions";
 import { prisma } from "../../../lib/prisma";
 
-// POST /api/notifications
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
 
@@ -39,29 +38,64 @@ export async function POST(req: Request) {
   }
 }
 
-// GET /api/notifications
 export async function GET() {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.role !== "DIRECTOR") {
+  if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const notifications = await prisma.notification.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        student: {
-          select: {
-            firstName: true,
-            lastName: true,
-          },
-        },
-        readBy: true, // pour savoir combien de parents ont lu
-      },
-    });
+  const role = session.user.role;
+  const email = session.user.email!;
 
-    return NextResponse.json({ notifications });
+  try {
+    if (role === "DIRECTOR") {
+      const notifications = await prisma.notification.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          student: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+          readBy: true,
+        },
+      });
+
+      return NextResponse.json({ notifications });
+    }
+
+    if (role === "PARENT") {
+      const parent = await prisma.user.findUnique({
+        where: { email },
+        include: {
+          students: true,
+        },
+      });
+
+      const studentIds = parent?.students.map((s) => s.id) || [];
+
+      const notifications = await prisma.notification.findMany({
+        where: {
+          OR: [{ isGlobal: true }, { studentId: { in: studentIds } }],
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+          student: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+          readBy: true,
+        },
+      });
+
+      return NextResponse.json({ notifications });
+    }
+
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   } catch (error) {
     console.error("Erreur récupération notifications :", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

@@ -18,6 +18,9 @@ async function main() {
       email,
       password: hashedPassword,
       role: "DIRECTOR",
+      firstName: "Leo",
+      lastName: "Barbosa",
+      phone: "0000000000",
     },
   });
 

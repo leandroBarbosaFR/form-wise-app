@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../../../lib/authOptions";
 
 export async function DELETE(
   _req: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -13,9 +13,8 @@ export async function DELETE(
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
-  const studentId = context.params.id;
+  const { id: studentId } = await context.params;
 
-  // Vérifie que l'élève appartient bien à ce parent
   const student = await prisma.student.findUnique({
     where: { id: studentId },
     include: { parent: true },

@@ -17,7 +17,7 @@ export default function SidebarBtn({
   return (
     <button
       onClick={() => setActiveSection(section)}
-      className={`block w-full text-left px-3 py-2 rounded hover:bg-gray-200 ${
+      className={`block w-full text-left px-3 py-2 rounded hover:bg-gray-200 cursor-pointer ${
         activeSection === section ? "bg-gray-300 font-bold" : ""
       }`}
     >

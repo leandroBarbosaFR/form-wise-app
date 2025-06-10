@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../lib/authOptions";
 import { prisma } from "../../../lib/prisma";
 
 export async function GET() {
@@ -41,13 +41,22 @@ export async function POST(req: Request) {
     hasHealthIssues,
     healthDetails,
     canLeaveAlone,
+    classId,
   } = body;
 
-  if (!firstName || !lastName || !birthDate || !address) {
+  if (!firstName || !lastName || !birthDate || !address || !classId) {
     return NextResponse.json(
       { error: "Champs requis manquants" },
       { status: 400 }
     );
+  }
+
+  const targetClass = await prisma.class.findUnique({
+    where: { id: classId },
+  });
+
+  if (!targetClass) {
+    return NextResponse.json({ error: "Classe introuvable" }, { status: 404 });
   }
 
   const student = await prisma.student.create({
@@ -61,6 +70,9 @@ export async function POST(req: Request) {
       canLeaveAlone,
       parent: {
         connect: { email: session.user.email! },
+      },
+      class: {
+        connect: { id: classId },
       },
     },
   });

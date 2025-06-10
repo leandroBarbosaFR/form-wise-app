@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
+import { authOptions } from "../../../lib/authOptions";
 import { prisma } from "../../../../src/lib/prisma";
 
 export async function POST(req: Request) {
@@ -39,7 +39,7 @@ export async function GET() {
   try {
     const classes = await prisma.class.findMany({
       include: {
-        schoolYear: true, // Pour inclure le nom de l'année scolaire
+        schoolYear: true,
       },
       orderBy: {
         createdAt: "desc",

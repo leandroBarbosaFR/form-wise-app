@@ -5,4 +5,6 @@ export type DashboardSection =
   | "myClass"
   | "subjects"
   | "notification"
-  | "teachers";
+  | "teachers"
+  | "payment"
+  | "rib";

@@ -46,7 +46,9 @@ export default function SchoolYearList() {
 
   return (
     <div className="space-y-4 mt-6">
-      {schoolYears.length === 0 ? (
+      {loading ? (
+        <p className="text-muted-foreground">Chargement...</p>
+      ) : schoolYears.length === 0 ? (
         <div className="text-muted-foreground flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" />
           Aucune année scolaire enregistrée.
@@ -65,6 +67,7 @@ export default function SchoolYearList() {
               <Button
                 variant="destructive"
                 onClick={() => handleDelete(year.id)}
+                className="cursor-pointer"
               >
                 Supprimer <UserX />
               </Button>

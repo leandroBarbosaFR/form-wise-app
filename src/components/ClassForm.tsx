@@ -13,6 +13,11 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 
+interface SchoolYear {
+  id: string;
+  name: string;
+}
+
 export default function ClassForm({ onCreated }: { onCreated: () => void }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -20,7 +25,7 @@ export default function ClassForm({ onCreated }: { onCreated: () => void }) {
     schoolYearId: "",
   });
 
-  const [schoolYears, setSchoolYears] = useState<any[]>([]);
+  const [schoolYears, setSchoolYears] = useState<SchoolYear[]>([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
 
@@ -68,7 +73,7 @@ export default function ClassForm({ onCreated }: { onCreated: () => void }) {
         </div>
       )}
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Nom de la classe</Label>
         <Input
           name="name"
@@ -78,7 +83,7 @@ export default function ClassForm({ onCreated }: { onCreated: () => void }) {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Prix mensuel (€)</Label>
         <Input
           type="number"
@@ -89,7 +94,7 @@ export default function ClassForm({ onCreated }: { onCreated: () => void }) {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Année scolaire</Label>
         <Select
           onValueChange={(value) =>
@@ -110,7 +115,7 @@ export default function ClassForm({ onCreated }: { onCreated: () => void }) {
         </Select>
       </div>
 
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={loading} className="cursor-pointer">
         {loading ? "Création..." : "Créer la classe"}
         <Plus />
       </Button>

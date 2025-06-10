@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../../../lib/authOptions";
 import { prisma } from "../../../lib/prisma";
 
 export async function GET() {
@@ -36,7 +36,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // 👇 Ici on renvoie bien l'année créée
     return NextResponse.json({ success: true, schoolYear });
   } catch (error) {
     console.error("Erreur création année scolaire :", error);

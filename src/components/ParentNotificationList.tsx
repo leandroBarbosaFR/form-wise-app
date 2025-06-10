@@ -1,23 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-
-type Notification = {
-  id: string;
-  title: string;
-  message: string;
-  createdAt: string;
-  isGlobal: boolean;
-  studentId: string | null;
-  readBy: any[]; // empty if non-lue
-};
+import NotificationCard from "./NotificationCard";
+import { ParentNotification } from "../types/notification";
 
 export default function ParentNotificationList() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<ParentNotification[]>([]);
 
   useEffect(() => {
-    fetch("/api/notifications/parent")
+    fetch("/api/notifications")
       .then((res) => res.json())
       .then((data) => setNotifications(data.notifications || []));
   }, []);
@@ -28,9 +19,10 @@ export default function ParentNotificationList() {
       body: JSON.stringify({ notificationId: id }),
       headers: { "Content-Type": "application/json" },
     });
+
     setNotifications((prev) =>
       prev.map((n) =>
-        n.id === id ? { ...n, readBy: [{ parentId: "read" }] } : n
+        n.id === id ? { ...n, readBy: [...n.readBy, { parentId: "ok" }] } : n
       )
     );
   };
@@ -38,35 +30,13 @@ export default function ParentNotificationList() {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold mb-4">Notifications</h2>
-      {notifications.map((n) => (
-        <div
-          key={n.id}
-          className={`border rounded p-4 shadow-sm ${
-            n.readBy.length > 0 ? "bg-white" : "bg-yellow-50"
-          }`}
-        >
-          <h3 className="font-bold">{n.title}</h3>
-          <p className="text-sm">{n.message}</p>
-          <p className="text-xs text-gray-500 mt-1">
-            {new Date(n.createdAt).toLocaleString()}
-          </p>
-          <p className="text-xs">
-            📌 {n.isGlobal ? "Tous les parents" : "Notification ciblée"}
-          </p>
 
-          {n.readBy.length === 0 && (
-            <Button
-              className="mt-2"
-              variant="secondary"
-              onClick={() => markAsRead(n.id)}
-            >
-              Marquer comme lue
-            </Button>
-          )}
-          {n.readBy.length > 0 && (
-            <p className="text-green-600 text-xs mt-2">✅ Lue</p>
-          )}
-        </div>
+      {notifications.map((n) => (
+        <NotificationCard
+          key={n.id}
+          notification={n}
+          onMarkAsRead={markAsRead}
+        />
       ))}
     </div>
   );

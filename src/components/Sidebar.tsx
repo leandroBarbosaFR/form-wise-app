@@ -69,6 +69,12 @@ export default function Sidebar({
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
           />
+          <SidebarBtn
+            label="Coordonnées bancaires"
+            section="rib"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+          />
         </>
       )}
 
@@ -85,6 +91,7 @@ export default function Sidebar({
         <Button
           variant="outline"
           onClick={() => signOut({ callbackUrl: "/login" })}
+          className="cursor-pointer"
         >
           Se déconnecter <LogOut />
         </Button>

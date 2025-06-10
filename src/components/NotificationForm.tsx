@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-
 type Student = {
   id: string;
   firstName: string;
@@ -28,10 +28,10 @@ export default function NotificationForm({ onSent }: { onSent?: () => void }) {
 
   useEffect(() => {
     if (!isGlobal) {
-      fetch("/api/students/all") // ← ici
+      fetch("/api/students/all")
         .then((res) => res.json())
         .then((data) => {
-          console.log("🎓 élèves récupérés :", data.students);
+          console.log("élèves récupérés :", data.students);
           setStudents(data.students || []);
         });
     }
@@ -60,7 +60,7 @@ export default function NotificationForm({ onSent }: { onSent?: () => void }) {
     const data = await res.json();
 
     if (data.success) {
-      setSuccess("✅ Notification envoyée");
+      setSuccess("Notification envoyée");
       setMessage("");
       setStudentId(null);
       setIsGlobal(true);
@@ -75,7 +75,7 @@ export default function NotificationForm({ onSent }: { onSent?: () => void }) {
           {success}
         </div>
       )}
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Titre</Label>
         <Input
           placeholder="Titre de la notification"
@@ -84,7 +84,7 @@ export default function NotificationForm({ onSent }: { onSent?: () => void }) {
           required
         />
       </div>
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Message</Label>
         <Input
           placeholder="Entrez le message"
@@ -94,7 +94,7 @@ export default function NotificationForm({ onSent }: { onSent?: () => void }) {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Type de notification</Label>
         <Select
           value={isGlobal ? "global" : "student"}
@@ -111,7 +111,7 @@ export default function NotificationForm({ onSent }: { onSent?: () => void }) {
       </div>
 
       {!isGlobal && (
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>Choisir l’élève</Label>
           <Select
             value={studentId || ""}
@@ -131,7 +131,9 @@ export default function NotificationForm({ onSent }: { onSent?: () => void }) {
         </div>
       )}
 
-      <Button type="submit">Envoyer</Button>
+      <Button type="submit" className="cursor-pointer">
+        Envoyer <Send />
+      </Button>
     </form>
   );
 }

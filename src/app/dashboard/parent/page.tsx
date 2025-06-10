@@ -9,6 +9,9 @@ import MobileSidebar from "../../../components/MobileSidebar";
 import ParentNotificationList from "../../../components/ParentNotificationList";
 import StudentForm from "../../../components/StudentForm";
 import StudentList from "../../../components/StudentList";
+import RIBForm from "components/RIBForm";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus } from "lucide-react";
 
 type Student = {
   id: string;
@@ -17,6 +20,7 @@ type Student = {
 };
 
 export default function ParentDashboardPage() {
+  const [showList, setShowList] = useState(false);
   const { data: session, status } = useSession();
   const [activeSection, setActiveSection] =
     useState<DashboardSection>("children");
@@ -41,7 +45,7 @@ export default function ParentDashboardPage() {
   if (status === "loading") return <p>Chargement...</p>;
   if (!session || session.user.role !== "PARENT") {
     redirect("/login");
-    return null; // sécurité (ne jamais retourner rien sans JSX)
+    return null;
   }
 
   return (
@@ -59,15 +63,50 @@ export default function ParentDashboardPage() {
         <p className="mb-6">Bienvenue, {session.user.firstName}</p>
 
         {activeSection === "children" && (
-          <>
+          <div className="flex flex-col gap-4">
             <StudentForm onStudentAdded={handleStudentAdded} />
-            <StudentList students={students} setStudents={setStudents} />
-          </>
+
+            <div>
+              {!students.length ? null : (
+                <>
+                  {showList ? (
+                    <>
+                      <StudentList
+                        students={students}
+                        setStudents={setStudents}
+                      />
+                      <Button
+                        className="mt-2 cursor-pointer"
+                        onClick={() => setShowList(false)}
+                      >
+                        Masquer la liste <Minus />
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      className="mt-4 cursor-pointer"
+                      onClick={() => setShowList(true)}
+                    >
+                      Voir la liste des élèves <Plus />
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         )}
 
         {activeSection === "notification" && (
           <>
             <ParentNotificationList />
+          </>
+        )}
+        {activeSection === "rib" && (
+          <>
+            <h2 className="text-xl font-semibold mb-4">
+              Coordonnées bancaires
+            </h2>
+            <RIBForm />
           </>
         )}
       </main>
