@@ -21,6 +21,7 @@ const sections: Section[] = [
   { key: "classes", label: "Classes" },
   { key: "subjects", label: "Matières" },
   { key: "teachers", label: "Professeurs" },
+  { key: "notification", label: "Notification" },
   // Tu pourras ajouter ici : { key: "teachers", label: "Professeurs" }
 ];
 

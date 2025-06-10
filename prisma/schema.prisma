@@ -14,11 +14,16 @@ model User {
   role      Role
   createdAt DateTime @default(now())
 
-  students Student[]
+  firstName String
+  lastName  String
+  phone     String
+
+  students         Student[]
+  NotificationRead NotificationRead[]
 }
 
 model Student {
-  id              String   @id @default(cuid())
+  id              String         @id @default(cuid())
   firstName       String
   lastName        String
   birthDate       DateTime
@@ -27,8 +32,9 @@ model Student {
   healthDetails   String?
   canLeaveAlone   Boolean
   parentId        String
-  parent          User     @relation(fields: [parentId], references: [id])
-  createdAt       DateTime @default(now())
+  parent          User           @relation(fields: [parentId], references: [id])
+  createdAt       DateTime       @default(now())
+  notifications   Notification[]
 }
 
 model Class {
@@ -39,26 +45,25 @@ model Class {
   schoolYearId String
   createdAt    DateTime   @default(now())
   subjects     Subject[]
-  teachers     Teacher[] // 👈 ajoute cette ligne
+  teachers     Teacher[]
 }
 
 model Subject {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  class     Class    @relation(fields: [classId], references: [id])
+  class     Class     @relation(fields: [classId], references: [id])
   classId   String
-  createdAt DateTime @default(now())
-
-  teachers Teacher[]
+  createdAt DateTime  @default(now())
+  teachers  Teacher[]
 }
 
 model Teacher {
-  id        String   @id @default(uuid())
-  firstName       String
-  lastName        String
-  subject   Subject  @relation(fields: [subjectId], references: [id])
+  id        String  @id @default(uuid())
+  firstName String
+  lastName  String
+  subject   Subject @relation(fields: [subjectId], references: [id])
   subjectId String
-  class     Class    @relation(fields: [classId], references: [id])
+  class     Class   @relation(fields: [classId], references: [id])
   classId   String
 }
 
@@ -70,6 +75,28 @@ model SchoolYear {
   createdAt DateTime @default(now())
 
   classes Class[]
+}
+
+model Notification {
+  id        String             @id @default(uuid())
+  title     String
+  message   String
+  createdAt DateTime           @default(now())
+  student   Student?           @relation(fields: [studentId], references: [id])
+  studentId String?
+  isGlobal  Boolean            @default(false)
+  readBy    NotificationRead[]
+}
+
+model NotificationRead {
+  id             String       @id @default(uuid())
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId String
+  parent         User         @relation(fields: [parentId], references: [id])
+  parentId       String
+  readAt         DateTime?
+
+  @@unique([notificationId, parentId])
 }
 
 enum Role {

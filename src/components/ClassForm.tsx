@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Plus } from "lucide-react";
 
 export default function ClassForm({ onCreated }: { onCreated: () => void }) {
   const [formData, setFormData] = useState({
@@ -111,6 +112,7 @@ export default function ClassForm({ onCreated }: { onCreated: () => void }) {
 
       <Button type="submit" disabled={loading}>
         {loading ? "Création..." : "Créer la classe"}
+        <Plus />
       </Button>
     </form>
   );

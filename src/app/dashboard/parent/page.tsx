@@ -1,99 +1,76 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import StudentForm from "../../../../src/components/StudentForm";
-import { signOut } from "next-auth/react";
+import { DashboardSection } from "../../../../src/types/types";
+import Sidebar from "../../../components/Sidebar";
+import MobileSidebar from "../../../components/MobileSidebar";
+import ParentNotificationList from "../../../components/ParentNotificationList";
+import StudentForm from "../../../components/StudentForm";
+import StudentList from "../../../components/StudentList";
 
 type Student = {
   id: string;
-  name: string;
   firstName: string;
   lastName: string;
 };
 
-export default function ParentDashboard() {
+export default function ParentDashboardPage() {
+  const { data: session, status } = useSession();
+  const [activeSection, setActiveSection] =
+    useState<DashboardSection>("children");
   const [students, setStudents] = useState<Student[]>([]);
 
-  useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        const res = await fetch("/api/students", {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          throw new Error(`Erreur HTTP: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        if (Array.isArray(data.students)) {
-          setStudents(data.students);
-        } else {
-          console.warn("Pas de liste d'élèves dans la réponse :", data);
-          setStudents([]);
-        }
-      } catch (error) {
-        console.error("Erreur de chargement des élèves", error);
-        setStudents([]);
-      }
-    };
-
-    fetchStudents();
-  }, []);
-
-  const handleAddStudent = (studentData: Student) => {
-    setStudents((prev) => [...prev, studentData]);
-  };
-
-  const handleDelete = async (id: string) => {
-    const res = await fetch(`/api/students/${id}`, { method: "DELETE" });
+  const fetchStudents = async () => {
+    const res = await fetch("/api/students");
     const data = await res.json();
-    if (data.success) {
-      setStudents((prev) => prev.filter((s) => s.id !== id));
-    }
+    setStudents(data.students || []);
   };
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role === "PARENT") {
+      fetchStudents();
+    }
+  }, [status, session]);
+
+  const handleStudentAdded = (newStudent: Student) => {
+    setStudents((prev) => [...prev, newStudent]);
+  };
+
+  if (status === "loading") return <p>Chargement...</p>;
+  if (!session || session.user.role !== "PARENT") {
+    redirect("/login");
+    return null; // sécurité (ne jamais retourner rien sans JSX)
+  }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4">👨‍👩‍👧‍👦 Mes enfants</h1>
+    <div className="flex min-h-screen">
+      <Sidebar
+        activeSection={activeSection}
+        setActiveSectionAction={setActiveSection}
+      />
+      <MobileSidebar
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+      />
+      <main className="flex-1 p-6 mt-10 md:mt-0">
+        <h1 className="text-2xl font-bold mb-4">Tableau de bord parent</h1>
+        <p className="mb-6">Bienvenue, {session.user.firstName}</p>
 
-      <StudentForm onStudentAdded={handleAddStudent} />
+        {activeSection === "children" && (
+          <>
+            <StudentForm onStudentAdded={handleStudentAdded} />
+            <StudentList students={students} setStudents={setStudents} />
+          </>
+        )}
 
-      {Array.isArray(students) && students.length === 0 ? (
-        <p className="text-muted-foreground">
-          Aucun élève inscrit pour le moment.
-        </p>
-      ) : (
-        <div className="grid gap-4">
-          {students.map((student) => (
-            <Card key={student.id}>
-              <CardContent className="p-4 flex justify-between items-center">
-                <span>
-                  {student.firstName} {student.lastName}
-                </span>
-                <Button
-                  variant="destructive"
-                  onClick={() => handleDelete(student.id)}
-                >
-                  Supprimer
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-      <div className="mt-5">
-        <Button
-          variant="outline"
-          onClick={() => signOut({ callbackUrl: "/login" })}
-        >
-          Se déconnecter
-        </Button>
-      </div>
+        {activeSection === "notification" && (
+          <>
+            <ParentNotificationList />
+          </>
+        )}
+      </main>
     </div>
   );
 }

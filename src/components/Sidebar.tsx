@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import SidebarBtn from "./SidebarBtn";
 import { DashboardSection } from "../types/types";
+import { LogOut } from "lucide-react";
 
 export default function Sidebar({
   activeSection,
@@ -17,31 +18,37 @@ export default function Sidebar({
 
   return (
     <aside className="w-64 h-screen bg-gray-100 border-r p-4 space-y-4">
-      <h2 className="text-lg font-semibold">📂 Navigation</h2>
+      <h2 className="text-lg font-semibold">Navigation</h2>
 
       {role === "DIRECTOR" && (
         <>
           <SidebarBtn
-            label="📅 Année scolaire"
+            label="Année scolaire"
             section="schoolYear"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
           />
           <SidebarBtn
-            label="🎓 Classes"
+            label="Classes"
             section="classes"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
           />
           <SidebarBtn
-            label="📚 Matières"
+            label="Matières"
             section="subjects"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
           />
           <SidebarBtn
-            label="👩‍🏫 Professeurs"
+            label="Professeurs"
             section="teachers"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+          />
+          <SidebarBtn
+            label="Notifications"
+            section="notification"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
           />
@@ -49,17 +56,25 @@ export default function Sidebar({
       )}
 
       {role === "PARENT" && (
-        <SidebarBtn
-          label="👶 Mes enfants"
-          section="children"
-          activeSection={activeSection}
-          setActiveSection={setActiveSectionAction}
-        />
+        <>
+          <SidebarBtn
+            label="Mes enfants"
+            section="children"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+          />
+          <SidebarBtn
+            label="Notifications"
+            section="notification"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+          />
+        </>
       )}
 
       {role === "TEACHER" && (
         <SidebarBtn
-          label="📋 Ma classe"
+          label="Ma classe"
           section="myClass"
           activeSection={activeSection}
           setActiveSection={setActiveSectionAction}
@@ -71,7 +86,7 @@ export default function Sidebar({
           variant="outline"
           onClick={() => signOut({ callbackUrl: "/login" })}
         >
-          Se déconnecter
+          Se déconnecter <LogOut />
         </Button>
       </div>
     </aside>

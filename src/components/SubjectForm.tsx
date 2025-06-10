@@ -11,6 +11,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Plus } from "lucide-react";
 
 type Class = {
   id: string;
@@ -67,7 +68,9 @@ export default function SubjectForm() {
         />
       </div>
 
-      <Button type="submit">Ajouter la matière</Button>
+      <Button type="submit">
+        Ajouter la matière <Plus />
+      </Button>
     </form>
   );
 }

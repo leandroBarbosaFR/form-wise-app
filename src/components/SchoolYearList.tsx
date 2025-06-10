@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, UserX } from "lucide-react";
 
 type SchoolYear = {
   id: string;
@@ -66,7 +66,7 @@ export default function SchoolYearList() {
                 variant="destructive"
                 onClick={() => handleDelete(year.id)}
               >
-                Supprimer
+                Supprimer <UserX />
               </Button>
             </CardContent>
           </Card>

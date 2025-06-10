@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { UserX } from "lucide-react";
 
 type Class = {
   id: string;
@@ -64,7 +65,7 @@ export default function ClassList() {
                 size="sm"
                 onClick={() => handleDelete(cls.id)}
               >
-                Supprimer 🗑
+                Supprimer <UserX />
               </Button>
             </div>
           </CardContent>

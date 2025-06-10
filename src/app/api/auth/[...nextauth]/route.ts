@@ -2,10 +2,26 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { Adapter } from "next-auth/adapters";
-import { prisma } from "../../../../lib/prisma"; // db
-import bcrypt from "bcryptjs"; // library to hash the password
-import type { AdapterUser } from "next-auth/adapters";
+import { prisma } from "../../../../lib/prisma";
+import bcrypt from "bcryptjs";
 import type { AuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
+
+type UserRole = "PARENT" | "TEACHER" | "DIRECTOR";
+
+interface AppUser {
+  id: string;
+  email: string;
+  role: UserRole;
+  rememberMe?: boolean;
+  firstName?: string;
+  lastName?: string;
+}
+
+interface AppToken extends JWT {
+  user?: AppUser;
+  rememberMe?: boolean;
+}
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
@@ -18,8 +34,9 @@ export const authOptions: AuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        rememberMe: { label: "Rester connecté", type: "checkbox" }, // 👈 important
       },
-      authorize: async (credentials): Promise<AdapterUser | null> => {
+      authorize: async (credentials) => {
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
@@ -36,34 +53,43 @@ export const authOptions: AuthOptions = {
 
         return {
           id: user.id,
-          email: user.email!,
-          name: null,
-          image: null,
-          emailVerified: null,
-          role: user.role as "PARENT" | "TEACHER" | "DIRECTOR",
-        } as AdapterUser & { role: "PARENT" | "TEACHER" | "DIRECTOR" };
+          email: user.email,
+          role: user.role,
+          rememberMe: credentials.rememberMe === "true",
+          firstName: user.firstName,
+          lastName: user.lastName,
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
+      const typedToken = token as AppToken;
+
       if (user) {
-        const u = await prisma.user.findUnique({
-          where: { email: user.email! },
-        });
-        if (u) token.role = u.role;
+        typedToken.user = user as AppUser;
+        typedToken.rememberMe = (user as AppUser).rememberMe ?? true;
+
+        if (!typedToken.rememberMe) {
+          typedToken.exp = Math.floor(Date.now() / 1000) + 60 * 60 * 4;
+        }
       }
-      return token;
+
+      return typedToken;
     },
+
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.role = token.role as "PARENT" | "TEACHER" | "DIRECTOR";
+      const typedToken = token as AppToken;
+
+      if (typedToken.user) {
+        session.user = typedToken.user;
       }
+
       return session;
     },
   },
   pages: {
-    signIn: "/login", // page de login custom
+    signIn: "/login",
   },
 };
 

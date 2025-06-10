@@ -11,9 +11,10 @@ import SchoolYearList from "./SchoolYearList";
 import ClassForm from "./ClassForm";
 import ClassList from "./ClassList";
 import SubjectForm from "./SubjectForm";
-import TeacherForm from "./TeacherForm";
 import SubjectList from "./SubjectList";
 import TeacherList from "./TeacherList";
+import NotificationForm from "./NotificationForm";
+import DirectorNotificationList from "./DirectorNotificationList";
 
 export default function DirectorDashboardContent() {
   const { data: session, status } = useSession();
@@ -36,9 +37,9 @@ export default function DirectorDashboardContent() {
 
       <main className="flex-1 p-6 mt-10 md:mt-0">
         <h1 className="text-2xl font-bold mb-4">
-          🎓 Tableau de bord du directeur
+          Tableau de bord du directeur
         </h1>
-        <p className="mb-6">Bienvenue, {session.user.email}</p>
+        <p className="mb-6">Bienvenue, {session.user.role}</p>
 
         {activeSection === "schoolYear" && (
           <>
@@ -63,8 +64,14 @@ export default function DirectorDashboardContent() {
 
         {activeSection === "teachers" && (
           <>
-            <TeacherForm />
             <TeacherList />
+          </>
+        )}
+
+        {activeSection === "notification" && (
+          <>
+            <NotificationForm onSent={() => location.reload()} />
+            <DirectorNotificationList />
           </>
         )}
       </main>
