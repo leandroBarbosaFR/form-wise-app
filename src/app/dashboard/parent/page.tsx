@@ -48,6 +48,8 @@ export default function ParentDashboardPage() {
     return null;
   }
 
+  const fullName = `${session.user.firstName} ${session.user.lastName}`;
+
   return (
     <div className="flex min-h-screen">
       <Sidebar
@@ -59,8 +61,8 @@ export default function ParentDashboardPage() {
         setActiveSection={setActiveSection}
       />
       <main className="flex-1 p-6 mt-10 md:mt-0">
-        <h1 className="text-2xl font-bold mb-4">Tableau de bord parent</h1>
-        <p className="mb-6">Bienvenue, {session.user.firstName}</p>
+        {/* <h1 className="text-2xl font-bold mb-4">Tableau de bord parent</h1> */}
+        <p className="mb-6">Bienvenue, {fullName}</p>
 
         {activeSection === "children" && (
           <div className="flex flex-col gap-4">

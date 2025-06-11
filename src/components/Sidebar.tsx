@@ -1,10 +1,12 @@
 "use client";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import SidebarBtn from "./SidebarBtn";
 import { DashboardSection } from "../types/types";
 import { LogOut } from "lucide-react";
+import { Greeting } from "./Greeting";
+import { ParentNotification } from "../types/notification";
 
 export default function Sidebar({
   activeSection,
@@ -15,10 +17,24 @@ export default function Sidebar({
 }) {
   const { data: session } = useSession();
   const role = session?.user?.role;
+  const [hasUnreadNotifs, setHasUnreadNotifs] = useState(false);
+
+  useEffect(() => {
+    if (role === "PARENT" && session?.user?.id) {
+      fetch("/api/notifications")
+        .then((res) => res.json())
+        .then((data: { notifications: ParentNotification[] }) => {
+          const unread = data.notifications?.some(
+            (n) => !n.readBy?.some((r) => r.parentId === session.user.id)
+          );
+          setHasUnreadNotifs(unread);
+        });
+    }
+  }, [role, session?.user?.id]);
 
   return (
     <aside className="w-64 h-screen bg-gray-100 border-r p-4 space-y-4">
-      <h2 className="text-lg font-semibold">Navigation</h2>
+      <Greeting name={session?.user?.lastName || "Utilisateur"} />
 
       {role === "DIRECTOR" && (
         <>
@@ -67,7 +83,11 @@ export default function Sidebar({
             label="Notifications"
             section="notification"
             activeSection={activeSection}
-            setActiveSection={setActiveSectionAction}
+            setActiveSection={(section) => {
+              setActiveSectionAction(section);
+              setHasUnreadNotifs(false);
+            }}
+            hasNotification={hasUnreadNotifs}
           />
           <SidebarBtn
             label="Coordonnées bancaires"

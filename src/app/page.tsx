@@ -1,102 +1,110 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Zap } from "lucide-react";
+
+export default function LandingPage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <header className="flex items-center justify-around p-4 border-b bg-white">
+        <div className="text-xl  flex lg:text-[50px] lg:leading-[56px] items-center">
+          <Zap width={40} height={40} />
+          Form
+          <span className="text-xl font-bold text-blue-600 lg:text-[50px] lg:leading-[56px]">
+            wise
+          </span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        <div className="space-x-4">
+          <Link href="/login">
+            <Button variant="outline">Se connecter</Button>
+          </Link>
+          <Link href="/register">
+            <Button>Créer un compte</Button>
+          </Link>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="flex flex-col items-center justify-center text-center px-4 bg-gradient-to-b from-white to-blue-100 min-h-[90vh]">
+        <h1 className="text-3xl sm:text-4xl lg:text-[76px] lg:leading-[79px] font-bold mb-4 max-w-4xl">
+          Inscription <span className="text-blue-600">simplifiée</span> pour
+          tous.
+        </h1>
+        <p className="text-lg text-gray-700 max-w-xl mb-6">
+          Avec notre solution, gérez les inscriptions de manière simple, rapide
+          et efficace.
+        </p>
+        <div className="space-x-4">
+          <Button className="cursor-pointer">Agender une démo</Button>
+          <Button className="cursor-pointer" variant="outline">
+            Nous contacter
+          </Button>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20 bg-white text-center">
+        <h2 className="text-3xl font-bold mb-10">Tarification</h2>
+        <div className="grid gap-8 max-w-4xl mx-auto md:grid-cols-3">
+          <div className="border p-6 rounded-xl shadow">
+            <h3 className="text-xl font-semibold mb-2">Basique</h3>
+            <p className="text-gray-700 mb-4">
+              Gratuit pour les petites associations.
+            </p>
+            <p className="text-2xl font-bold">0€</p>
+          </div>
+          <div className="border p-6 rounded-xl shadow border-blue-600">
+            <h3 className="text-xl font-semibold mb-2">Standard</h3>
+            <p className="text-gray-700 mb-4">
+              Pour les écoles et établissements moyens.
+            </p>
+            <p className="text-2xl font-bold">29€ / mois</p>
+          </div>
+          <div className="border p-6 rounded-xl shadow">
+            <h3 className="text-xl font-semibold mb-2">Pro</h3>
+            <p className="text-gray-700 mb-4">
+              Pour les grandes structures et groupes scolaires.
+            </p>
+            <p className="text-2xl font-bold">59€ / mois</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Fake Testimonials */}
+      <section className="py-20 bg-blue-50 text-center">
+        <h2 className="text-3xl font-bold mb-10">Ce qu&apos;ils en disent</h2>
+        <div className="grid gap-6 max-w-4xl mx-auto md:grid-cols-3">
+          <div className="bg-white p-6 rounded-xl shadow">
+            <p className="italic">
+              &quot;Formwise a changé notre manière de gérer les inscriptions.
+              Tellement plus simple maintenant !&quot;
+            </p>
+            <p className="mt-4 font-semibold">Marie, directrice d&apos;école</p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow">
+            <p className="italic">
+              &quot;Un vrai gain de temps pour tous les parents. L’interface est
+              très claire.&quot;
+            </p>
+            <p className="mt-4 font-semibold">Jean, parent d&apos;élève</p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow">
+            <p className="italic">
+              &quot;Simple, rapide, efficace. Nos professeurs adorent
+              l&apos;outil.&quot;
+            </p>
+            <p className="mt-4 font-semibold">
+              Julie, coordinatrice pédagogique
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-100 py-8 text-center text-sm text-gray-600">
+        &copy; {new Date().getFullYear()} Formwise. Tous droits réservés.
       </footer>
     </div>
   );
