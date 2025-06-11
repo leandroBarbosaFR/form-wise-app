@@ -17,9 +17,9 @@ model User {
   firstName        String
   lastName         String
   phone            String
-  iban             String?
-  bic              String?
-  bankName         String?
+  iban             String
+  bic              String
+  bankName         String
   students         Student[]
   NotificationRead NotificationRead[]
 }
