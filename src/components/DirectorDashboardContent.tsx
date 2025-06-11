@@ -36,9 +36,9 @@ export default function DirectorDashboardContent() {
       />
 
       <main className="flex-1 p-6 mt-10 md:mt-0">
-        <h1 className="text-2xl font-bold mb-4">
+        {/* <h1 className="text-2xl font-bold mb-4">
           Tableau de bord du directeur
-        </h1>
+        </h1> */}
         <p className="mb-6">Bienvenue, {session.user.role}</p>
 
         {activeSection === "schoolYear" && (

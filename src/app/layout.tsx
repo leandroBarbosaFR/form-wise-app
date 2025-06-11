@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Geist, Geist_Mono } from "next/font/google";
 import AuthProvider from "../providers/AuthProvider";
 import { Toaster } from "sonner";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../lib/authOptions";
+import type { Metadata } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,12 +16,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Form Wise app",
-  description: "Form Wise app",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const session = await getServerSession(authOptions);
+  const role = session?.user?.role;
 
-export default function RootLayout({
+  let roleTitle = "";
+  if (role === "DIRECTOR") roleTitle = " | Director";
+  else if (role === "TEACHER") roleTitle = " | Teacher";
+  else if (role === "PARENT") roleTitle = " | Parent";
+
+  return {
+    title: `Form Wise app${roleTitle}`,
+    description: "Form Wise app",
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
