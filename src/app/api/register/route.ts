@@ -5,11 +5,19 @@ import bcrypt from "bcryptjs";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    console.log("📦 Données reçues /api/register:", body);
     const { email, password, firstName, lastName, phone, role } = body;
 
-    if (!email || !password || !firstName || !lastName || !phone || !role) {
+    if (
+      !email?.trim() ||
+      !password?.trim() ||
+      !firstName?.trim() ||
+      !lastName?.trim() ||
+      !phone?.trim() ||
+      !role
+    ) {
       return NextResponse.json(
-        { success: false, error: "Champs manquants" },
+        { success: false, error: "Champs manquants ou invalides" },
         { status: 400 }
       );
     }
