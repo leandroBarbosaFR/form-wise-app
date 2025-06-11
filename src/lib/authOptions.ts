@@ -35,6 +35,7 @@ export const authOptions: AuthOptions = {
         rememberMe: { label: "Rester connecté", type: "checkbox" },
       },
       authorize: async (credentials) => {
+        console.log("Tentative de connexion avec :", credentials);
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({

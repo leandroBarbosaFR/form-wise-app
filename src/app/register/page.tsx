@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,29 +21,43 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        password,
-        firstName,
-        lastName,
-        phone,
-        role,
-      }),
-    });
+    const data = {
+      firstName,
+      lastName,
+      phone,
+      email,
+      password,
+      role,
+    };
 
-    const data = await res.json();
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (data.success) {
+      const result = await res.json();
+
+      if (!res.ok) {
+        toast.error(result.error || "Une erreur est survenue.");
+        setLoading(false);
+        return;
+      }
+
+      toast.success("Inscription réussie !");
       router.push("/login");
-    } else {
-      setError("Erreur lors de l’inscription.");
+    } catch (err) {
+      console.error("Erreur réseau", err);
+      toast.error("Erreur réseau. Réessayez plus tard.");
+      setError("Erreur réseau. Réessayez plus tard.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
