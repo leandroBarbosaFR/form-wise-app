@@ -31,7 +31,7 @@ export default function SidebarBtn({
     >
       {/* Icon + Label */}
       <div className="flex items-center gap-2 flex-1">
-        {icon && <span className="w-5 h-5 text-gray-700">{icon}</span>}
+        {icon && <span className="w-4 h-4 text-gray-700">{icon}</span>}
         <span>{label}</span>
       </div>
 

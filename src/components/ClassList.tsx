@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UserX } from "lucide-react";
 
@@ -16,6 +15,16 @@ type Class = {
 
 export default function ClassList() {
   const [classes, setClasses] = useState<Class[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchClasses = async () => {
     const res = await fetch("/api/classes", { credentials: "include" });
@@ -41,36 +50,72 @@ export default function ClassList() {
 
   if (classes.length === 0) {
     return (
-      <p className="text-muted-foreground">
+      <p className="text-muted-foreground mt-6">
         Aucune classe créée pour l’instant.
       </p>
     );
   }
 
   return (
-    <div className="grid gap-4 mt-6">
-      {classes.map((cls) => (
-        <Card key={cls.id}>
-          <CardContent className="p-4 flex flex-col gap-2">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-semibold">{cls.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  Année : {cls.schoolYear.name} – {cls.monthlyFee} € / mois
-                </p>
-              </div>
+    <div className="mt-6">
+      {isMobile ? (
+        <div className="space-y-4">
+          {classes.map((cls) => (
+            <div
+              key={cls.id}
+              className="rounded border p-4 shadow-sm space-y-2"
+            >
+              <p className="font-semibold">{cls.name}</p>
+              <p className="text-sm text-muted-foreground">
+                Année : {cls.schoolYear.name}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Tarif : {cls.monthlyFee} € / mois
+              </p>
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={() => handleDelete(cls.id)}
-                className="cursor-pointer"
               >
-                Supprimer <UserX />
+                <UserX className="h-4 w-4 mr-1" />
+                Supprimer
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      ))}
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-md border shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead className="bg-muted text-muted-foreground uppercase text-xs">
+              <tr>
+                <th className="px-4 py-3 text-left">Classe</th>
+                <th className="px-4 py-3 text-left">Année scolaire</th>
+                <th className="px-4 py-3 text-left">Tarif mensuel</th>
+                <th className="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {classes.map((cls) => (
+                <tr key={cls.id} className="hover:bg-muted/20">
+                  <td className="px-4 py-2 font-medium">{cls.name}</td>
+                  <td className="px-4 py-2">{cls.schoolYear.name}</td>
+                  <td className="px-4 py-2">{cls.monthlyFee} €</td>
+                  <td className="px-4 py-2 text-right">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(cls.id)}
+                    >
+                      <UserX className="h-4 w-4 mr-1 cursor-pointer" />
+                      Supprimer
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

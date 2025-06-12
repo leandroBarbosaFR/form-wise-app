@@ -10,7 +10,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -83,7 +83,7 @@ export default function SchoolYearForm({
               variant="outline"
               className="w-full justify-start text-left font-normal"
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarDays className="mr-2 h-4 w-4" />
               {formData.startDate
                 ? format(formData.startDate, "dd/MM/yyyy", { locale: fr })
                 : "Sélectionner une date"}
@@ -111,7 +111,7 @@ export default function SchoolYearForm({
               variant="outline"
               className="w-full justify-start text-left font-normal"
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarDays className="mr-2 h-4 w-4" />
               {formData.endDate
                 ? format(formData.endDate, "dd/MM/yyyy", { locale: fr })
                 : "Sélectionner une date"}

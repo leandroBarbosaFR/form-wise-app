@@ -17,6 +17,16 @@ type Notification = {
 
 export default function DirectorNotificationList() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetch("/api/notifications")
@@ -24,48 +34,96 @@ export default function DirectorNotificationList() {
       .then((data) => setNotifications(data.notifications || []));
   }, []);
 
+  if (notifications.length === 0) {
+    return (
+      <p className="text-muted-foreground mt-6">Aucune notification envoyée.</p>
+    );
+  }
+
   return (
-    <div className="space-y-4 mt-8">
-      <h2 className="text-xl font-semibold">Historique des notifications</h2>
-      {notifications.length === 0 ? (
-        <p>Aucune notification envoyée.</p>
-      ) : (
-        notifications.map((n) => (
-          <div
-            key={n.id}
-            className="border rounded p-4 bg-white shadow-sm space-y-1"
-          >
-            <h3 className="font-bold">{n.title}</h3>
-            <p className="text-sm">{n.message}</p>
-            <p className="text-xs text-gray-500">
-              {new Date(n.createdAt).toLocaleString()}
-            </p>
-            <p className="text-xs">
-              {" "}
-              {n.isGlobal
-                ? "Tous les parents"
-                : `Élève : ${n.student?.firstName} ${n.student?.lastName}`}
-            </p>
-            {n.isGlobal ? (
-              <p className="text-xs text-gray-600">
-                {n.readBy.length} parent(s) ont lu cette notification
+    <div className="mt-8">
+      {isMobile ? (
+        <div className="space-y-4">
+          {notifications.map((n) => (
+            <div
+              key={n.id}
+              className="rounded border p-4 shadow-sm space-y-1 bg-white"
+            >
+              <p className="font-semibold">{n.title}</p>
+              <p className="text-sm">{n.message}</p>
+              <p className="text-xs text-gray-500">
+                {new Date(n.createdAt).toLocaleString()}
               </p>
-            ) : (
-              <div className="text-xs flex items-center gap-2">
-                <span
-                  className={`px-2 py-0.5 rounded-full font-medium ${
-                    n.readBy.length > 0
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {n.readBy.length > 0 ? "Lue" : "Non lue"}
-                </span>
-                par le parent de {n.student?.firstName} {n.student?.lastName}
+              <p className="text-xs">
+                {n.isGlobal
+                  ? "Tous les parents"
+                  : `Élève : ${n.student?.firstName} ${n.student?.lastName}`}
+              </p>
+              <div className="text-xs">
+                {n.isGlobal ? (
+                  <span className="text-gray-600">
+                    {n.readBy.length} parent(s) ont lu
+                  </span>
+                ) : (
+                  <span
+                    className={`px-2 py-0.5 rounded-full font-medium ${
+                      n.readBy.length > 0
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {n.readBy.length > 0 ? "Lue" : "Non lue"}
+                  </span>
+                )}
               </div>
-            )}
-          </div>
-        ))
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-md border shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead className="bg-muted text-muted-foreground uppercase text-xs">
+              <tr>
+                <th className="px-4 py-3 text-left">Titre</th>
+                <th className="px-4 py-3 text-left">Destinataire</th>
+                <th className="px-4 py-3 text-left">Statut</th>
+                <th className="px-4 py-3 text-left">Date</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {notifications.map((n) => (
+                <tr key={n.id} className="hover:bg-muted/20">
+                  <td className="px-4 py-2 font-medium">{n.title}</td>
+                  <td className="px-4 py-2">
+                    {n.isGlobal
+                      ? "Tous les parents"
+                      : `${n.student?.firstName} ${n.student?.lastName}`}
+                  </td>
+                  <td className="px-4 py-2">
+                    {n.isGlobal ? (
+                      <span className="text-xs text-gray-600">
+                        {n.readBy.length} parent(s) ont lu
+                      </span>
+                    ) : (
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          n.readBy.length > 0
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {n.readBy.length > 0 ? "Lue" : "Non lue"}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2 text-xs text-gray-500">
+                    {new Date(n.createdAt).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

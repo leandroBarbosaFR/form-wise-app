@@ -4,7 +4,17 @@ import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import SidebarBtn from "./SidebarBtn";
 import { DashboardSection } from "../types/types";
-import { LogOut, CalendarDays, LayoutGrid, BookOpen, UserRound, Bell, Users,CreditCard } from "lucide-react";
+import {
+  LogOut,
+  CalendarDays,
+  LayoutGrid,
+  BookOpen,
+  UserRound,
+  Bell,
+  Users,
+  CreditCard,
+  ChartPie,
+} from "lucide-react";
 import { Greeting } from "./Greeting";
 import { ParentNotification } from "../types/notification";
 
@@ -72,6 +82,20 @@ export default function Sidebar({
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
             icon={<Bell className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Éleves"
+            section="eleves"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Users className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Graphiques"
+            section="charts"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<ChartPie className="w-4 h-4" />}
           />
         </>
       )}

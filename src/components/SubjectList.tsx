@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+// import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -19,6 +19,7 @@ interface SchoolClass {
 interface Subject {
   id: string;
   name: string;
+  teachers: { firstName: string; lastName: string }[];
   class: {
     id: string;
     name: string;
@@ -52,11 +53,16 @@ export default function SubjectList() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <Label>Choisir une classe</Label>
+    <div className="space-y-6 mt-6">
+      <div className="space-y-2">
+        <Label
+          htmlFor="class-select"
+          className="text-sm font-medium text-muted-foreground"
+        >
+          Choisir une classe
+        </Label>
         <Select onValueChange={setSelectedClassId}>
-          <SelectTrigger>
+          <SelectTrigger id="class-select" className="w-48">
             <SelectValue placeholder="Sélectionner une classe" />
           </SelectTrigger>
           <SelectContent>
@@ -70,19 +76,43 @@ export default function SubjectList() {
       </div>
 
       {selectedClassId && (
-        <div className="grid gap-4">
+        <div className="space-y-4">
+          <h2 className="text-sm font-semibold text-muted-foreground">
+            Matières de la classe{" "}
+            {classes.find((c) => c.id === selectedClassId)?.name}
+          </h2>
+
           {filteredSubjects.length === 0 ? (
             <p className="text-muted-foreground">
               Aucune matière pour cette classe.
             </p>
           ) : (
-            filteredSubjects.map((subject) => (
-              <Card key={subject.id}>
-                <CardContent className="p-4">
-                  <p className="font-medium">{subject.name}</p>
-                </CardContent>
-              </Card>
-            ))
+            <div className="overflow-x-auto rounded-md border shadow-sm">
+              <table className="min-w-full text-sm">
+                <thead className="bg-muted text-muted-foreground uppercase text-xs">
+                  <tr>
+                    <th className="px-4 py-3 text-left">Matière</th>
+                    <th className="px-4 py-3 text-left">Professeur</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {filteredSubjects.map((subject) => (
+                    <tr key={subject.id} className="hover:bg-muted/20">
+                      <td className="px-4 py-2 font-medium">{subject.name}</td>
+                      <td className="px-4 py-2">
+                        {subject.teachers.length > 0 ? (
+                          `${subject.teachers[0].firstName} ${subject.teachers[0].lastName}`
+                        ) : (
+                          <span className="text-muted-foreground italic">
+                            Professeur non assigné
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       )}

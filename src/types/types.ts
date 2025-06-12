@@ -7,4 +7,6 @@ export type DashboardSection =
   | "notification"
   | "teachers"
   | "payment"
+  | "eleves"
+  | "charts"
   | "rib";

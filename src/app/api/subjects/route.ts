@@ -37,6 +37,13 @@ export async function GET() {
   const subjects = await prisma.subject.findMany({
     include: {
       class: true,
+      teachers: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+        take: 1,
+      },
     },
   });
   return NextResponse.json({ subjects });

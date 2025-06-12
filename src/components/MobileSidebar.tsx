@@ -33,6 +33,8 @@ const getSections = (role?: string): Section[] => {
       { key: "subjects", label: "Matières" },
       { key: "teachers", label: "Professeurs" },
       { key: "notification", label: "Notification" },
+      { key: "eleves", label: "Éleves" },
+      { key: "charts", label: "Graphiques" },
     ];
   }
 
@@ -55,7 +57,7 @@ export default function MobileSidebar({
   const sections = getSections(role);
 
   return (
-    <div className="fixed top-4 left-4 z-50 md:hidden p-4">
+    <div className="fixed top-4 right-4 z-50 md:hidden p-4">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" className="cursor-pointer">
