@@ -55,7 +55,7 @@ export default function MobileSidebar({
   const sections = getSections(role);
 
   return (
-    <div className="fixed top-4 left-4 z-50 md:hidden">
+    <div className="fixed top-4 left-4 z-50 md:hidden p-4">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" className="cursor-pointer">
