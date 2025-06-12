@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function RedirectPage() {
   const { data: session, status } = useSession();
@@ -10,6 +11,7 @@ export default function RedirectPage() {
 
   useEffect(() => {
     if (status === "loading") return;
+
     const role = session?.user?.role;
 
     if (!role) {
@@ -32,5 +34,12 @@ export default function RedirectPage() {
     }
   }, [session, status, router]);
 
-  return <p>Redirection en cours...</p>;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+        <Loader2 className="w-5 h-5 animate-spin text-indigo-600" />
+        Redirection en cours...
+      </div>
+    </div>
+  );
 }

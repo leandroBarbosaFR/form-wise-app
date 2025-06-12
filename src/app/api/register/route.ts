@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import bcrypt from "bcryptjs";
+import { resend } from "../../../lib/resend";
 
 export async function POST(req: Request) {
   try {
@@ -42,6 +43,19 @@ export async function POST(req: Request) {
         phone,
         role,
       },
+    });
+
+    // 👇 Envoi de l'email de bienvenue avec lien de login
+    await resend.emails.send({
+      from: "Formwise <onboarding@formwise.fr>",
+      to: [email],
+      subject: "Bienvenue sur Formwise !",
+      html: `
+        <p>Bonjour ${firstName},</p>
+        <p>Votre compte a été créé avec succès.</p>
+        <p><a href="https://formwise.fr/login?email=${encodeURIComponent(email)}">Cliquez ici pour vous connecter</a></p>
+        <p>À bientôt !</p>
+      `,
     });
 
     return NextResponse.json({ success: true });

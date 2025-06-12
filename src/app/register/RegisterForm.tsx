@@ -18,13 +18,22 @@ export default function RegisterForm() {
   const [role, setRole] = useState<"PARENT" | "TEACHER" | "DIRECTOR">("PARENT");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [civility] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const data = { firstName, lastName, phone, email, password, role };
+    const data = {
+      firstName,
+      lastName,
+      phone,
+      email,
+      password,
+      role,
+      civility,
+    };
 
     try {
       const res = await fetch("/api/register", {

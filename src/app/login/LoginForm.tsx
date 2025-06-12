@@ -6,9 +6,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Eye, EyeOff, Zap } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
+export default function LoginForm() {
+  const searchParams = useSearchParams();
+  const prefilledEmail = searchParams.get("email") || "";
+  const [email, setEmail] = useState(prefilledEmail);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
@@ -118,7 +121,10 @@ export default function LoginPage() {
                 />
                 Rester connecté
               </label>
-              <Link href="#" className="text-indigo-600 hover:text-indigo-500">
+              <Link
+                href="/forgot-password"
+                className="text-indigo-600 hover:text-indigo-500"
+              >
                 Mot de passe oublié ?
               </Link>
             </div>
