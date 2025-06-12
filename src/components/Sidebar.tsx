@@ -4,7 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import SidebarBtn from "./SidebarBtn";
 import { DashboardSection } from "../types/types";
-import { LogOut } from "lucide-react";
+import { LogOut, CalendarDays, LayoutGrid, BookOpen, UserRound, Bell, Users,CreditCard } from "lucide-react";
 import { Greeting } from "./Greeting";
 import { ParentNotification } from "../types/notification";
 
@@ -43,30 +43,35 @@ export default function Sidebar({
             section="schoolYear"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
+            icon={<CalendarDays className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Classes"
             section="classes"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
+            icon={<LayoutGrid className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Matières"
             section="subjects"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
+            icon={<BookOpen className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Professeurs"
             section="teachers"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
+            icon={<UserRound className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Notifications"
             section="notification"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
+            icon={<Bell className="w-4 h-4" />}
           />
         </>
       )}
@@ -78,6 +83,7 @@ export default function Sidebar({
             section="children"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
+            icon={<Users className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Notifications"
@@ -88,12 +94,14 @@ export default function Sidebar({
               setHasUnreadNotifs(false);
             }}
             hasNotification={hasUnreadNotifs}
+            icon={<Bell className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Coordonnées bancaires"
             section="rib"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
+            icon={<CreditCard className="w-4 h-4" />}
           />
         </>
       )}
@@ -104,6 +112,7 @@ export default function Sidebar({
           section="myClass"
           activeSection={activeSection}
           setActiveSection={setActiveSectionAction}
+          icon={<LayoutGrid className="w-4 h-4" />}
         />
       )}
 

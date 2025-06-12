@@ -1,34 +1,45 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, ReactNode } from "react";
 import { DashboardSection } from "../types/types";
+
+interface SidebarBtnProps {
+  label: string;
+  section: DashboardSection;
+  activeSection: DashboardSection;
+  setActiveSection: Dispatch<SetStateAction<DashboardSection>>;
+  icon?: ReactNode;
+  hasNotification?: boolean;
+}
 
 export default function SidebarBtn({
   label,
   section,
   activeSection,
   setActiveSection,
+  icon,
   hasNotification,
-}: {
-  label: string;
-  section: DashboardSection;
-  activeSection: DashboardSection;
-  setActiveSection: Dispatch<SetStateAction<DashboardSection>>;
-  hasNotification?: boolean;
-}) {
+}: SidebarBtnProps) {
+  const isActive = activeSection === section;
+
   return (
     <button
       onClick={() => setActiveSection(section)}
-      className={`flex items-center justify-between w-full text-left px-3 py-2 rounded hover:bg-gray-200 cursor-pointer ${
-        activeSection === section ? "bg-gray-300 font-bold" : ""
+      className={`flex items-center w-full text-left px-3 py-2 rounded hover:bg-gray-200 cursor-pointer ${
+        isActive ? "bg-gray-300 font-bold" : ""
       }`}
     >
-      <span>{label}</span>
+      {/* Icon + Label */}
+      <div className="flex items-center gap-2 flex-1">
+        {icon && <span className="w-5 h-5 text-gray-700">{icon}</span>}
+        <span>{label}</span>
+      </div>
 
+      {/* Notification Dot */}
       {hasNotification && (
-        <span className="relative flex h-2 w-2 ml-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fc7582] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#fc7582]"></span>
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fc7582] opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#fc7582]" />
         </span>
       )}
     </button>
