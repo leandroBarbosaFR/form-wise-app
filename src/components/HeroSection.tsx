@@ -150,7 +150,7 @@ export default function HeroSection() {
                   href="https://calendly.com/hello1367studio/30min"
                   target="_blank"
                 >
-                  <Button className="cursor-pointer">Agender une démo</Button>
+                  <Button className="cursor-pointer">Réserver une démo</Button>
                 </Link>
                 <Link href="https://wa.me/+330763858388" target="_blank">
                   <Button className="cursor-pointer" variant="outline">
