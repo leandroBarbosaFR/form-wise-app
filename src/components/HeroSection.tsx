@@ -163,7 +163,7 @@ export default function HeroSection() {
               <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
                 <Image
                   alt="App screenshot"
-                  src="https://cdn.sanity.io/media-libraries/mllo1PEUbcwG/images/8f8bdfa02006655ce1a21836055725bd20556900-5098x2478.png"
+                  src="https://cdn.sanity.io/media-libraries/mllo1PEUbcwG/images/f73f9b6e168bf4d17e56ccb8d9a9141d6c8a8fc7-5098x2690.png"
                   width={2432}
                   height={1442}
                   className="rounded-md shadow-2xl ring-1 ring-gray-900/10"
