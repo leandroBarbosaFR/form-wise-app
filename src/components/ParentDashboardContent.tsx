@@ -56,14 +56,14 @@ export default function ParentDashboardContent() {
   return (
     <div className="flex min-h-screen">
       {isMobile ? (
-      <Sidebar
-        activeSection={activeSection}
-        setActiveSectionAction={setActiveSection}
-      />
-        ) : (
-      <MobileSidebar
+        <MobileSidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
+      />
+        ) : (
+     <Sidebar
+        activeSection={activeSection}
+        setActiveSectionAction={setActiveSection}
       />
         )}
       <main className="flex-1 p-6 mt-10 md:mt-0">
