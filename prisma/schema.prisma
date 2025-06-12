@@ -22,7 +22,6 @@ model User {
   bankName         String?
   students         Student[]
   NotificationRead NotificationRead[]
-  civility String?
 }
 
 model Student {

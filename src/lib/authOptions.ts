@@ -36,28 +36,48 @@ export const authOptions: AuthOptions = {
       },
       authorize: async (credentials) => {
         console.log("Tentative de connexion avec :", credentials);
-        if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        try {
+          if (!credentials?.email || !credentials?.password) return null;
 
-        if (!user || !user.password) return null;
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
 
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-        if (!isValid) return null;
+          if (!user) {
+            console.error("❌ Utilisateur introuvable");
+            return null;
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          rememberMe: credentials.rememberMe === "true",
-          firstName: user.firstName,
-          lastName: user.lastName,
-        };
+          if (!user.password) {
+            console.error(
+              "❌ Le mot de passe n’est pas défini pour cet utilisateur"
+            );
+            return null;
+          }
+
+          const isValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          if (!isValid) {
+            console.error("❌ Mot de passe incorrect");
+            return null;
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            rememberMe: credentials.rememberMe === "true",
+            firstName: user.firstName,
+            lastName: user.lastName,
+          };
+        } catch (error) {
+          console.error("❌ Erreur dans authorize:", error);
+          return null;
+        }
       },
     }),
   ],
