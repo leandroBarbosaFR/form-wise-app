@@ -62,7 +62,7 @@ export default function MobileSidebar({
             ☰ Menu
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent className="p-4" side="left">
           <SheetTitle className="text-lg font-semibold mb-4">Menu</SheetTitle>
           <div className="flex flex-col gap-4 mt-4">
             {sections.map((section) => (
