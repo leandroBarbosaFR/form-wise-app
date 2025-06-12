@@ -2,15 +2,17 @@
 
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { useState } from "react";
-import Sidebar from "./Sidebar";
-import MobileSidebar from "./MobileSidebar";
-import StudentForm from "./StudentForm";
-import ParentNotificationList from "./ParentNotificationList";
+import { useState, useEffect } from "react";
 import { DashboardSection } from "../types/types";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Landmark } from "lucide-react";
-import RIBForm from "./RIBForm";
+import Sidebar from "../components/Sidebar";
+import MobileSidebar from "../components/MobileSidebar";
+import ParentNotificationList from "../components/ParentNotificationList";
+import StudentForm from "../components/StudentForm";
+import StudentList from "../components/StudentList";
+import RIBForm from "components/RIBForm";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus } from "lucide-react";
+import { useMediaQuery } from "../app/hooks/useMediaQuery";
 
 type Student = {
   id: string;
@@ -19,51 +21,87 @@ type Student = {
 };
 
 export default function ParentDashboardContent() {
-  const { data: session, status } = useSession();
-  const [bankInfoMissing] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [showList, setShowList] = useState(false);
 
+  const { data: session, status } = useSession();
   const [activeSection, setActiveSection] =
     useState<DashboardSection>("children");
+  const [students, setStudents] = useState<Student[]>([]);
+
+  const fetchStudents = async () => {
+    const res = await fetch("/api/students");
+    const data = await res.json();
+    setStudents(data.students || []);
+  };
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role === "PARENT") {
+      fetchStudents();
+    }
+  }, [status, session]);
+
+  const handleStudentAdded = (newStudent: Student) => {
+    setStudents((prev) => [...prev, newStudent]);
+  };
 
   if (status === "loading") return <p>Chargement...</p>;
-  if (!session || session.user.role !== "PARENT") redirect("/login");
-  console.log("activeSection:", activeSection);
+  if (!session || session.user.role !== "PARENT") {
+    redirect("/login");
+    return null;
+  }
+
+  const fullName = `${session.user.firstName} ${session.user.lastName}`;
 
   return (
     <div className="flex min-h-screen">
+      {isMobile ? (
       <Sidebar
         activeSection={activeSection}
         setActiveSectionAction={setActiveSection}
       />
+        ) : (
       <MobileSidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
       />
-      {bankInfoMissing && (
-        <div className="w-full p-6">
-          <Alert variant="destructive">
-            <Landmark className="h-5 w-5" />
-            <AlertTitle>Informations bancaires manquantes</AlertTitle>
-            <AlertDescription>
-              Veuillez renseigner votre IBAN, BIC et nom de banque pour que
-              l’école puisse effectuer le prélèvement mensuel.
-            </AlertDescription>
-          </Alert>
-        </div>
-      )}
-
+        )}
       <main className="flex-1 p-6 mt-10 md:mt-0">
-        <h1 className="text-2xl font-bold mb-4">Espace Parent</h1>
-        <p className="mb-6">Bienvenue,{session.user.firstName}</p>
+        {/* <h1 className="text-2xl font-bold mb-4">Tableau de bord parent</h1> */}
+        <p className="mb-6">Bienvenue, {fullName}</p>
 
         {activeSection === "children" && (
-          <>
-            <StudentForm
-              onStudentAdded={(student: Student) => {
-                console.log("Nouveau student :", student);
-              }}
-            />
-          </>
+          <div className="flex flex-col gap-4">
+            <StudentForm onStudentAdded={handleStudentAdded} />
+
+            <div>
+              {!students.length ? null : (
+                <>
+                  {showList ? (
+                    <>
+                      <StudentList
+                        students={students}
+                        setStudents={setStudents}
+                      />
+                      <Button
+                        className="mt-2 cursor-pointer"
+                        onClick={() => setShowList(false)}
+                      >
+                        Masquer la liste <Minus />
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      className="mt-4 cursor-pointer"
+                      onClick={() => setShowList(true)}
+                    >
+                      Voir la liste des élèves <Plus />
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         )}
 
         {activeSection === "notification" && (

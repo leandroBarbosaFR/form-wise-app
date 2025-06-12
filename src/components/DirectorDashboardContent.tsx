@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 import { DashboardSection } from "../types/types";
 
+import { useMediaQuery } from "../app/hooks/useMediaQuery";
+
 import Sidebar from "./Sidebar";
 import MobileSidebar from "./MobileSidebar";
 import SchoolYearForm from "./SchoolYearForm";
@@ -18,6 +20,7 @@ import DirectorNotificationList from "./DirectorNotificationList";
 
 export default function DirectorDashboardContent() {
   const { data: session, status } = useSession();
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const [activeSection, setActiveSection] =
     useState<DashboardSection>("schoolYear");
 
@@ -26,14 +29,17 @@ export default function DirectorDashboardContent() {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar
-        activeSection={activeSection}
-        setActiveSectionAction={setActiveSection}
-      />
-      <MobileSidebar
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-      />
+    {isMobile ? (
+        <MobileSidebar
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+        />
+      ) : (
+        <Sidebar
+          activeSection={activeSection}
+          setActiveSectionAction={setActiveSection}
+        />
+      )}
 
       <main className="flex-1 p-6 mt-10 md:mt-0">
         {/* <h1 className="text-2xl font-bold mb-4">
