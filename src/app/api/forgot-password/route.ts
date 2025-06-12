@@ -4,17 +4,25 @@ import { prisma } from "../../../lib/prisma";
 import { resend } from "../../../lib/resend";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required");
+}
+
+const JWT_SECRET = process.env.JWT_SECRET!;
+
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is not defined");
+}
 
 export async function POST(req: Request) {
   try {
     const { email } = await req.json();
 
-    // const user = await prisma.user.findUnique({ where: { email } });
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { email: true }, // on évite de charger tout l'objet
+      select: { email: true },
     });
+
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur introuvable." },
@@ -22,11 +30,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = jwt.sign(
-      { email },
-      JWT_SECRET,
-      { expiresIn: "1h" } // Expire en 1h
-    );
+    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "1h" });
 
     const resetLink = `${
       process.env.NODE_ENV === "development"
