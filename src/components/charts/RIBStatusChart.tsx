@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const COLORS = ["#22c55e", "#ef4444"];
 
-export default function RibStatusChart() {
+export default function RIBStatusChart() {
   const [data, setData] = useState([
     { name: "RIB à jour", value: 0 },
     { name: "RIB manquant", value: 0 },

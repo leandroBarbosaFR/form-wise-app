@@ -1,7 +1,7 @@
 "use client";
 
 import TotalStudentsChart from "../components/charts/TotalStudentsChart";
-import RibStatusChart from "../components/charts/RibStatusChart";
+import RibStatusChart from "../components/charts/RIBStatusChart";
 import StudentsByClassChart from "../components/charts/StudentsByClassChart";
 import NotificationCountChart from "../components/charts/NotificationCountChart";
 
