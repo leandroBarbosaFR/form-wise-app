@@ -19,6 +19,7 @@ import NotificationForm from "./NotificationForm";
 import DirectorNotificationList from "./DirectorNotificationList";
 import StudentListWithFilter from "./StudentListWithFilter";
 import DashboardCharts from "./DashboardCharts";
+import CenteredSpinner from "./CenteredSpinner";
 
 export default function DirectorDashboardContent() {
   const { data: session, status } = useSession();
@@ -26,7 +27,7 @@ export default function DirectorDashboardContent() {
   const [activeSection, setActiveSection] =
     useState<DashboardSection>("schoolYear");
 
-  if (status === "loading") return <p>Chargement...</p>;
+  if (status === "loading") return <CenteredSpinner label="Chargement..." />;
   if (!session || session.user.role !== "DIRECTOR") redirect("/login");
 
   return (

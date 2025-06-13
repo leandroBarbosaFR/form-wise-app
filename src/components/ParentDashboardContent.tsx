@@ -13,6 +13,7 @@ import RIBForm from "components/RIBForm";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
 import { useMediaQuery } from "../app/hooks/useMediaQuery";
+import CenteredSpinner from "./CenteredSpinner";
 
 type Student = {
   id: string;
@@ -45,7 +46,7 @@ export default function ParentDashboardContent() {
     setStudents((prev) => [...prev, newStudent]);
   };
 
-  if (status === "loading") return <p>Chargement...</p>;
+  if (status === "loading") return <CenteredSpinner label="Chargement..." />;
   if (!session || session.user.role !== "PARENT") {
     redirect("/login");
     return null;
@@ -57,15 +58,15 @@ export default function ParentDashboardContent() {
     <div className="flex min-h-screen">
       {isMobile ? (
         <MobileSidebar
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-      />
-        ) : (
-     <Sidebar
-        activeSection={activeSection}
-        setActiveSectionAction={setActiveSection}
-      />
-        )}
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+        />
+      ) : (
+        <Sidebar
+          activeSection={activeSection}
+          setActiveSectionAction={setActiveSection}
+        />
+      )}
       <main className="flex-1 p-6 mt-10 md:mt-0">
         {/* <h1 className="text-2xl font-bold mb-4">Tableau de bord parent</h1> */}
         <p className="mb-6">Bienvenue, {fullName}</p>

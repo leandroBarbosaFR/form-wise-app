@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, UserX } from "lucide-react";
+import CenteredSpinner from "./CenteredSpinner";
 
 type SchoolYear = {
   id: string;
@@ -55,7 +56,7 @@ export default function SchoolYearList() {
   }, []);
 
   if (loading) {
-    return <p className="text-muted-foreground mt-6">Chargement...</p>;
+    return <CenteredSpinner label="Chargement..." />;
   }
 
   if (schoolYears.length === 0) {

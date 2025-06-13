@@ -1,33 +1,48 @@
-import { Card, CardContent } from "@/components/ui/card";
+"use client";
+import { useEffect, useState } from "react";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
-
-const data = [
-  { name: "Jan", élèves: 30 },
-  { name: "Fév", élèves: 45 },
-  { name: "Mar", élèves: 60 },
-  { name: "Avr", élèves: 55 },
-  { name: "Mai", élèves: 70 },
-];
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function TotalStudentsChart() {
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    fetch("/api/students/count-by-year")
+      .then((res) => res.json())
+      .then((data) => setData(data));
+  }, []);
+
   return (
     <Card>
-      <CardContent className="p-4">
-        <h4 className="font-semibold mb-2">Évolution des élèves inscrits</h4>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={data}>
-            <XAxis dataKey="name" />
-            <YAxis />
+      <CardContent className="p-6">
+        <p className="text-lg font-semibold mb-4 text-center">
+          Évolution des élèves
+        </p>
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="year" />
+            <YAxis allowDecimals={false} />
             <Tooltip />
-            <Bar dataKey="élèves" />
-          </BarChart>
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="élèves"
+              stroke="#3b82f6"
+              strokeWidth={3}
+              dot={{ r: 6 }}
+              activeDot={{ r: 8 }}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>

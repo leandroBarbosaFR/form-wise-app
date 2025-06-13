@@ -10,21 +10,21 @@ import {
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 
-const COLORS = ["#22c55e", "#ef4444"]; // vert = ok, rouge = manquant
+const COLORS = ["#22c55e", "#f97316"]; // vert = lu, orange = non lu
 
-export default function RibStatusChart() {
+export default function NotificationReadChart() {
   const [data, setData] = useState([
-    { name: "RIB à jour", value: 0 },
-    { name: "RIB manquant", value: 0 },
+    { name: "Lues", value: 0 },
+    { name: "Non lues", value: 0 },
   ]);
 
   useEffect(() => {
-    fetch("/api/rib/status")
+    fetch("/api/notifications/read-stats")
       .then((res) => res.json())
       .then((stats) => {
         setData([
-          { name: "RIB à jour", value: stats.ribOk },
-          { name: "RIB manquant", value: stats.ribMissing },
+          { name: "Lues", value: stats.read },
+          { name: "Non lues", value: stats.unread },
         ]);
       });
   }, []);
@@ -32,7 +32,9 @@ export default function RibStatusChart() {
   return (
     <Card>
       <CardContent className="p-6">
-        <p className="text-lg font-semibold mb-4 text-center">Statut des RIB</p>
+        <p className="text-lg font-semibold mb-4 text-center">
+          Notifications (globales)
+        </p>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart width={300} height={200}>
             <Pie
