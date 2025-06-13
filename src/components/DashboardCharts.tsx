@@ -1,9 +1,9 @@
 "use client";
 
-import TotalStudentsChart from "./charts/TotalStudentsChart";
-import RibStatusChart from "./charts/RibStatusChart";
-import StudentsByClassChart from "./charts/StudentsByClassChart";
-import NotificationCountChart from "./charts/NotificationCountChart";
+import TotalStudentsChart from "../components/charts/TotalStudentsChart";
+import RibStatusChart from "../components/charts/RibStatusChart";
+import StudentsByClassChart from "../components/charts/StudentsByClassChart";
+import NotificationCountChart from "../components/charts/NotificationCountChart";
 
 export default function DashboardCharts() {
   return (
