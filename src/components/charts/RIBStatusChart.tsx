@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 
-const COLORS = ["#22c55e", "#ef4444"]; // vert = ok, rouge = manquant
+const COLORS = ["#22c55e", "#ef4444"];
 
 export default function RibStatusChart() {
   const [data, setData] = useState([
