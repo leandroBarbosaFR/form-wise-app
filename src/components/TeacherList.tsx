@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import TeacherForm from "./TeacherForm";
 import { UserPen, UserX } from "lucide-react";
+import InviteTeacherForm from "./InviteTeacherForm";
+import TeacherForm from "./TeacherForm";
 
 export type Teacher = {
   id: string;
   firstName: string;
   lastName: string;
-  subject: {
+  subject?: {
     id: string;
     name: string;
   };
-  class: {
+  class?: {
     id: string;
     name: string;
   };
@@ -30,32 +31,32 @@ export default function TeacherList({
   const [showList, setShowList] = useState(visible);
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const fetchTeachers = async () => {
-      try {
-        const res = await fetch("/api/teachers", {
-          credentials: "include",
-        });
-        const data = await res.json();
-        setTeachers(data.teachers || []);
-      } catch (error) {
-        console.error("Erreur chargement enseignants:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // ✅ On déclare ici la fonction pour pouvoir la réutiliser
+  const fetchTeachers = async () => {
+    try {
+      const res = await fetch("/api/teachers", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setTeachers(data.teachers || []);
+    } catch (error) {
+      console.error("Erreur chargement enseignants:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTeachers();
   }, []);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // breakpoint Tailwind "md"
+      setIsMobile(window.innerWidth < 768);
     };
 
-    handleResize(); // initial check
+    handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -96,20 +97,25 @@ export default function TeacherList({
 
   return (
     <div className="mt-6 flex flex-col gap-6">
-      {/* Toujours visible */}
-      <TeacherForm
-        onCreated={handleCreatedOrUpdated}
-        teacher={selectedTeacher}
-      />
+      {/* Formulaire d’invitation */}
+      <InviteTeacherForm onInvited={fetchTeachers} />
 
-      {/* Bouton toggle */}
+      {/* Formulaire pour assigner classe/matière */}
+      {selectedTeacher && (
+        <TeacherForm
+          teacher={selectedTeacher}
+          onCreated={handleCreatedOrUpdated}
+        />
+      )}
+
+      {/* Toggle liste */}
       <Button onClick={() => setShowList(!showList)} variant="outline">
         {showList
           ? "Masquer la liste des professeurs"
           : "Voir tous les professeurs"}
       </Button>
 
-      {/* Liste des profs */}
+      {/* Liste des professeurs */}
       {showList &&
         (isMobile ? (
           <div className="flex flex-col gap-4">
@@ -119,8 +125,8 @@ export default function TeacherList({
                   {teacher.firstName} {teacher.lastName}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Matière : {teacher.subject.name} <br />
-                  Classe : {teacher.class.name}
+                  Matière : {teacher.subject?.name || "—"} <br />
+                  Classe : {teacher.class?.name || "—"}
                 </p>
                 <div className="mt-3 flex justify-end gap-2">
                   <Button
@@ -164,10 +170,10 @@ export default function TeacherList({
                       {teacher.firstName} {teacher.lastName}
                     </td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
-                      {teacher.subject.name}
+                      {teacher.subject?.name || "—"}
                     </td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
-                      {teacher.class.name}
+                      {teacher.class?.name || "—"}
                     </td>
                     <td className="px-4 py-3 text-right space-x-2">
                       <Button

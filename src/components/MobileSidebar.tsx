@@ -39,7 +39,12 @@ const getSections = (role?: string): Section[] => {
   }
 
   if (role === "TEACHER") {
-    return [{ key: "myClass", label: "Ma classe" }];
+    return [
+      { key: "myClass", label: "Ma classe" },
+      { key: "infos", label: "Ma classe & matière" },
+      { key: "eleves", label: "Élèves" },
+      { key: "notifications", label: "Notifications" },
+    ];
   }
 
   return [];

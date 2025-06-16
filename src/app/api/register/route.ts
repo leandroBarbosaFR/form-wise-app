@@ -7,7 +7,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     console.log("📦 Données reçues /api/register:", body);
-    const { email, password, firstName, lastName, phone, role } = body;
+    const { email, password, firstName, lastName, phone } = body;
+    const role = "PARENT";
 
     if (
       !email?.trim() ||

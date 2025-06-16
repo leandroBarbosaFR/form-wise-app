@@ -131,13 +131,33 @@ export default function Sidebar({
       )}
 
       {role === "TEACHER" && (
-        <SidebarBtn
-          label="Ma classe"
-          section="myClass"
-          activeSection={activeSection}
-          setActiveSection={setActiveSectionAction}
-          icon={<LayoutGrid className="w-4 h-4" />}
-        />
+        <>
+          <SidebarBtn
+            label="Ma classe"
+            section="myClass"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<LayoutGrid className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Notifications"
+            section="notification"
+            activeSection={activeSection}
+            setActiveSection={(section) => {
+              setActiveSectionAction(section);
+              setHasUnreadNotifs(false);
+            }}
+            hasNotification={hasUnreadNotifs}
+            icon={<Bell className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Éleves"
+            section="eleves"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Users className="w-4 h-4" />}
+          />
+        </>
       )}
 
       <div className="mt-5">

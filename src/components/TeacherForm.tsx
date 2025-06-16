@@ -1,120 +1,115 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectTrigger,
-  SelectItem,
-  SelectContent,
   SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
-import type { Teacher } from "./TeacherList";
+import { Label } from "@/components/ui/label";
+import { Teacher } from "./TeacherList";
 
-type TeacherFormProps = {
-  onCreated?: (teacher: Teacher) => void;
-  teacher?: Teacher | null;
+type Subject = {
+  id: string;
+  name: string;
 };
 
-export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
-  const [success, setSuccess] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+type Class = {
+  id: string;
+  name: string;
+};
+
+export default function TeacherForm({
+  teacher,
+  onCreated,
+}: {
+  teacher: Teacher | null;
+  onCreated: (t: Teacher) => void;
+}) {
   const [subjectId, setSubjectId] = useState("");
   const [classId, setClassId] = useState("");
-
-  const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([]);
-  const [classes, setClasses] = useState<{ id: string; name: string }[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Pré-remplir si modification
     if (teacher) {
-      setFirstName(teacher.firstName || "");
-      setLastName(teacher.lastName || "");
       setSubjectId(teacher.subject?.id || "");
       setClassId(teacher.class?.id || "");
     } else {
-      setFirstName("");
-      setLastName("");
       setSubjectId("");
       setClassId("");
     }
   }, [teacher]);
 
   useEffect(() => {
-    fetch("/api/subjects")
-      .then((res) => res.json())
-      .then((data) => setSubjects(data.subjects || []));
+    const fetchData = async () => {
+      const [subjectsRes, classesRes] = await Promise.all([
+        fetch("/api/subjects"),
+        fetch("/api/classes"),
+      ]);
 
-    fetch("/api/classes")
-      .then((res) => res.json())
-      .then((data) => setClasses(data.classes || []));
+      const subjectsData = await subjectsRes.json();
+      const classesData = await classesRes.json();
+
+      setSubjects(subjectsData.subjects || []);
+      setClasses(classesData.classes || []);
+    };
+
+    fetchData();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!teacher) return;
 
-    const method = teacher?.id ? "PUT" : "POST";
-    const url = teacher?.id ? `/api/teachers/${teacher.id}` : "/api/teachers";
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/teachers/${teacher.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subjectId,
+          classId,
+        }),
+      });
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firstName, lastName, subjectId, classId }),
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      setSuccess(
-        teacher?.id
-          ? `Professeur mis à jour avec succès`
-          : `Professeur ${data.teacher.firstName} ajouté`
-      );
-      setFirstName("");
-      setLastName("");
-      setSubjectId("");
-      setClassId("");
-      onCreated?.(data.teacher);
+      const data = await res.json();
+      if (data.success && data.teacher) {
+        onCreated(data.teacher);
+      }
+    } catch (err) {
+      console.error("Erreur modification enseignant :", err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (!teacher) return null;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-      {success && (
-        <div className="text-green-600 bg-green-100 border p-3 rounded">
-          {success}
-        </div>
-      )}
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 max-w-md border p-4 rounded-md"
+    >
+      <h3 className="text-lg font-semibold">
+        Attribuer à {teacher.firstName} {teacher.lastName}
+      </h3>
 
       <div className="flex flex-col gap-2">
-        <Label>Prénom</Label>
-        <Input
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Label>Nom</Label>
-        <Input
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Label>Matière enseignée</Label>
+        <Label>Matière</Label>
         <Select value={subjectId} onValueChange={setSubjectId}>
           <SelectTrigger>
             <SelectValue placeholder="Choisir une matière" />
           </SelectTrigger>
           <SelectContent>
-            {subjects.map((subject) => (
-              <SelectItem key={subject.id} value={subject.id}>
-                {subject.name}
+            {subjects.map((s) => (
+              <SelectItem key={s.id} value={s.id}>
+                {s.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -128,17 +123,17 @@ export default function TeacherForm({ onCreated, teacher }: TeacherFormProps) {
             <SelectValue placeholder="Choisir une classe" />
           </SelectTrigger>
           <SelectContent>
-            {classes.map((cls) => (
-              <SelectItem key={cls.id} value={cls.id}>
-                {cls.name}
+            {classes.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      <Button type="submit" className="cursor-pointer">
-        {teacher?.id ? "Mettre à jour le professeur" : "Créer le professeur"}
+      <Button type="submit" disabled={loading}>
+        {loading ? "Enregistrement..." : "Enregistrer"}
       </Button>
     </form>
   );

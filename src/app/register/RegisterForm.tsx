@@ -15,7 +15,6 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState<"PARENT" | "TEACHER" | "DIRECTOR">("PARENT");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [civility] = useState("");
@@ -31,7 +30,6 @@ export default function RegisterForm() {
       phone,
       email,
       password,
-      role,
       civility,
     };
 
@@ -134,17 +132,7 @@ export default function RegisterForm() {
                 )}
               </button>
             </div>
-            <select
-              value={role}
-              onChange={(e) =>
-                setRole(e.target.value as "PARENT" | "TEACHER" | "DIRECTOR")
-              }
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-            >
-              <option value="PARENT">Parent</option>
-              <option value="TEACHER">Professeur</option>
-              <option value="DIRECTOR">Directeur</option>
-            </select>
+            <input type="hidden" value="PARENT" readOnly name="role" />
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button
               type="submit"

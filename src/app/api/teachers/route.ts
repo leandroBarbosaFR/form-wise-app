@@ -12,6 +12,7 @@ export async function GET() {
       },
     });
 
+    console.log("📦 Professeurs trouvés:", teachers);
     return NextResponse.json({ teachers });
   } catch (error) {
     console.error("Erreur récupération enseignants :", error);
@@ -27,13 +28,14 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { firstName, lastName, subjectId, classId } = body;
+  const { firstName, lastName, subjectId, classId, email } = body;
 
   try {
     const teacher = await prisma.teacher.create({
       data: {
         firstName,
         lastName,
+        email,
         subject: { connect: { id: subjectId } },
         class: { connect: { id: classId } },
       },
