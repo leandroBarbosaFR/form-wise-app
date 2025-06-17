@@ -86,6 +86,7 @@ export default function SchoolYearList() {
                 variant="destructive"
                 size="sm"
                 onClick={() => handleDelete(year.id)}
+                className="cursor-pointer"
               >
                 <UserX className="h-4 w-4 mr-1" />
                 Supprimer
@@ -117,6 +118,7 @@ export default function SchoolYearList() {
                   <td className="px-4 py-2 text-right">
                     <Button
                       variant="destructive"
+                      className="cursor-pointer"
                       onClick={() => handleDelete(year.id)}
                       size="sm"
                     >

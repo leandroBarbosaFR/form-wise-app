@@ -36,13 +36,10 @@ export default function ParentNotificationList() {
           Aucune notification pour le moment.
         </h1>
       ) : (
-        notifications.map((n) => (
-          <NotificationCard
-            key={n.id}
-            notification={n}
-            onMarkAsRead={markAsRead}
-          />
-        ))
+        <NotificationCard
+          notifications={notifications}
+          onMarkAsRead={markAsRead}
+        />
       )}
     </div>
   );

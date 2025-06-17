@@ -9,6 +9,7 @@ declare module "next-auth" {
       role: "PARENT" | "TEACHER" | "DIRECTOR";
       firstName?: string;
       lastName?: string;
+      civility?: string;
     };
   }
 

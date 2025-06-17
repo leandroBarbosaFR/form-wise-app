@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 
-export function Greeting({ name }: { name: string }) {
-  const [greeting, setGreeting] = useState("");
+export function Greeting({
+  name,
+  civility,
+}: {
+  name: string;
+  civility: string;
+}) {
+  const [greeting, setGreeting] = useState("Bonjour");
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -12,7 +18,7 @@ export function Greeting({ name }: { name: string }) {
 
   return (
     <h2 className="text-lg font-semibold">
-      {greeting} {name}
+      {greeting}, {civility} {name}
     </h2>
   );
 }

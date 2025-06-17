@@ -137,6 +137,7 @@ export default function TeacherList({
                     variant="secondary"
                     size="sm"
                     onClick={() => handleEdit(teacher)}
+                    className="cursor-pointer"
                   >
                     <UserPen className="h-4 w-4 mr-1" />
                     Modifier
@@ -145,6 +146,7 @@ export default function TeacherList({
                     variant="destructive"
                     size="sm"
                     onClick={() => handleDelete(teacher.id)}
+                    className="cursor-pointer"
                   >
                     <UserX className="h-4 w-4 mr-1" />
                     Supprimer
@@ -184,6 +186,7 @@ export default function TeacherList({
                         variant="secondary"
                         size="sm"
                         onClick={() => handleEdit(teacher)}
+                        className="cursor-pointer"
                       >
                         <UserPen className="h-4 w-4 mr-1" />
                         Modifier
@@ -192,6 +195,7 @@ export default function TeacherList({
                         variant="destructive"
                         size="sm"
                         onClick={() => handleDelete(teacher.id)}
+                        className="cursor-pointer"
                       >
                         <UserX className="h-4 w-4 mr-1" />
                         Supprimer

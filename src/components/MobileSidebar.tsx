@@ -35,6 +35,7 @@ const getSections = (role?: string): Section[] => {
       { key: "notification", label: "Notification" },
       { key: "eleves", label: "Éleves" },
       { key: "charts", label: "Graphiques" },
+      { key: "pendingStudents", label: "Élèves en attente" },
     ];
   }
 

@@ -12,4 +12,5 @@ export type DashboardSection =
   | "infos"
   | "notifications"
   | "myProfile"
+  | "pendingStudents"
   | "rib";

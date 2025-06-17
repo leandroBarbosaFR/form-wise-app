@@ -23,6 +23,7 @@ model User {
   NotificationRead NotificationRead[]
   inviteToken      String?            @unique
   teacher          Teacher?
+  civility         String?
 }
 
 model Student {
@@ -34,6 +35,7 @@ model Student {
   hasHealthIssues Boolean
   healthDetails   String?
   canLeaveAlone   Boolean
+  status          String   @default("PENDING")
   parentId        String
   parent          User           @relation(fields: [parentId], references: [id])
   classId         String?

@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     console.log("📦 Données reçues /api/register:", body);
-    const { email, password, firstName, lastName, phone } = body;
+    const { email, password, firstName, lastName, phone, civility } = body;
     const role = "PARENT";
 
     if (
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
         lastName,
         phone,
         role,
+        civility,
       },
     });
 

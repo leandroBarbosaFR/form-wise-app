@@ -24,6 +24,7 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface ClassOption {
   id: string;
@@ -62,6 +63,7 @@ export default function StudentForm({
   const [classes, setClasses] = useState<ClassOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     fetch("/api/classes/public")
@@ -79,6 +81,13 @@ export default function StudentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError("");
+
+    if (!formData.classId) {
+      setFormError("Veuillez choisir une classe.");
+      return;
+    }
+
     setLoading(true);
 
     const res = await fetch("/api/students", {
@@ -98,6 +107,11 @@ export default function StudentForm({
 
     if (data.success) {
       onStudentAdded(data.student);
+
+      toast.success(
+        "Élève ajouté avec succès. Veuillez valider votre inscription auprès du secrétariat."
+      );
+
       setFormData({
         firstName: "",
         lastName: "",
@@ -121,8 +135,12 @@ export default function StudentForm({
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
+          {/* Prénom */}
           <div className="flex flex-col gap-2">
-            <Label>Prénom</Label>
+            <Label>
+              Prénom{" "}
+              <span className="text-gray-400 text-xs italic">obligatoire</span>
+            </Label>
             <Input
               name="firstName"
               value={formData.firstName}
@@ -130,8 +148,13 @@ export default function StudentForm({
               required
             />
           </div>
+
+          {/* Nom */}
           <div className="flex flex-col gap-2">
-            <Label>Nom</Label>
+            <Label>
+              Nom{" "}
+              <span className="text-gray-400 text-xs italic">obligatoire</span>
+            </Label>
             <Input
               name="lastName"
               value={formData.lastName}
@@ -139,15 +162,18 @@ export default function StudentForm({
               required
             />
           </div>
+
+          {/* Date de naissance */}
           <div className="flex flex-col gap-2">
-            <Label>Date de naissance</Label>
+            <Label>
+              Date de naissance{" "}
+              <span className="text-gray-400 text-xs italic">obligatoire</span>
+            </Label>
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  variant={"outline"}
-                  className={
-                    "justify-start text-left font-normal w-full cursor-pointer"
-                  }
+                  variant="outline"
+                  className="justify-start text-left font-normal w-full cursor-pointer"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {formData.birthDate ? (
@@ -173,8 +199,13 @@ export default function StudentForm({
               </PopoverContent>
             </Popover>
           </div>
+
+          {/* Adresse */}
           <div className="flex flex-col gap-2">
-            <Label>Adresse</Label>
+            <Label>
+              Adresse{" "}
+              <span className="text-gray-400 text-xs italic">obligatoire</span>
+            </Label>
             <Input
               name="address"
               value={formData.address}
@@ -183,8 +214,12 @@ export default function StudentForm({
             />
           </div>
 
+          {/* Classe */}
           <div className="md:col-span-2 flex flex-col gap-2">
-            <Label>Classe</Label>
+            <Label>
+              Classe{" "}
+              <span className="text-gray-400 text-xs italic">obligatoire</span>
+            </Label>
             <Select
               value={formData.classId}
               onValueChange={(value) =>
@@ -202,6 +237,9 @@ export default function StudentForm({
                 ))}
               </SelectContent>
             </Select>
+            {formError && (
+              <p className="text-sm text-red-500 mt-1">{formError}</p>
+            )}
             {selectedClass && (
               <p className="text-sm text-muted-foreground mt-1">
                 Prix mensuel : {selectedClass.monthlyFee.toFixed(2)} €
@@ -209,8 +247,12 @@ export default function StudentForm({
             )}
           </div>
 
+          {/* Problèmes de santé */}
           <div className="md:col-span-2 flex flex-col gap-2">
-            <Label>Problèmes de santé ?</Label>
+            <Label>
+              Problèmes de santé ?{" "}
+              <span className="text-gray-400 text-xs italic">obligatoire</span>
+            </Label>
             <RadioGroup
               name="hasHealthIssues"
               defaultValue="no"
@@ -231,19 +273,29 @@ export default function StudentForm({
             </RadioGroup>
             {formData.hasHealthIssues === "yes" && (
               <div className="mt-2 flex flex-col gap-2">
-                <Label>Précisions</Label>
+                <Label>
+                  Précisions{" "}
+                  <span className="text-gray-400 text-xs italic">
+                    obligatoire
+                  </span>
+                </Label>
                 <Textarea
                   name="healthDetails"
                   value={formData.healthDetails}
                   onChange={handleChange}
                   placeholder="Décrivez les problèmes de santé..."
+                  required
                 />
               </div>
             )}
           </div>
 
+          {/* Peut partir seul */}
           <div className="md:col-span-2 flex flex-col gap-2">
-            <Label>Peut partir seul ?</Label>
+            <Label>
+              Peut partir seul ?{" "}
+              <span className="text-gray-400 text-xs italic">obligatoire</span>
+            </Label>
             <RadioGroup
               name="canLeaveAlone"
               defaultValue="no"
@@ -264,8 +316,13 @@ export default function StudentForm({
             </RadioGroup>
           </div>
 
+          {/* CTA */}
           <div className="md:col-span-2">
-            <Button type="submit" className="cursor-pointer" disabled={loading}>
+            <Button
+              type="submit"
+              className="cursor-pointer"
+              disabled={loading || !formData.classId}
+            >
               {loading && <Loader2Icon className="animate-spin mr-2 h-4 w-4" />}
               {loading ? "Ajout..." : "Ajouter l'élève"}
             </Button>

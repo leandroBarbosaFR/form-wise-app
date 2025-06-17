@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Zap } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -17,7 +24,7 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [civility] = useState("");
+  const [civility, setCivility] = useState<"M." | "Mme" | "">("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +85,18 @@ export default function RegisterForm() {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
         <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <Select
+              value={civility}
+              onValueChange={(value) => setCivility(value as "M." | "Mme")}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Civilité" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="M.">M.</SelectItem>
+                <SelectItem value="Mme">Mme</SelectItem>
+              </SelectContent>
+            </Select>
             <input
               type="text"
               placeholder="Prénom"

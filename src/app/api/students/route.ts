@@ -68,6 +68,7 @@ export async function POST(req: Request) {
       hasHealthIssues,
       healthDetails: hasHealthIssues ? healthDetails : null,
       canLeaveAlone,
+      status: "PENDING",
       parent: {
         connect: { email: session.user.email! },
       },

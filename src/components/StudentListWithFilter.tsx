@@ -163,6 +163,7 @@ export default function StudentListWithFilter() {
                   variant="secondary"
                   size="sm"
                   onClick={() => handleView(student)}
+                  className="cursor-pointer"
                 >
                   <Eye className="w-4 h-4 mr-1" />
                   Voir plus

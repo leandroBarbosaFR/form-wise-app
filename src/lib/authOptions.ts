@@ -15,6 +15,7 @@ interface AppUser {
   rememberMe?: boolean;
   firstName?: string;
   lastName?: string;
+  civility?: string;
 }
 
 interface AppToken extends JWT {
@@ -73,6 +74,7 @@ export const authOptions: AuthOptions = {
             rememberMe: credentials.rememberMe === "true",
             firstName: user.firstName,
             lastName: user.lastName,
+            civility: user.civility,
           };
         } catch (error) {
           console.error("❌ Erreur dans authorize:", error);

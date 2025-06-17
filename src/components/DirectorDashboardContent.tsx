@@ -20,6 +20,7 @@ import DirectorNotificationList from "./DirectorNotificationList";
 import StudentListWithFilter from "./StudentListWithFilter";
 import DashboardCharts from "./DashboardCharts";
 import CenteredSpinner from "./CenteredSpinner";
+import PendingStudents from "./PendingStudents";
 
 export default function DirectorDashboardContent() {
   const { data: session, status } = useSession();
@@ -48,7 +49,9 @@ export default function DirectorDashboardContent() {
         {/* <h1 className="text-2xl font-bold mb-4">
           Tableau de bord du directeur
         </h1> */}
-        <p className="mb-6">Bienvenue, {session.user.role}</p>
+        <p className="mb-6">
+          Bienvenue, {session.user.firstName} {session.user.lastName}
+        </p>
         {activeSection === "schoolYear" && (
           <>
             <SchoolYearForm onCreated={() => location.reload()} />
@@ -83,6 +86,11 @@ export default function DirectorDashboardContent() {
         {activeSection === "eleves" && (
           <>
             <StudentListWithFilter />
+          </>
+        )}
+        {activeSection === "pendingStudents" && (
+          <>
+            <PendingStudents />
           </>
         )}
         {activeSection === "charts" && (

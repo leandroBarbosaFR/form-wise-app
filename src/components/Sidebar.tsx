@@ -45,7 +45,12 @@ export default function Sidebar({
 
   return (
     <aside className="w-64 h-screen bg-gray-100 border-r p-4 space-y-4">
-      <Greeting name={session?.user?.lastName || "Utilisateur"} />
+      <div className="mb-8">
+        <Greeting
+          name={session?.user?.lastName || "Utilisateur"}
+          civility={session?.user?.civility || "M."}
+        />
+      </div>
 
       {role === "DIRECTOR" && (
         <>
@@ -92,6 +97,13 @@ export default function Sidebar({
             icon={<Users className="w-4 h-4" />}
           />
           <SidebarBtn
+            label="Élèves en attente"
+            section="pendingStudents"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Users className="w-4 h-4" />}
+          />
+          <SidebarBtn
             label="Graphiques"
             section="charts"
             activeSection={activeSection}
@@ -100,7 +112,6 @@ export default function Sidebar({
           />
         </>
       )}
-
       {role === "PARENT" && (
         <>
           <SidebarBtn
@@ -130,7 +141,6 @@ export default function Sidebar({
           />
         </>
       )}
-
       {role === "TEACHER" && (
         <>
           <SidebarBtn
@@ -161,7 +171,7 @@ export default function Sidebar({
         </>
       )}
 
-      <div className="mt-5">
+      <div className="mt-5 absolute bottom-15">
         <Button
           variant="outline"
           onClick={() => signOut({ callbackUrl: "/login" })}
