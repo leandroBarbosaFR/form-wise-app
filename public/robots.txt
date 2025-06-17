@@ -1,0 +1,14 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /api/*
+
+# Host
+Host: https://formwise.fr
+
+# Sitemaps
+Sitemap: https://formwise.fr/sitemap.xml
