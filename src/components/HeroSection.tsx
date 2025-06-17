@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { Zap } from "lucide-react";
+import gsap from "gsap";
 
 // const navigation = [
 //   { name: "Product", href: "#" },
@@ -22,7 +23,31 @@ import { Zap } from "lucide-react";
 
 export default function HeroSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const titleRef = useRef(null);
+  const paragraphRef = useRef(null);
+  const buttonsRef = useRef(null);
 
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+    tl.fromTo(
+      titleRef.current,
+      { opacity: 0, y: 40 },
+      { opacity: 1, y: 0, duration: 1 }
+    )
+      .fromTo(
+        paragraphRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8 },
+        "-=0.6"
+      )
+      .fromTo(
+        buttonsRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8 },
+        "-=0.5"
+      );
+  }, []);
   return (
     <div className="bg-white">
       <header className="absolute inset-x-0 top-0 z-50 mt-8">
@@ -138,10 +163,16 @@ export default function HeroSection() {
         <div className="py-24 sm:py-32 lg:pb-40">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
-              <h1 className="text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
+              <h1
+                ref={titleRef}
+                className="text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl"
+              >
                 Inscription simplifiée pour tous.
               </h1>
-              <p className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+              <p
+                ref={paragraphRef}
+                className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8"
+              >
                 Avec notre solution, gérez les inscriptions de manière simple,
                 rapide et efficace.
               </p>
@@ -150,10 +181,16 @@ export default function HeroSection() {
                   href="https://calendly.com/hello1367studio/30min"
                   target="_blank"
                 >
-                  <Button className="cursor-pointer">Réserver une démo</Button>
+                  <Button ref={buttonsRef} className="cursor-pointer">
+                    Réserver une démo
+                  </Button>
                 </Link>
                 <Link href="https://wa.me/+330763858388" target="_blank">
-                  <Button className="cursor-pointer" variant="outline">
+                  <Button
+                    ref={buttonsRef}
+                    className="cursor-pointer"
+                    variant="outline"
+                  >
                     Nous contacter
                   </Button>
                 </Link>
