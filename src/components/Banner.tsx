@@ -14,17 +14,14 @@ export default function Banner() {
             <circle r={1} cx={1} cy={1} />
           </svg>
           Disponible prochainement&nbsp;
-          <span aria-hidden="true">&rarr;</span>
         </a>
       </p>
-      <div className="flex flex-1 justify-end">
-        {/* <button
-          type="button"
-          className="-m-3 p-3 focus-visible:-outline-offset-4"
-        >
-          <span className="sr-only">Dismiss</span>
-          <X aria-hidden="true" className="size-5 text-white" />
-        </button> */}
+      <div className="hidden sm:flex flex-1 justify-end">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2" height={"20"}>
+          <rect fill="#CE1126" width="3" height="2" />
+          <rect fill="#fff" width="2" height="2" />
+          <rect fill="#002654" width="1" height="2" />
+        </svg>
       </div>
     </div>
   );

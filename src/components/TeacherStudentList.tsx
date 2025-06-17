@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import CenteredSpinner from "./CenteredSpinner";
 
 type Student = {
   id: string;
@@ -27,7 +28,7 @@ export default function TeacherStudentList() {
       });
   }, []);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <CenteredSpinner label="Chargement..." />;
 
   return (
     <div className="mt-6 space-y-4">

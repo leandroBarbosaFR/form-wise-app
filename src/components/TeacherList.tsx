@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { UserPen, UserX } from "lucide-react";
 import InviteTeacherForm from "./InviteTeacherForm";
 import TeacherForm from "./TeacherForm";
+import CenteredSpinner from "./CenteredSpinner";
 
 export type Teacher = {
   id: string;
@@ -96,7 +97,7 @@ export default function TeacherList({
     setSelectedTeacher(null);
   };
 
-  if (loading) return <p>Chargement des professeurs...</p>;
+  if (loading) return <CenteredSpinner label="Chargement des professeurs..." />;
 
   return (
     <div className="mt-6 flex flex-col gap-6">

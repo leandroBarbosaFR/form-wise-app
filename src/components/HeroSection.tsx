@@ -14,18 +14,28 @@ import Image from "next/image";
 import { Zap } from "lucide-react";
 import gsap from "gsap";
 
-// const navigation = [
-//   { name: "Product", href: "#" },
-//   { name: "Features", href: "#" },
-//   { name: "Marketplace", href: "#" },
-//   { name: "Company", href: "#" },
-// ];
+const navigation = [
+  { name: "Contactez-nous", href: "/contact" },
+  // { name: "Features", href: "#" },
+  // { name: "Marketplace", href: "#" },
+  // { name: "Company", href: "#" },
+];
 
 export default function HeroSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const titleRef = useRef(null);
   const paragraphRef = useRef(null);
   const buttonsRef = useRef(null);
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowStickyHeader(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
@@ -51,48 +61,81 @@ export default function HeroSection() {
   return (
     <div className="bg-white">
       <header className="absolute inset-x-0 top-0 z-50 mt-8">
+        {showStickyHeader && (
+          <div
+            className="fixed top-4 left-1/2 z-40 -translate-x-1/2 w-[90%] max-w-6xl
+               rounded-full bg-white/10 backdrop-blur-3xl backdrop-saturate-200
+               shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)]
+               ring-1 ring-red transition-all duration-300"
+          >
+            <div className="flex items-center justify-between px-6 py-3">
+              <Link
+                href="/"
+                className="flex items-center gap-2 font-semibold text-gray-900"
+              >
+                <Zap className="h-5 w-5" />
+                Formwise
+              </Link>
+              <div className="flex gap-6 items-center">
+                {navigation.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-sm font-semibold text-gray-900 hover:text-indigo-200 transition-colors"
+                  >
+                    {item.name}
+                  </a>
+                ))}
+                <a
+                  href="/login"
+                  className="text-sm font-semibold text-gray-900 hover:text-indigo-200"
+                >
+                  Connexion <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
         <nav
           aria-label="Global"
           className="flex items-center justify-between p-6 lg:px-8"
         >
-          <div className="flex lg:flex-1">
-            <a href="#" className="-m-1.5 p-1.5 flex gap-2">
+          {/* Logo à gauche */}
+          <div className="flex flex-1">
+            <a href="#" className="-m-1.5 p-1.5 flex gap-2 items-center">
               <Zap />
               <span className="font-semibold">Formwise</span>
-              {/* <Image
-                alt=""
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-                width={600}
-                height={600}
-              /> */}
             </a>
           </div>
+          <div className="hidden lg:flex flex-1 gap-4 justify-end">
+            <div className="hidden lg:flex lg:gap-x-12">
+              {navigation.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm font-semibold text-gray-900 hover:text-indigo-600 transition-colors duration-200"
+                >
+                  {item.name}
+                </a>
+              ))}
+            </div>
+            <a
+              href="/login"
+              className="text-sm font-semibold text-gray-900 hover:text-indigo-600 transition-colors duration-200"
+            >
+              Connexion <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+          {/* Menu mobile */}
           <div className="flex lg:hidden">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 cursor-pointer"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
             >
               <span className="sr-only">Open main menu</span>
               <Menu aria-hidden="true" className="size-6" />
             </button>
-          </div>
-          {/* <div className="hidden lg:flex lg:gap-x-12">
-            {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-sm/6 font-semibold text-gray-900"
-              >
-                {item.name}
-              </a>
-            ))}
-          </div> */}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="/login" className="text-sm/6 font-semibold text-gray-900">
-              Connection <span aria-hidden="true">&rarr;</span>
-            </a>
           </div>
         </nav>
         <Dialog open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -122,7 +165,7 @@ export default function HeroSection() {
             </div>
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
-                {/* <div className="space-y-2 py-6">
+                <div className="space-y-2 py-6">
                   {navigation.map((item) => (
                     <a
                       key={item.name}
@@ -132,7 +175,7 @@ export default function HeroSection() {
                       {item.name}
                     </a>
                   ))}
-                </div> */}
+                </div>
                 <div className="py-6">
                   <a
                     href="/login"
