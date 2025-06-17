@@ -11,7 +11,12 @@ export async function GET() {
   }
 
   const teacher = await prisma.teacher.findUnique({
-    where: { id: session.user.id },
+    where: { userId: session.user.id },
+    include: {
+      class: true,
+      subject: true,
+      user: true,
+    },
   });
 
   if (!teacher?.classId) {

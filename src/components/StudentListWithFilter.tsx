@@ -60,7 +60,7 @@ export default function StudentListWithFilter() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const pageSize = 10;
-  const isMobile = useIsMobile(); // 👈
+  const isMobile = useIsMobile();
 
   const handleView = (student: Student) => {
     setSelectedStudent(student);

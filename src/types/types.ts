@@ -11,4 +11,5 @@ export type DashboardSection =
   | "charts"
   | "infos"
   | "notifications"
+  | "myProfile"
   | "rib";

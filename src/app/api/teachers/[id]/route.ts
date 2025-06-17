@@ -44,14 +44,19 @@ export async function PUT(
     const updatedTeacher = await prisma.teacher.update({
       where: { id },
       data: {
-        firstName,
-        lastName,
         subject: { connect: { id: subjectId } },
         class: { connect: { id: classId } },
+        user: {
+          update: {
+            firstName,
+            lastName,
+          },
+        },
       },
       include: {
         subject: true,
         class: true,
+        user: true,
       },
     });
 

@@ -8,11 +8,19 @@ type Notification = {
   message: string;
   createdAt: string;
   isGlobal: boolean;
+  teacherId?: string | null;
   student?: {
     firstName: string;
     lastName: string;
   } | null;
+  teacher?: {
+    user?: {
+      firstName: string;
+      lastName: string;
+    };
+  };
   readBy: { parentId: string; readAt: string | null }[];
+  readByTeachers?: { teacherId: string; readAt: string | null }[];
 };
 
 export default function DirectorNotificationList() {
@@ -96,11 +104,29 @@ export default function DirectorNotificationList() {
                   <td className="px-4 py-2 font-medium">{n.title}</td>
                   <td className="px-4 py-2">
                     {n.isGlobal
-                      ? "Tous les parents"
-                      : `${n.student?.firstName} ${n.student?.lastName}`}
+                      ? n.teacherId
+                        ? "Tous les enseignants"
+                        : "Tous les parents"
+                      : n.student
+                        ? `${n.student.firstName} ${n.student.lastName}`
+                        : n.teacher?.user
+                          ? `${n.teacher.user.firstName} ${n.teacher.user.lastName}`
+                          : "Notification privée"}
                   </td>
                   <td className="px-4 py-2">
-                    {n.isGlobal ? (
+                    {n.teacherId || n.teacher ? (
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          n.readByTeachers && n.readByTeachers.length > 0
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {n.readByTeachers && n.readByTeachers.length > 0
+                          ? "Lue"
+                          : "Non lue"}
+                      </span>
+                    ) : n.isGlobal ? (
                       <span className="text-xs text-gray-600">
                         {n.readBy.length} parent(s) ont lu
                       </span>

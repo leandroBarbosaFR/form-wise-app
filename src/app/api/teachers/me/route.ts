@@ -12,12 +12,14 @@ export async function GET() {
   }
 
   const teacher = await prisma.teacher.findUnique({
-    where: { email: user.email },
+    where: { userId: user.id },
     include: {
       class: true,
       subject: true,
+      user: true,
     },
   });
+  console.log("Teacher ===>", teacher);
 
   if (!teacher) {
     return NextResponse.json(

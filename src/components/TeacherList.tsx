@@ -18,6 +18,10 @@ export type Teacher = {
     id: string;
     name: string;
   };
+  user: {
+    firstName: string;
+    lastName: string;
+  };
 };
 
 export default function TeacherList({
@@ -31,7 +35,6 @@ export default function TeacherList({
   const [showList, setShowList] = useState(visible);
   const [isMobile, setIsMobile] = useState(false);
 
-  // ✅ On déclare ici la fonction pour pouvoir la réutiliser
   const fetchTeachers = async () => {
     try {
       const res = await fetch("/api/teachers", {
@@ -122,7 +125,7 @@ export default function TeacherList({
             {teachers.map((teacher) => (
               <div key={teacher.id} className="border p-4 rounded-md shadow-sm">
                 <p className="font-semibold">
-                  {teacher.firstName} {teacher.lastName}
+                  {teacher.user.firstName} {teacher.user.lastName}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Matière : {teacher.subject?.name || "—"} <br />
@@ -167,7 +170,7 @@ export default function TeacherList({
                     className="hover:bg-gray-50 dark:hover:bg-zinc-700"
                   >
                     <td className="px-4 py-3 font-medium text-black dark:text-white">
-                      {teacher.firstName} {teacher.lastName}
+                      {teacher.user?.firstName} {teacher.user?.lastName}
                     </td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
                       {teacher.subject?.name || "—"}

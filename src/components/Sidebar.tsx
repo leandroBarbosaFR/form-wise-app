@@ -14,6 +14,7 @@ import {
   Users,
   CreditCard,
   ChartPie,
+  User,
 } from "lucide-react";
 import { Greeting } from "./Greeting";
 import { ParentNotification } from "../types/notification";
@@ -133,15 +134,15 @@ export default function Sidebar({
       {role === "TEACHER" && (
         <>
           <SidebarBtn
-            label="Ma classe"
-            section="myClass"
+            label="Mon Profil"
+            section="myProfile"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
-            icon={<LayoutGrid className="w-4 h-4" />}
+            icon={<User className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Notifications"
-            section="notification"
+            section="notifications"
             activeSection={activeSection}
             setActiveSection={(section) => {
               setActiveSectionAction(section);

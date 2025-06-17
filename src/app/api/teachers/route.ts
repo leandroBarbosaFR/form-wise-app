@@ -9,6 +9,13 @@ export async function GET() {
       include: {
         subject: true,
         class: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -28,20 +35,14 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { firstName, lastName, subjectId, classId, email } = body;
+  const { subjectId, classId, userId } = body;
 
   try {
     const teacher = await prisma.teacher.create({
       data: {
-        firstName,
-        lastName,
-        email,
+        userId,
         subject: { connect: { id: subjectId } },
         class: { connect: { id: classId } },
-      },
-      include: {
-        subject: true,
-        class: true,
       },
     });
 

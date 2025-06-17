@@ -99,7 +99,7 @@ export default function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 cursor-pointer"
                   aria-label="Afficher ou masquer le mot de passe"
                 >
                   {showPassword ? (

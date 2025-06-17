@@ -73,6 +73,7 @@ export default function ClassList() {
                 Tarif : {cls.monthlyFee} € / mois
               </p>
               <Button
+                className="cursor-pointer"
                 variant="destructive"
                 size="sm"
                 onClick={() => handleDelete(cls.id)}
@@ -105,6 +106,7 @@ export default function ClassList() {
                       variant="destructive"
                       size="sm"
                       onClick={() => handleDelete(cls.id)}
+                      className="cursor-pointer"
                     >
                       <UserX className="h-4 w-4 mr-1 cursor-pointer" />
                       Supprimer

@@ -8,26 +8,16 @@ import CenteredSpinner from "./CenteredSpinner";
 import Sidebar from "./Sidebar";
 import MobileSidebar from "./MobileSidebar";
 import { DashboardSection } from "../types/types";
-
-type TeacherData = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  class?: {
-    id: string;
-    name: string;
-  } | null;
-  subject?: {
-    id: string;
-    name: string;
-  } | null;
-};
+import StudentListTeacher from "./StudentListTeacher";
+import TeacherNotificationList from "./TeacherNotificationList";
+import TeacherProfile from "./TeacherProfile";
+import type { TeacherData } from "../types/teacher";
 
 export default function TeacherDashboardContent() {
   const { data: session, status } = useSession();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [activeSection, setActiveSection] = useState<DashboardSection>("infos");
+  const [activeSection, setActiveSection] =
+    useState<DashboardSection>("myProfile");
   const [teacher, setTeacher] = useState<TeacherData | null>(null);
   const [loadingTeacher, setLoadingTeacher] = useState(true);
 
@@ -65,33 +55,18 @@ export default function TeacherDashboardContent() {
       )}
 
       <main className="flex-1 p-6 mt-10 md:mt-0">
-        <p className="mb-6">Bienvenue, professeur {session.user.firstName}</p>
-
-        {activeSection === "infos" && (
+        <p className="mb-6">Bienvenue, professeur {teacher?.user?.firstName}</p>
+        {activeSection === "myProfile" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">
-              Votre classe & matière
-            </h2>
-
+            <h2 className="text-xl font-semibold mb-4">Mon Profil</h2>
             {loadingTeacher ? (
-              <p>Chargement...</p>
+              <CenteredSpinner label="Chargement des infos..." />
             ) : teacher ? (
-              <>
-                <p>
-                  Classe assignée :{" "}
-                  <span className="font-medium">
-                    {teacher.class?.name || "—"}
-                  </span>
-                </p>
-                <p>
-                  Matière :{" "}
-                  <span className="font-medium">
-                    {teacher.subject?.name || "—"}
-                  </span>
-                </p>
-              </>
+              <TeacherProfile teacher={teacher} />
             ) : (
-              <p>Aucune donnée trouvée pour ce professeur.</p>
+              <p className="text-muted-foreground">
+                Aucune donnée professeur trouvée.
+              </p>
             )}
           </div>
         )}
@@ -101,23 +76,14 @@ export default function TeacherDashboardContent() {
             <h2 className="text-xl font-semibold mb-4">
               Élèves de votre classe
             </h2>
-            {/* TODO: List students from assigned class */}
-            <p>
-              À implémenter : Liste des élèves liés à la classe du professeur
-            </p>
+            <StudentListTeacher />
           </div>
         )}
 
         {activeSection === "notifications" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">
-              Envoyer une notification
-            </h2>
-            {/* TODO: Notification form to parents */}
-            <p>
-              À implémenter : Formulaire d&apos;envoi de notification aux
-              parents
-            </p>
+            <h2 className="text-xl font-semibold mb-4">Notifications reçues</h2>
+            <TeacherNotificationList />
           </div>
         )}
       </main>

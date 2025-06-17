@@ -4,12 +4,17 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { token, password } = await req.json();
-    console.log("🔐 Reçu dans create-password:", { token, password });
+    const { token, password, classId, subjectId } = await req.json();
+    console.log("🔐 Reçu dans create-password:", {
+      token,
+      password,
+      classId,
+      subjectId,
+    });
 
     if (!token || !password) {
       return NextResponse.json(
-        { success: false, error: "Token ou mot de passe manquant" },
+        { success: false, error: "Champs requis manquants" },
         { status: 400 }
       );
     }
@@ -17,7 +22,6 @@ export async function POST(req: Request) {
     const user = await prisma.user.findUnique({
       where: { inviteToken: token },
     });
-    console.log("🔍 Résultat recherche user :", user);
 
     if (!user || user.role !== "TEACHER") {
       return NextResponse.json(
@@ -37,9 +41,9 @@ export async function POST(req: Request) {
       console.log("📥 Création teacher pour:", user.email);
       await prisma.teacher.create({
         data: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
+          userId: user.id,
+          classId: classId,
+          subjectId: subjectId,
         },
       });
       console.log("✅ Professeur ajouté à la table Teacher");
@@ -53,7 +57,7 @@ export async function POST(req: Request) {
       where: { id: user.id },
       data: {
         password: hashedPassword,
-        inviteToken: null, // On nettoie le token une fois utilisé
+        inviteToken: null,
       },
     });
 

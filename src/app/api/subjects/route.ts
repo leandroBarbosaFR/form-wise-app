@@ -38,13 +38,18 @@ export async function GET() {
     include: {
       class: true,
       teachers: {
-        select: {
-          firstName: true,
-          lastName: true,
-        },
         take: 1,
+        include: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
       },
     },
   });
+
   return NextResponse.json({ subjects });
 }

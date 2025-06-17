@@ -22,6 +22,7 @@ model User {
   students         Student[]
   NotificationRead NotificationRead[]
   inviteToken      String?            @unique
+  teacher          Teacher?
 }
 
 model Student {
@@ -63,14 +64,15 @@ model Subject {
 }
 
 model Teacher {
-  id        String   @id @default(cuid())
-  firstName String
-  lastName  String
-  email     String   @unique
-  subject   Subject? @relation(fields: [subjectId], references: [id])
-  subjectId String?
-  class     Class?   @relation(fields: [classId], references: [id])
-  classId   String?
+  id                String                    @id @default(cuid())
+  userId            String?                   @unique
+  user              User?                     @relation(fields: [userId], references: [id])
+  subject           Subject?                  @relation(fields: [subjectId], references: [id])
+  subjectId         String?
+  class             Class?                    @relation(fields: [classId], references: [id])
+  classId           String?
+  Notification      Notification[]
+  notificationsRead NotificationReadTeacher[]
 }
 
 model SchoolYear {
@@ -84,14 +86,17 @@ model SchoolYear {
 }
 
 model Notification {
-  id        String             @id @default(cuid())
-  title     String
-  message   String
-  isGlobal  Boolean
-  studentId String?
-  student   Student?           @relation(fields: [studentId], references: [id])
-  createdAt DateTime           @default(now())
-  readBy    NotificationRead[]
+  id             String                    @id @default(cuid())
+  title          String
+  message        String
+  isGlobal       Boolean
+  studentId      String?
+  student        Student?                  @relation(fields: [studentId], references: [id])
+  teacherId      String?
+  teacher        Teacher?                  @relation(fields: [teacherId], references: [id])
+  createdAt      DateTime                  @default(now())
+  readBy         NotificationRead[]
+  readByTeachers NotificationReadTeacher[]
 }
 
 model NotificationRead {
@@ -103,6 +108,17 @@ model NotificationRead {
   readAt         DateTime?
 
   @@unique([notificationId, parentId])
+}
+
+model NotificationReadTeacher {
+  id             String       @id @default(uuid())
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId String
+  teacher        Teacher      @relation(fields: [teacherId], references: [id])
+  teacherId      String
+  readAt         DateTime?
+
+  @@unique([notificationId, teacherId])
 }
 
 enum Role {

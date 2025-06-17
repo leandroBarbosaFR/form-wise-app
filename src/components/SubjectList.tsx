@@ -19,11 +19,16 @@ interface SchoolClass {
 interface Subject {
   id: string;
   name: string;
-  teachers: { firstName: string; lastName: string }[];
   class: {
     id: string;
     name: string;
   };
+  teachers: {
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  }[];
 }
 
 export default function SubjectList() {
@@ -100,8 +105,9 @@ export default function SubjectList() {
                     <tr key={subject.id} className="hover:bg-muted/20">
                       <td className="px-4 py-2 font-medium">{subject.name}</td>
                       <td className="px-4 py-2">
-                        {subject.teachers.length > 0 ? (
-                          `${subject.teachers[0].firstName} ${subject.teachers[0].lastName}`
+                        {subject.teachers.length > 0 &&
+                        subject.teachers[0].user ? (
+                          `${subject.teachers[0].user.firstName} ${subject.teachers[0].user.lastName}`
                         ) : (
                           <span className="text-muted-foreground italic">
                             Professeur non assigné
