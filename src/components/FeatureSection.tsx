@@ -36,7 +36,7 @@ export default function FeatureSection() {
             Fonctionnalités Formwise
           </h2>
           <p className="mt-2 text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Gérez votre école plus simplement, dès aujourd’hui.
+            Gérez votre établissement plus simplement, dès aujourd’hui.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
             Tout ce qu’il vous faut, réuni dans une seule plateforme.

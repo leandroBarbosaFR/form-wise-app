@@ -4,7 +4,7 @@ const tiers = [
   {
     name: "Mensuel",
     id: "tier-mensuel",
-    href: "#",
+    href: "/contact",
     priceMonthly: "129€",
     billingCycle: "mois",
     description: "Une formule simple, mensuelle, sans engagement.",
@@ -20,7 +20,7 @@ const tiers = [
   {
     name: "Annuel",
     id: "tier-annuel",
-    href: "#",
+    href: "/contact",
     priceMonthly: "1419€",
     billingCycle: "an",
     description:
@@ -76,8 +76,8 @@ export default function PricingSection() {
               tier.featured
                 ? ""
                 : tierIdx === 0
-                ? "rounded-t-3xl sm:rounded-b-none lg:rounded-bl-3xl lg:rounded-tr-none"
-                : "sm:rounded-t-none lg:rounded-bl-none lg:rounded-tr-3xl",
+                  ? "rounded-t-3xl sm:rounded-b-none lg:rounded-bl-3xl lg:rounded-tr-none"
+                  : "sm:rounded-t-none lg:rounded-bl-none lg:rounded-tr-3xl",
               "rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10"
             )}
           >
@@ -146,7 +146,7 @@ export default function PricingSection() {
                 "mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10"
               )}
             >
-              Commencez dès aujourd’hui
+              Être contacté
             </a>
           </div>
         ))}
