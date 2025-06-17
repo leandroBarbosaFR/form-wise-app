@@ -76,7 +76,7 @@ export default function HeroSection() {
                 <Zap className="h-5 w-5" />
                 Formwise
               </Link>
-              <div className="flex gap-6 items-center">
+              <div className="hidden lg:flex gap-6 items-center">
                 {navigation.map((item) => (
                   <a
                     key={item.name}
