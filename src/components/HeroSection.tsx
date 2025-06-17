@@ -68,7 +68,7 @@ export default function HeroSection() {
                  shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)]
                  ring-1 ring-white/20 transition-all duration-300"
           >
-            <div className="flex items-center justify-between px-6 py-3">
+            <div className="flex items-center justify-between px-6 py-1 lg:py-3">
               <Link
                 href="/"
                 className="flex items-center gap-2 font-semibold text-gray-900"
