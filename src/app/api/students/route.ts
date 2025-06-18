@@ -3,18 +3,27 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/authOptions";
 import { prisma } from "../../../lib/prisma";
 
+// Récupérer les élèves du parent connecté
 export async function GET() {
   const session = await getServerSession(authOptions);
-  console.log("SESSION:", session);
 
   if (!session || session.user.role !== "PARENT") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const userEmail = session.user?.email;
+
+  if (!userEmail) {
+    return NextResponse.json(
+      { error: "Email manquant dans la session" },
+      { status: 400 }
+    );
+  }
+
   const students = await prisma.student.findMany({
     where: {
       parent: {
-        email: session.user.email!,
+        email: userEmail,
       },
     },
     orderBy: {
@@ -25,11 +34,34 @@ export async function GET() {
   return NextResponse.json({ students });
 }
 
+// Ajouter un élève
 export async function POST(req: Request) {
+  const generateStudentCode = async (): Promise<string> => {
+    let code: string = "";
+    let exists = true;
+
+    while (exists) {
+      code = Math.floor(10000 + Math.random() * 90000).toString();
+      const student = await prisma.student.findUnique({ where: { code } });
+      exists = !!student;
+    }
+
+    return code;
+  };
+
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "PARENT") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const userEmail = session.user?.email;
+
+  if (!userEmail) {
+    return NextResponse.json(
+      { error: "Email manquant dans la session" },
+      { status: 400 }
+    );
   }
 
   const body = await req.json();
@@ -59,6 +91,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Classe introuvable" }, { status: 404 });
   }
 
+  const code = await generateStudentCode();
+
   const student = await prisma.student.create({
     data: {
       firstName,
@@ -68,9 +102,10 @@ export async function POST(req: Request) {
       hasHealthIssues,
       healthDetails: hasHealthIssues ? healthDetails : null,
       canLeaveAlone,
+      code,
       status: "PENDING",
       parent: {
-        connect: { email: session.user.email! },
+        connect: { email: userEmail },
       },
       class: {
         connect: { id: classId },

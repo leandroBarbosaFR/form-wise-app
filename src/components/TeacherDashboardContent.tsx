@@ -12,6 +12,7 @@ import StudentListTeacher from "./StudentListTeacher";
 import TeacherNotificationList from "./TeacherNotificationList";
 import TeacherProfile from "./TeacherProfile";
 import type { TeacherData } from "../types/teacher";
+import AccountSettings from "./AccountSettings";
 
 export default function TeacherDashboardContent() {
   const { data: session, status } = useSession();
@@ -20,6 +21,19 @@ export default function TeacherDashboardContent() {
     useState<DashboardSection>("myProfile");
   const [teacher, setTeacher] = useState<TeacherData | null>(null);
   const [loadingTeacher, setLoadingTeacher] = useState(true);
+
+  // 🔄 Récupérer section active depuis localStorage
+  useEffect(() => {
+    const savedSection = localStorage.getItem("teacherActiveSection");
+    if (savedSection) {
+      setActiveSection(savedSection as DashboardSection);
+    }
+  }, []);
+
+  // 💾 Sauvegarder section active à chaque changement
+  useEffect(() => {
+    localStorage.setItem("teacherActiveSection", activeSection);
+  }, [activeSection]);
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -56,6 +70,7 @@ export default function TeacherDashboardContent() {
 
       <main className="flex-1 p-6 mt-10 md:mt-0">
         <p className="mb-6">Bienvenue, professeur {teacher?.user?.firstName}</p>
+
         {activeSection === "myProfile" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Mon Profil</h2>
@@ -84,6 +99,12 @@ export default function TeacherDashboardContent() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Notifications reçues</h2>
             <TeacherNotificationList />
+          </div>
+        )}
+        {activeSection === "settings" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Paramètres du compte</h2>
+            <AccountSettings />
           </div>
         )}
       </main>

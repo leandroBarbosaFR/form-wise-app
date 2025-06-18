@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
 import { useMediaQuery } from "../app/hooks/useMediaQuery";
 import CenteredSpinner from "./CenteredSpinner";
+import DocumentManager from "./DocumentManager";
+import ParentDocumentList from "./ParentDocumentList";
+import AccountSettings from "./AccountSettings";
 
 type Student = {
   id: string;
@@ -35,6 +38,18 @@ export default function ParentDashboardContent() {
     const data = await res.json();
     setStudents(data.students || []);
   };
+
+  useEffect(() => {
+    const storedSection = localStorage.getItem("activeSection");
+    if (storedSection) {
+      setActiveSection(storedSection as DashboardSection);
+    }
+  }, []);
+
+  // Sauvegarde la section à chaque changement
+  useEffect(() => {
+    localStorage.setItem("activeSection", activeSection);
+  }, [activeSection]);
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role === "PARENT") {
@@ -117,6 +132,19 @@ export default function ParentDashboardContent() {
             </h2>
             <RIBForm />
           </>
+        )}
+        {activeSection === "documents" && (
+          <>
+            <DocumentManager />
+            <ParentDocumentList />
+          </>
+        )}
+
+        {activeSection === "settings" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Paramètres du compte</h2>
+            <AccountSettings />
+          </div>
         )}
       </main>
     </div>

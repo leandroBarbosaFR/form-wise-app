@@ -15,7 +15,11 @@ const nextConfig = {
     ];
   },
   images: {
-    domains: ["tailwindcss.com", "cdn.sanity.io"],
+    domains: [
+      "tailwindcss.com",
+      "cdn.sanity.io",
+      "axldybsfbwwcwjekojpw.supabase.co",
+    ],
   },
   experimental: {
     serverExternalPackages: ["@prisma/client", "prisma"],

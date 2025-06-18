@@ -42,6 +42,8 @@ model Student {
   class           Class?         @relation(fields: [classId], references: [id])
   createdAt       DateTime       @default(now())
   notifications   Notification[]
+  documents       Document[]
+  code            String? @unique @default(uuid())
 }
 
 model Class {
@@ -54,6 +56,16 @@ model Class {
   subjects     Subject[]
   teachers     Teacher[]
   Student      Student[]
+}
+
+model Document {
+  id         String   @id @default(cuid())
+  url        String
+  fileName   String
+  fileType   String
+  createdAt  DateTime @default(now())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  String
 }
 
 model Subject {

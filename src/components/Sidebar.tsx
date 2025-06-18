@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import SidebarBtn from "./SidebarBtn";
 import { DashboardSection } from "../types/types";
+import { getInitials } from "../utils/getInitials";
 import {
   LogOut,
   CalendarDays,
@@ -15,6 +16,9 @@ import {
   CreditCard,
   ChartPie,
   User,
+  FileText,
+  UserLock,
+  Settings,
 } from "lucide-react";
 import { Greeting } from "./Greeting";
 import { ParentNotification } from "../types/notification";
@@ -28,19 +32,30 @@ export default function Sidebar({
 }) {
   const { data: session } = useSession();
   const role = session?.user?.role;
-  const [hasUnreadNotifs, setHasUnreadNotifs] = useState(false);
+  const [hasUnreadNotifs, setHasUnreadNotifs] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (role === "PARENT" && session?.user?.id) {
-      fetch("/api/notifications")
-        .then((res) => res.json())
-        .then((data: { notifications: ParentNotification[] }) => {
-          const unread = data.notifications?.some(
-            (n) => !n.readBy?.some((r) => r.parentId === session.user.id)
-          );
-          setHasUnreadNotifs(unread);
+    const checkUnread = async () => {
+      try {
+        if (!session?.user?.id || role !== "PARENT") return;
+
+        const res = await fetch("/api/notifications");
+        if (!res.ok) return;
+
+        const data: { notifications: ParentNotification[] } = await res.json();
+
+        const hasUnread = data.notifications.some((notif) => {
+          const readBy = notif.readBy || [];
+          return !readBy.some((entry) => entry.parentId === session.user.id);
         });
-    }
+
+        setHasUnreadNotifs(hasUnread);
+      } catch (error) {
+        console.error("Erreur lors du fetch des notifications :", error);
+      }
+    };
+
+    checkUnread();
   }, [role, session?.user?.id]);
 
   return (
@@ -101,7 +116,14 @@ export default function Sidebar({
             section="pendingStudents"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
-            icon={<Users className="w-4 h-4" />}
+            icon={<UserLock className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Documents"
+            section="documents"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<FileText className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Graphiques"
@@ -109,6 +131,13 @@ export default function Sidebar({
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
             icon={<ChartPie className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Paramètres"
+            section="settings"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Settings className="w-4 h-4" />}
           />
         </>
       )}
@@ -122,6 +151,13 @@ export default function Sidebar({
             icon={<Users className="w-4 h-4" />}
           />
           <SidebarBtn
+            label="Documents"
+            section="documents"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<FileText className="w-4 h-4" />}
+          />
+          <SidebarBtn
             label="Notifications"
             section="notification"
             activeSection={activeSection}
@@ -129,7 +165,7 @@ export default function Sidebar({
               setActiveSectionAction(section);
               setHasUnreadNotifs(false);
             }}
-            hasNotification={hasUnreadNotifs}
+            hasNotification={hasUnreadNotifs ?? undefined}
             icon={<Bell className="w-4 h-4" />}
           />
           <SidebarBtn
@@ -138,6 +174,13 @@ export default function Sidebar({
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
             icon={<CreditCard className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Paramètres"
+            section="settings"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Settings className="w-4 h-4" />}
           />
         </>
       )}
@@ -168,10 +211,35 @@ export default function Sidebar({
             setActiveSection={setActiveSectionAction}
             icon={<Users className="w-4 h-4" />}
           />
+          <SidebarBtn
+            label="Paramètres"
+            section="settings"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Settings className="w-4 h-4" />}
+          />
         </>
       )}
 
       <div className="mt-5 absolute bottom-15">
+        {session && (
+          <div className="flex items-center gap-3 mb-6 px-4">
+            <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">
+              {getInitials(
+                session.user.firstName || "",
+                session.user.lastName || ""
+              )}
+            </div>
+            <div className="text-sm leading-tight">
+              <p className="font-medium">
+                {session.user.firstName} {session.user.lastName}
+              </p>
+              {/* <p className="text-xs text-muted-foreground">
+                {session.user.email}
+              </p> */}
+            </div>
+          </div>
+        )}
         <Button
           variant="outline"
           onClick={() => signOut({ callbackUrl: "/login" })}

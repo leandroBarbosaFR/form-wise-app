@@ -57,6 +57,9 @@ export async function GET(req: Request) {
             phone: true,
           },
         },
+        documents: {
+          select: { id: true },
+        },
       },
     }),
     prisma.student.count({ where }),

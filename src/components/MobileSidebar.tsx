@@ -23,6 +23,7 @@ const getSections = (role?: string): Section[] => {
       { key: "children", label: "Mes enfants" },
       { key: "notification", label: "Notifications" },
       { key: "rib", label: "Coordonnées bancaires" },
+      { key: "documents", label: "Documents" },
     ];
   }
 
@@ -36,6 +37,7 @@ const getSections = (role?: string): Section[] => {
       { key: "eleves", label: "Éleves" },
       { key: "charts", label: "Graphiques" },
       { key: "pendingStudents", label: "Élèves en attente" },
+      { key: "documents", label: "Documents" },
     ];
   }
 

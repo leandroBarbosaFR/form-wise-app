@@ -9,7 +9,8 @@ declare module "next-auth" {
       role: "PARENT" | "TEACHER" | "DIRECTOR";
       firstName?: string;
       lastName?: string;
-      civility?: string;
+      phone?: string | null;
+      civility?: string | null;
     };
   }
 
@@ -19,6 +20,8 @@ declare module "next-auth" {
     role: "PARENT" | "TEACHER" | "DIRECTOR";
     firstName?: string;
     lastName?: string;
+    phone?: string | null;
+    civility?: string | null;
   }
 }
 
@@ -30,6 +33,8 @@ declare module "next-auth/jwt" {
       role: "PARENT" | "TEACHER" | "DIRECTOR";
       firstName?: string;
       lastName?: string;
+      phone?: string | null;
+      civility?: string | null;
     };
   }
 }

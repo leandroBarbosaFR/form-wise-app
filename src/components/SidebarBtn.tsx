@@ -9,7 +9,7 @@ interface SidebarBtnProps {
   activeSection: DashboardSection;
   setActiveSection: Dispatch<SetStateAction<DashboardSection>>;
   icon?: ReactNode;
-  hasNotification?: boolean;
+  hasNotification?: boolean | null;
 }
 
 export default function SidebarBtn({
@@ -36,7 +36,7 @@ export default function SidebarBtn({
       </div>
 
       {/* Notification Dot */}
-      {hasNotification && (
+      {hasNotification === true && (
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fc7582] opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#fc7582]" />
