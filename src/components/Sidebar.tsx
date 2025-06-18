@@ -59,7 +59,7 @@ export default function Sidebar({
   }, [role, session?.user?.id]);
 
   return (
-    <aside className="w-64 h-screen bg-gray-100 border-r p-4 space-y-4">
+    <aside className="w-64 h-auto bg-gray-100 border-r p-4 space-y-4">
       <div className="mb-8">
         <Greeting
           name={session?.user?.lastName || "Utilisateur"}
