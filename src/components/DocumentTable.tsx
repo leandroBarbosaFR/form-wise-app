@@ -34,7 +34,7 @@ export default function DocumentTable({ studentName, documents }: Props) {
           <thead>
             <tr className="text-left text-gray-500">
               <th className="w-1/2">Nom</th>
-              <th className="w-1/4">Date</th>
+              <th className="w-1/4 hidden sm:table-cell">Date</th>
               <th className="w-1/4">Aperçu</th>
             </tr>
           </thead>
@@ -42,7 +42,7 @@ export default function DocumentTable({ studentName, documents }: Props) {
             {documents.map((doc) => (
               <tr key={doc.id} className="border-t">
                 <td className="py-2 truncate">{doc.fileName}</td>
-                <td className="py-2 whitespace-nowrap">
+                <td className="py-2 whitespace-nowrap hidden sm:table-cell">
                   {new Date(doc.createdAt).toLocaleDateString()}
                 </td>
                 <td className="py-2">

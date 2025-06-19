@@ -10,43 +10,133 @@ import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { DashboardSection } from "../types/types";
-import { LogOut } from "lucide-react";
+import {
+  CalendarDays,
+  LayoutGrid,
+  BookOpen,
+  UserRound,
+  Bell,
+  Users,
+  CreditCard,
+  ChartPie,
+  User,
+  FileText,
+  UserLock,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 type Section = {
   key: DashboardSection;
   label: string;
+  icon: React.ReactNode;
 };
 
 const getSections = (role?: string): Section[] => {
   if (role === "PARENT") {
     return [
-      { key: "children", label: "Mes enfants" },
-      { key: "notification", label: "Notifications" },
-      { key: "rib", label: "Coordonnées bancaires" },
-      { key: "documents", label: "Documents" },
+      {
+        key: "children",
+        label: "Mes enfants",
+        icon: <Users className="w-4 h-4" />,
+      },
+      {
+        key: "notification",
+        label: "Notifications",
+        icon: <Bell className="w-4 h-4" />,
+      },
+      {
+        key: "rib",
+        label: "Coordonnées bancaires",
+        icon: <CreditCard className="w-4 h-4" />,
+      },
+      {
+        key: "documents",
+        label: "Documents",
+        icon: <FileText className="w-4 h-4" />,
+      },
+      {
+        key: "settings",
+        label: "Paramètres",
+        icon: <Settings className="w-4 h-4" />,
+      },
     ];
   }
 
   if (role === "DIRECTOR") {
     return [
-      { key: "schoolYear", label: "Année scolaire" },
-      { key: "classes", label: "Classes" },
-      { key: "subjects", label: "Matières" },
-      { key: "teachers", label: "Professeurs" },
-      { key: "notification", label: "Notification" },
-      { key: "eleves", label: "Éleves" },
-      { key: "charts", label: "Graphiques" },
-      { key: "pendingStudents", label: "Élèves en attente" },
-      { key: "documents", label: "Documents" },
+      {
+        key: "schoolYear",
+        label: "Année scolaire",
+        icon: <CalendarDays className="w-4 h-4" />,
+      },
+      {
+        key: "classes",
+        label: "Classes",
+        icon: <LayoutGrid className="w-4 h-4" />,
+      },
+      {
+        key: "subjects",
+        label: "Matières",
+        icon: <BookOpen className="w-4 h-4" />,
+      },
+      {
+        key: "teachers",
+        label: "Professeurs",
+        icon: <UserRound className="w-4 h-4" />,
+      },
+      {
+        key: "notification",
+        label: "Notifications",
+        icon: <Bell className="w-4 h-4" />,
+      },
+      { key: "eleves", label: "Éleves", icon: <Users className="w-4 h-4" /> },
+      {
+        key: "pendingStudents",
+        label: "Élèves en attente",
+        icon: <UserLock className="w-4 h-4" />,
+      },
+      {
+        key: "documents",
+        label: "Documents",
+        icon: <FileText className="w-4 h-4" />,
+      },
+      {
+        key: "charts",
+        label: "Graphiques",
+        icon: <ChartPie className="w-4 h-4" />,
+      },
+      {
+        key: "settings",
+        label: "Paramètres",
+        icon: <Settings className="w-4 h-4" />,
+      },
     ];
   }
 
   if (role === "TEACHER") {
     return [
-      { key: "myProfile", label: "Mon Profil" },
-      { key: "infos", label: "Ma classe & matière" },
-      { key: "eleves", label: "Élèves" },
-      { key: "notifications", label: "Notifications" },
+      {
+        key: "myProfile",
+        label: "Mon Profil",
+        icon: <User className="w-4 h-4" />,
+      },
+      {
+        key: "infos",
+        label: "Ma classe & matière",
+        icon: <LayoutGrid className="w-4 h-4" />,
+      },
+      { key: "eleves", label: "Éleves", icon: <Users className="w-4 h-4" /> },
+      {
+        key: "notifications",
+        label: "Notifications",
+        icon: <Bell className="w-4 h-4" />,
+      },
+      {
+        key: "settings",
+        label: "Paramètres",
+        icon: <Settings className="w-4 h-4" />,
+      },
     ];
   }
 
@@ -74,23 +164,25 @@ export default function MobileSidebar({
         </SheetTrigger>
         <SheetContent className="p-4" side="left">
           <SheetTitle className="text-lg font-semibold mb-4">Menu</SheetTitle>
-          <div className="flex flex-col gap-4 mt-4">
+          <div className="flex flex-col gap-2 mt-4">
             {sections.map((section) => (
               <Button
                 key={section.key}
                 variant={activeSection === section.key ? "default" : "ghost"}
                 onClick={() => setActiveSection(section.key)}
-                className="cursor-pointer"
+                className="flex items-center justify-start gap-2 w-full px-4 py-2 text-sm cursor-pointer"
               >
-                {section.label}
+                {section.icon}
+                <span>{section.label}</span>
               </Button>
             ))}
             <Button
               variant="outline"
-              className="cursor-pointer"
               onClick={() => signOut({ callbackUrl: "/login" })}
+              className="mt-4 flex items-center justify-start gap-2 px-4 py-2 w-full cursor-pointer"
             >
-              Se déconnecter <LogOut />
+              <LogOut className="w-4 h-4" />
+              <span>Se déconnecter</span>
             </Button>
           </div>
         </SheetContent>
