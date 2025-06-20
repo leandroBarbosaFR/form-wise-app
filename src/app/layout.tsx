@@ -5,6 +5,9 @@ import { Toaster } from "sonner";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOptions";
 import type { Metadata } from "next";
+import ConditionalFooter from "components/ConditionalFooter";
+import ConditionalHeader from "components/ConditionalHeader";
+import ConditionalBanner from "components/ConditionalBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,8 +44,13 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <ConditionalBanner />
+        <ConditionalHeader />
+        <AuthProvider>
+          <main className="pt-[120px] min-h-screen">{children}</main>
+        </AuthProvider>
         <Toaster position="top-center" richColors />
+        <ConditionalFooter />
       </body>
     </html>
   );

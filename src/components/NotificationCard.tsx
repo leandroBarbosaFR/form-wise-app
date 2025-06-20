@@ -81,8 +81,8 @@ export default function NotificationCard({
                     <Badge
                       className={
                         isRead
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-[#e8f7ee] text-[#2fbf6c]"
+                          : "bg-[#fdecec] text-[#e3342f]"
                       }
                     >
                       {isRead ? "Lue" : "Non lue"}

@@ -200,11 +200,11 @@ export default function StudentListWithFilter() {
                   </td>
                   <td className="px-4 py-2">
                     {student.parent.iban ? (
-                      <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                      <span className="inline-flex items-center rounded-full bg-[#e8f7ee] px-2 py-0.5 text-xs font-medium text-[#2fbf6c] ring-1 ring-inset ring-green-600/20">
                         RIB à jour
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
+                      <span className="inline-flex items-center rounded-full bg-[#fdecec] px-2 py-0.5 text-xs font-medium text-[#e3342f] ring-1 ring-inset ring-red-600/20">
                         RIB non ajouté
                       </span>
                     )}

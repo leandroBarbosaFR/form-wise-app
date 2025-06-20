@@ -11,14 +11,18 @@ const navigation = {
     { name: "Statistiques", href: "#" },
   ],
   entreprise: [
-    { name: "À propos", href: "#" },
+    { name: "À propos", href: "/a-propos" },
     { name: "Recrutement", href: "#" },
     { name: "Presse", href: "#" },
   ],
   legal: [
-    { name: "Conditions d’utilisation", href: "#" },
-    { name: "Politique de confidentialité", href: "#" },
-    { name: "Licence", href: "#" },
+    { name: "Conditions d’utilisation", href: "/cgu" },
+    {
+      name: "Politique de confidentialité",
+      href: "/politique-de-confidentialite",
+    },
+    { name: "Conditions de services", href: "/cgs" },
+    { name: "Mentions légales", href: "/mentions-legales" },
   ],
   social: [
     {
@@ -132,7 +136,14 @@ export default function SiteFooter() {
         </div>
         <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
           <p className="text-sm/6 text-gray-400">
-            &copy; {new Date().getFullYear()} Formwise. Tous droits réservés.
+            &copy; {new Date().getFullYear()} Formwise. Tous droits réservés ·
+            Software développé par{" "}
+            <a
+              href="www.1367studio.com"
+              className="cursor-pointer hover:text-gray-300"
+            >
+              1367 Studio
+            </a>
           </p>
         </div>
       </div>

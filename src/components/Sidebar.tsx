@@ -1,12 +1,12 @@
 "use client";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+// import { Button } from "@/components/ui/button";
 import SidebarBtn from "./SidebarBtn";
 import { DashboardSection } from "../types/types";
-import { getInitials } from "../utils/getInitials";
+// import { getInitials } from "../utils/getInitials";
 import {
-  LogOut,
+  // LogOut,
   CalendarDays,
   LayoutGrid,
   BookOpen,
@@ -20,7 +20,7 @@ import {
   UserLock,
   Settings,
 } from "lucide-react";
-import { Greeting } from "./Greeting";
+// import { Greeting } from "./Greeting";
 import { ParentNotification } from "../types/notification";
 
 export default function Sidebar({
@@ -59,13 +59,13 @@ export default function Sidebar({
   }, [role, session?.user?.id]);
 
   return (
-    <aside className="w-64 h-auto bg-gray-100 border-r p-4 space-y-4">
-      <div className="mb-8">
+    <aside className="w-64 h-auto bg-[white] border-r p-4 space-y-4">
+      {/* <div className="mb-8">
         <Greeting
           name={session?.user?.lastName || "Utilisateur"}
           civility={session?.user?.civility || "M."}
         />
-      </div>
+      </div> */}
 
       {role === "DIRECTOR" && (
         <>
@@ -220,34 +220,6 @@ export default function Sidebar({
           />
         </>
       )}
-
-      <div className="mt-5 absolute bottom-15">
-        {session && (
-          <div className="flex items-center gap-3 mb-6 px-4">
-            <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">
-              {getInitials(
-                session.user.firstName || "",
-                session.user.lastName || ""
-              )}
-            </div>
-            <div className="text-sm leading-tight">
-              <p className="font-medium">
-                {session.user.firstName} {session.user.lastName}
-              </p>
-              {/* <p className="text-xs text-muted-foreground">
-                {session.user.email}
-              </p> */}
-            </div>
-          </div>
-        )}
-        <Button
-          variant="outline"
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="cursor-pointer"
-        >
-          Se déconnecter <LogOut />
-        </Button>
-      </div>
     </aside>
   );
 }

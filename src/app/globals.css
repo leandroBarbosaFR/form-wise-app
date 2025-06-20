@@ -43,6 +43,17 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+.fancy-gradient-text {
+  text-shadow:
+    -1.5px 3px 3px #2a33460d,
+    0 1px 1px #2a334608;
+  -webkit-text-fill-color: transparent;
+  background-image:
+    linear-gradient(315deg, #0000, #ffffff40), linear-gradient(#3a3940, #1f1e24);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
