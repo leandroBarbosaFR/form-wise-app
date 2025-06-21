@@ -3,18 +3,7 @@ import Link from "next/link";
 import { Zap } from "lucide-react";
 
 const navigation = {
-  fonctionnalites: [
-    { name: "Gestion des inscriptions", href: "#" },
-    { name: "Suivi des paiements", href: "#" },
-    { name: "Notifications aux parents", href: "#" },
-    { name: "Tableaux de bord", href: "#" },
-    { name: "Statistiques", href: "#" },
-  ],
-  entreprise: [
-    { name: "À propos", href: "/a-propos" },
-    { name: "Recrutement", href: "#" },
-    { name: "Presse", href: "#" },
-  ],
+  entreprise: [{ name: "À propos", href: "/a-propos" }],
   legal: [
     { name: "Conditions d’utilisation", href: "/cgu" },
     {
@@ -77,25 +66,6 @@ export default function SiteFooter() {
             </div>
           </div>
           <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-sm/6 font-semibold text-white">
-                  Fonctionnalités
-                </h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {navigation.fonctionnalites.map((item) => (
-                    <li key={item.name}>
-                      <a
-                        href={item.href}
-                        className="text-sm/6 text-gray-400 hover:text-gray-300"
-                      >
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-sm/6 font-semibold text-white">
