@@ -65,7 +65,7 @@ export default function HeroSection() {
             <div className="mx-auto text-center">
               <h1
                 ref={titleRef}
-                className="fancy-gradient-text text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl"
+                className="fancy-gradient-text text-balance text-5xl sm:text-7xl leading-[54px] sm:leading-[78px] font-semibold tracking-tight text-gray-900"
               >
                 Centralisez. Simplifiez. Gagnez du temps.
               </h1>
