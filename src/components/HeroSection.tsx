@@ -6,7 +6,7 @@ import SiteHeader from "./SiteHeader";
 import NavDrawerMobile from "./NavDrawerMobile";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import TabsShowcase from "./TabsShowcase";
 
 export default function HeroSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -96,17 +96,7 @@ export default function HeroSection() {
             </div>
 
             {/* Screenshot */}
-            <div className="mt-16 flow-root sm:mt-24">
-              <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-                <Image
-                  alt="App screenshot"
-                  src="https://cdn.sanity.io/media-libraries/mllo1PEUbcwG/images/b3044cc91f7cc72b23289c22d2d5be98507edd76-5096x2668.png"
-                  width={2432}
-                  height={1442}
-                  className="rounded-md shadow-2xl ring-1 ring-gray-900/10"
-                />
-              </div>
-            </div>
+            <TabsShowcase />
           </div>
         </div>
 

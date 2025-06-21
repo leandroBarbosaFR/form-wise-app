@@ -47,7 +47,7 @@ export default async function RootLayout({
         <ConditionalBanner />
         <ConditionalHeader />
         <AuthProvider>
-          <main className="pt-[120px] min-h-screen">{children}</main>
+          <main>{children}</main>
         </AuthProvider>
         <Toaster position="top-center" richColors />
         <ConditionalFooter />

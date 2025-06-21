@@ -173,57 +173,63 @@ export default function StudentListWithFilter() {
           ))}
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-md border shadow-sm">
-          <table className="min-w-full text-sm">
-            <thead className="bg-muted text-muted-foreground uppercase text-xs">
-              <tr>
-                <th className="px-4 py-3 text-left">Élève</th>
-                <th className="px-4 py-3 text-left">Classe</th>
-                <th className="px-4 py-3 text-left">Problèmes de santé</th>
-                <th className="px-4 py-3 text-left">Peut partir seul</th>
-                <th className="px-4 py-3 text-left">Status RIB</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {students.map((student) => (
-                <tr key={student.id}>
-                  <td className="px-4 py-2 font-medium">
-                    {student.firstName} {student.lastName}
-                  </td>
-                  <td className="px-4 py-2">{student.class.name}</td>
-                  <td className="px-4 py-2">
-                    {student.healthIssues || "Aucun"}
-                  </td>
-                  <td className="px-4 py-2">
-                    {student.canLeaveAlone ? "Oui" : "Non"}
-                  </td>
-                  <td className="px-4 py-2">
-                    {student.parent.iban ? (
-                      <span className="inline-flex items-center rounded-full bg-[#e8f7ee] px-2 py-0.5 text-xs font-medium text-[#2fbf6c] ring-1 ring-inset ring-green-600/20">
-                        RIB à jour
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center rounded-full bg-[#fdecec] px-2 py-0.5 text-xs font-medium text-[#e3342f] ring-1 ring-inset ring-red-600/20">
-                        RIB non ajouté
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-2 text-right space-x-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleView(student)}
-                      className="cursor-pointer"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </td>
+        <>
+          <div className="overflow-x-auto rounded-md border shadow-sm">
+            <table className="min-w-full text-sm">
+              <thead className="bg-muted text-muted-foreground uppercase text-xs">
+                <tr>
+                  <th className="px-4 py-3 text-left">Élève</th>
+                  <th className="px-4 py-3 text-left">Classe</th>
+                  <th className="px-4 py-3 text-left">Problèmes de santé</th>
+                  <th className="px-4 py-3 text-left">Peut partir seul</th>
+                  <th className="px-4 py-3 text-left">Status RIB</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y">
+                {students.map((student) => (
+                  <tr key={student.id}>
+                    <td className="px-4 py-2 font-medium">
+                      {student.firstName} {student.lastName}
+                    </td>
+                    <td className="px-4 py-2">{student.class.name}</td>
+                    <td className="px-4 py-2">
+                      {student.healthIssues || "Aucun"}
+                    </td>
+                    <td className="px-4 py-2">
+                      {student.canLeaveAlone ? "Oui" : "Non"}
+                    </td>
+                    <td className="px-4 py-2">
+                      {student.parent.iban ? (
+                        <span className="inline-flex items-center rounded-full bg-[#e8f7ee] px-2 py-0.5 text-xs font-medium text-[#2fbf6c] ring-1 ring-inset ring-green-600/20">
+                          RIB à jour
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-full bg-[#fdecec] px-2 py-0.5 text-xs font-medium text-[#e3342f] ring-1 ring-inset ring-red-600/20">
+                          RIB non ajouté
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2 text-right space-x-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleView(student)}
+                        className="cursor-pointer"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="text-sm text-muted-foreground text-right mt-2">
+            Total : <span className="font-semibold">{total}</span> élève
+            {total > 1 ? "s" : ""}
+          </div>
+        </>
       )}
 
       {totalPages > 1 && (

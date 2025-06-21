@@ -30,6 +30,7 @@ export default function SiteHeader({ onMobileMenuOpen }: Props) {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 mt-8">
+      {/* Sticky Header */}
       {showSticky && (
         <div className="fixed top-4 left-1/2 z-40 -translate-x-1/2 w-[90%] max-w-6xl rounded-full bg-white/10 backdrop-blur-3xl backdrop-saturate-200 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)] ring-1 ring-white/20 transition-all duration-300">
           <div className="flex items-center justify-between px-6 py-1 lg:py-3">
@@ -74,43 +75,52 @@ export default function SiteHeader({ onMobileMenuOpen }: Props) {
         </div>
       )}
 
-      <nav className="flex items-center justify-between p-6 lg:px-8">
-        <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-2">
-          <Zap />
-          <span className="font-semibold">Formwise</span>
-        </Link>
-
-        <div className="hidden lg:flex lg:gap-x-12">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="text-sm font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
-            >
-              {item.name}
-            </Link>
-          ))}
-        </div>
-
-        <div className="hidden lg:flex">
-          <Link
-            href="/login"
-            className="text-sm font-semibold text-gray-900 hover:text-indigo-600"
-          >
-            Connexion →
+      {/* Normal Header */}
+      <div className="flex items-center justify-between p-6 lg:px-8">
+        {/* Logo à gauche */}
+        <div className="flex-shrink-0">
+          <Link href="/" className="flex items-center gap-2 -m-1.5 p-1.5">
+            <Zap className="h-5 w-5" />
+            <span className="font-semibold text-gray-900">Formwise</span>
           </Link>
         </div>
 
-        <div className="flex lg:hidden">
-          <button
-            onClick={onMobileMenuOpen}
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-          >
-            <span className="sr-only">Menu mobile</span>
-            <Menu className="size-6" />
-          </button>
-        </div>
-      </nav>
+        {/* Navigation à droite */}
+        <nav className="flex items-center gap-6">
+          <div className="hidden lg:flex lg:gap-x-12">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
+          <div className="hidden lg:flex">
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-gray-900 hover:text-indigo-600"
+            >
+              Connexion →
+            </Link>
+          </div>
+
+          <div className="flex lg:hidden">
+            {onMobileMenuOpen && (
+              <button
+                onClick={onMobileMenuOpen}
+                className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+              >
+                <span className="sr-only">Menu mobile</span>
+                <Menu className="h-6 w-6" />
+              </button>
+            )}
+          </div>
+        </nav>
+      </div>
     </header>
   );
 }
