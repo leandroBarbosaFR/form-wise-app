@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 
+
 const tiers = [
   {
     name: "Mensuel",
