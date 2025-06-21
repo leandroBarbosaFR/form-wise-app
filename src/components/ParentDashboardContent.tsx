@@ -17,6 +17,7 @@ import CenteredSpinner from "./CenteredSpinner";
 import DocumentManager from "./DocumentManager";
 import ParentDocumentList from "./ParentDocumentList";
 import AccountSettings from "./AccountSettings";
+export const dynamic = "force-dynamic";
 
 type Student = {
   id: string;

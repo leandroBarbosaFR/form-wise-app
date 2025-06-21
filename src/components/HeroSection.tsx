@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import SiteHeader from "./SiteHeader";
-import NavDrawerMobile from "./NavDrawerMobile";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import TabsShowcase from "./TabsShowcase";
 
 export default function HeroSection() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const titleRef = useRef(null);
   const paragraphRef = useRef(null);
   const buttonsRef = useRef(null);
@@ -38,9 +35,6 @@ export default function HeroSection() {
 
   return (
     <div className="bg-white">
-      <SiteHeader onMobileMenuOpen={() => setMobileMenuOpen(true)} />
-      <NavDrawerMobile open={mobileMenuOpen} onClose={setMobileMenuOpen} />
-
       <div className="relative isolate pt-14">
         {/* Backgrounds */}
         <div

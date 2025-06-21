@@ -1,62 +1,43 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   open: boolean;
-  onClose: (open: boolean) => void;
+  onClose: (value: boolean) => void;
 }
 
-const navigation = [{ name: "Contactez-nous", href: "/contact" }];
-
 export default function NavDrawerMobile({ open, onClose }: Props) {
+  if (!open) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="inset-y-0 right-0 w-full max-w-sm p-6 lg:hidden">
-        {/* Accessible title (required by Radix) */}
-        <DialogHeader>
-          <DialogTitle className="sr-only">Menu mobile</DialogTitle>
-        </DialogHeader>
-
-        {/* Close button in top-right corner */}
-        <button
-          type="button"
-          onClick={() => onClose(false)}
-          className="absolute top-4 right-4 rounded-md p-2 text-gray-700 hover:bg-gray-100"
-        >
-          <span className="sr-only">Fermer</span>
-          <X className="size-6" />
-        </button>
-
-        {/* Menu */}
-        <div className="flex flex-col items-center gap-6 mt-10">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="text-base font-semibold text-gray-900 hover:text-indigo-600"
-              onClick={() => onClose(false)}
-            >
-              {item.name}
-            </Link>
-          ))}
-
-          <Link
-            href="/login"
-            className="text-base font-semibold text-gray-900 hover:text-indigo-600"
-            onClick={() => onClose(false)}
-          >
-            Connexion →
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" >
+      <div className="fixed  w-full h-full bg-white shadow-xl p-6 z-50" style={{background: "linear-gradient(0deg, #DEE9EE 0%, #F3F7F9 100%)"}}>
+        <div className="flex justify-between items-center">
+              <Link href={"/"} className="flex justify-center items-center gap-2">
+            <Zap className="text-indigo-600" />
+            <h1 className="text-xl font-bold text-gray-900">Formwise</h1>
           </Link>
+          <button onClick={() => onClose(false)}>
+            <X className="h-6 w-6 text-gray-700 cursor-pointer" />
+          </button>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        <nav className="absolute top-1/2 -translate-y-1/2 flex flex-col gap-4">
+          <Link href="/contact" onClick={() => onClose(false)} className="text-sm font-medium text-gray-900">
+            Contactez-nous
+          </Link>
+          <Link
+            href="https://calendly.com/hello1367studio/30min"
+            target="_blank"
+          >
+            <Button className="cursor-pointer">Connexion</Button>
+          </Link>
+        </nav>
+      </div>
+    </div>
   );
 }
