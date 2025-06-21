@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import AuthProvider from "../providers/AuthProvider";
 import { Toaster } from "sonner";
 import { getServerSession } from "next-auth";
@@ -9,7 +9,7 @@ import ConditionalFooter from "components/ConditionalFooter";
 import ConditionalHeader from "components/ConditionalHeader";
 import ConditionalBanner from "components/ConditionalBanner";
 
-const geistSans = Geist({
+const geistSans = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
