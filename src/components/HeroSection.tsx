@@ -67,7 +67,7 @@ export default function HeroSection() {
                 ref={titleRef}
                 className="fancy-gradient-text text-balance text-5xl sm:text-7xl leading-[57px] sm:leading-[83px] font-semibold tracking-tight text-gray-900"
               >
-                Centralisez. Simplifiez. Gagnez du temps.
+                Centralisez, Simplifiez et Gagnez du <span className="fancy-gradient-span">temps.</span>
               </h1>
               <p
                 ref={paragraphRef}

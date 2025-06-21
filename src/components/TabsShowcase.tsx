@@ -7,7 +7,7 @@ import {
   Layers,
   List,
   BarChart2,
-  UserRound,
+  Users,
   LayoutGrid,
   Bell,
 } from "lucide-react";
@@ -16,7 +16,7 @@ const tabs = [
   {
     id: "eleves",
     label: "Élèves",
-    icon: <UserRound className="w-4 h-4" />,
+    icon: <Users className="w-4 h-4" />,
     imageUrl:
       "https://cdn.sanity.io/media-libraries/mllo1PEUbcwG/images/2fd0af2464672b561c6723175f359c3274473381-2868x1598.png",
   },
