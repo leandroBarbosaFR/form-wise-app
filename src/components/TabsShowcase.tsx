@@ -5,7 +5,7 @@ import { cn } from "../lib/utils";
 import Image from "next/image";
 import {
   Layers,
-  Settings,
+  List,
   BarChart2,
   UserRound,
   LayoutGrid,
@@ -51,7 +51,7 @@ const tabs = [
   {
     id: "liste-de-professeurs",
     label: "Liste de professeurs",
-    icon: <Settings className="w-4 h-4" />,
+    icon: <List className="w-4 h-4" />,
     imageUrl:
       "https://cdn.sanity.io/media-libraries/mllo1PEUbcwG/images/0169df9b3ff785337c160a6e7b27c872f12b3398-5064x2432.png",
   },
