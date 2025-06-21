@@ -67,8 +67,7 @@ export default function HeroSection() {
                 ref={titleRef}
                 className="fancy-gradient-text text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl"
               >
-                Centralisez vos inscriptions. Éliminez les fichiers Excel, les
-                formulaires dispersés et les erreurs manuelles
+                Centralisez. Simplifiez. Gagnez du temps.
               </h1>
               <p
                 ref={paragraphRef}
