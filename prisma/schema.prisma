@@ -24,6 +24,8 @@ model User {
   inviteToken      String?            @unique
   teacher          Teacher?
   civility         String?
+  tenantId         String?
+  tenant           Tenant?            @relation(fields: [tenantId], references: [id])
 }
 
 model Student {
@@ -35,7 +37,7 @@ model Student {
   hasHealthIssues Boolean
   healthDetails   String?
   canLeaveAlone   Boolean
-  status          String   @default("PENDING")
+  status          String         @default("PENDING")
   parentId        String
   parent          User           @relation(fields: [parentId], references: [id])
   classId         String?
@@ -43,7 +45,9 @@ model Student {
   createdAt       DateTime       @default(now())
   notifications   Notification[]
   documents       Document[]
-  code            String? @unique @default(uuid())
+  code            String?        @unique @default(uuid())
+  tenantId        String
+  tenant          Tenant         @relation(fields: [tenantId], references: [id])
 }
 
 model Class {
@@ -56,16 +60,18 @@ model Class {
   subjects     Subject[]
   teachers     Teacher[]
   Student      Student[]
+  tenantId     String
+  tenant       Tenant     @relation(fields: [tenantId], references: [id])
 }
 
 model Document {
-  id         String   @id @default(cuid())
-  url        String
-  fileName   String
-  fileType   String
-  createdAt  DateTime @default(now())
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  String
+  id        String   @id @default(cuid())
+  url       String
+  fileName  String
+  fileType  String
+  createdAt DateTime @default(now())
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
 }
 
 model Subject {
@@ -75,6 +81,8 @@ model Subject {
   classId   String
   createdAt DateTime  @default(now())
   teachers  Teacher[]
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
 }
 
 model Teacher {
@@ -87,6 +95,8 @@ model Teacher {
   classId           String?
   Notification      Notification[]
   notificationsRead NotificationReadTeacher[]
+  tenantId          String
+  tenant            Tenant                    @relation(fields: [tenantId], references: [id])
 }
 
 model SchoolYear {
@@ -96,7 +106,9 @@ model SchoolYear {
   endDate   DateTime
   createdAt DateTime @default(now())
 
-  classes Class[]
+  classes  Class[]
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id])
 }
 
 model Notification {
@@ -135,10 +147,34 @@ model NotificationReadTeacher {
   @@unique([notificationId, teacherId])
 }
 
+model Tenant {
+  id               String      @id @default(cuid())
+  name             String
+  uniqueNumber     Int?        @unique // ex: 123456
+  stripeCustomerId String?
+  billingPlan      BillingPlan @default(FREE_TRIAL)
+  trialEndsAt      DateTime?
+  createdAt        DateTime    @default(now())
+
+  users    User[]
+  students Student[]
+  classes  Class[]
+  teachers Teacher[]
+  subjects Subject[]
+  years    SchoolYear[]
+}
+
+enum BillingPlan {
+  FREE_TRIAL
+  MONTHLY
+  YEARLY
+}
+
 enum Role {
   PARENT
   TEACHER
   DIRECTOR
+  SUPER_ADMIN
 }
 
 enum Civility {

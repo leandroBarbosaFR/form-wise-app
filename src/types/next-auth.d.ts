@@ -6,7 +6,7 @@ declare module "next-auth" {
     user: {
       id: string;
       email: string;
-      role: "PARENT" | "TEACHER" | "DIRECTOR";
+      role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN";
       firstName?: string;
       lastName?: string;
       phone?: string | null;
@@ -17,7 +17,7 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     id: string;
     email: string;
-    role: "PARENT" | "TEACHER" | "DIRECTOR";
+    role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN";
     firstName?: string;
     lastName?: string;
     phone?: string | null;
@@ -30,7 +30,7 @@ declare module "next-auth/jwt" {
     user?: {
       id: string;
       email: string;
-      role: "PARENT" | "TEACHER" | "DIRECTOR";
+      role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN";
       firstName?: string;
       lastName?: string;
       phone?: string | null;

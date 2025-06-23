@@ -2,8 +2,8 @@ import "./globals.css";
 import { Inter, Geist_Mono } from "next/font/google";
 import AuthProvider from "../providers/AuthProvider";
 import { Toaster } from "sonner";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../lib/authOptions";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../lib/authOptions";
 import type { Metadata } from "next";
 import ConditionalFooter from "components/ConditionalFooter";
 import ConditionalHeader from "components/ConditionalHeader";
@@ -19,20 +19,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const session = await getServerSession(authOptions);
-  const role = session?.user?.role;
-
-  let roleTitle = "";
-  if (role === "DIRECTOR") roleTitle = " | Director";
-  else if (role === "TEACHER") roleTitle = " | Teacher";
-  else if (role === "PARENT") roleTitle = " | Parent";
-
-  return {
-    title: `Form Wise app${roleTitle}`,
-    description: "Form Wise app",
-  };
-}
+export const metadata: Metadata = {
+  title: "Form Wise app",
+  description: "Form Wise app",
+};
 
 export default async function RootLayout({
   children,
