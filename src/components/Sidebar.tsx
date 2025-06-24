@@ -1,12 +1,9 @@
 "use client";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-// import { Button } from "@/components/ui/button";
 import SidebarBtn from "./SidebarBtn";
 import { DashboardSection } from "../types/types";
-// import { getInitials } from "../utils/getInitials";
 import {
-  // LogOut,
   CalendarDays,
   LayoutGrid,
   BookOpen,
@@ -20,7 +17,6 @@ import {
   UserLock,
   Settings,
 } from "lucide-react";
-// import { Greeting } from "./Greeting";
 import { ParentNotification } from "../types/notification";
 
 export default function Sidebar({
@@ -60,13 +56,6 @@ export default function Sidebar({
 
   return (
     <aside className="w-64 h-auto bg-[white] border-r p-4 space-y-4">
-      {/* <div className="mb-8">
-        <Greeting
-          name={session?.user?.lastName || "Utilisateur"}
-          civility={session?.user?.civility || "M."}
-        />
-      </div> */}
-
       {role === "DIRECTOR" && (
         <>
           <SidebarBtn
@@ -214,6 +203,31 @@ export default function Sidebar({
           <SidebarBtn
             label="Paramètres"
             section="settings"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Settings className="w-4 h-4" />}
+          />
+        </>
+      )}
+      {role === "SUPER_ADMIN" && (
+        <>
+          <SidebarBtn
+            label="Établissement"
+            section="tenants"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<LayoutGrid className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Statistiques"
+            section="chartsAdmin"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<ChartPie className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="settings"
+            section="settingsAdmin"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
             icon={<Settings className="w-4 h-4" />}

@@ -4,10 +4,13 @@ import { authOptions } from "../../../../lib/authOptions";
 import { redirect } from "next/navigation";
 import {
   Breadcrumb,
+  BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Slash } from "lucide-react";
+import TenantDetailCard from "components/TenantDetailCard";
 
 interface PageProps {
   params: {
@@ -26,7 +29,12 @@ export default async function TenantDetailPage({ params }: PageProps) {
     include: {
       users: {
         where: { role: "DIRECTOR" },
-        select: { firstName: true, lastName: true, email: true },
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+        },
       },
     },
   });
@@ -35,39 +43,26 @@ export default async function TenantDetailPage({ params }: PageProps) {
     return <div className="p-6">École introuvable.</div>;
   }
 
+  const schoolName = tenant.name;
+
   return (
     <div className="p-6 space-y-4">
-      <Breadcrumb>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href="#" aria-current="page">
-            {tenant.name}
-          </BreadcrumbLink>
-        </BreadcrumbItem>
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <Slash className="h-4 w-4 text-muted-foreground" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="#" aria-current="page">
+              {schoolName}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
       </Breadcrumb>
-
-      <h1 className="text-2xl font-semibold">{tenant.name}</h1>
-
-      <p>
-        <strong>N° École :</strong> {tenant.uniqueNumber}
-      </p>
-      <p>
-        <strong>Plan :</strong> {tenant.billingPlan}
-      </p>
-      <p>
-        <strong>Créé le :</strong>{" "}
-        {new Date(tenant.createdAt).toLocaleDateString()}
-      </p>
-
-      {tenant.users.length > 0 && (
-        <p>
-          <strong>Directeur :</strong> {tenant.users[0].firstName}{" "}
-          {tenant.users[0].lastName} ({tenant.users[0].email})
-        </p>
-      )}
+      <TenantDetailCard tenant={tenant} />
     </div>
   );
 }

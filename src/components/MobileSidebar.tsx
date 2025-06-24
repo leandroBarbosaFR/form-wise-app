@@ -140,6 +140,26 @@ const getSections = (role?: string): Section[] => {
     ];
   }
 
+  if (role === "SUPER_ADMIN") {
+    return [
+      {
+        key: "tenants",
+        label: "Écoles",
+        icon: <LayoutGrid className="w-4 h-4" />,
+      },
+      {
+        key: "chartsAdmin",
+        label: "Statistiques",
+        icon: <ChartPie className="w-4 h-4" />,
+      },
+      {
+        key: "settingsAdmin",
+        label: "Paramètres",
+        icon: <Settings className="w-4 h-4" />,
+      },
+    ];
+  }
+
   return [];
 };
 

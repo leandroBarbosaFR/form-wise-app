@@ -15,4 +15,7 @@ export type DashboardSection =
   | "pendingStudents"
   | "documents"
   | "settings"
+  | "tenants"
+  | "chartsAdmin"
+  | "settingsAdmin"
   | "rib";

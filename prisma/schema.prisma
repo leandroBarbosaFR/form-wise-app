@@ -148,20 +148,22 @@ model NotificationReadTeacher {
 }
 
 model Tenant {
-  id               String      @id @default(cuid())
+  id               String       @id @default(cuid())
   name             String
-  uniqueNumber     Int?        @unique // ex: 123456
+  uniqueNumber     Int?         @unique // ex: 123456
   stripeCustomerId String?
-  billingPlan      BillingPlan @default(FREE_TRIAL)
+  billingPlan      BillingPlan  @default(FREE_TRIAL)
   trialEndsAt      DateTime?
-  createdAt        DateTime    @default(now())
-
-  users    User[]
-  students Student[]
-  classes  Class[]
-  teachers Teacher[]
-  subjects Subject[]
-  years    SchoolYear[]
+  createdAt        DateTime     @default(now())
+  status           String?
+  users            User[]
+  students         Student[]
+  classes          Class[]
+  teachers         Teacher[]
+  subjects         Subject[]
+  years            SchoolYear[]
+  phone            String?
+  address          String?
 }
 
 enum BillingPlan {

@@ -1,6 +1,5 @@
 import { Check } from "lucide-react";
 
-
 const tiers = [
   {
     name: "Mensuel",
@@ -35,6 +34,22 @@ const tiers = [
     ],
     featured: true,
   },
+  {
+    name: "Essai gratuit",
+    id: "tier-freemium",
+    href: "/register/free-trial",
+    priceMonthly: "Gratuit",
+    billingCycle: "20 jours",
+    description: "Testez gratuitement toutes les fonctionnalités de Formwise.",
+    features: [
+      "Toutes les fonctionnalités de la formule mensuelle",
+      "Sans carte bancaire",
+      "Valable pendant 20 jours",
+      "Activation immédiate",
+      "Support inclus",
+    ],
+    featured: false,
+  },
 ];
 
 function classNames(...classes: string[]) {
@@ -66,7 +81,8 @@ export default function PricingSection() {
         Choose an affordable plan that’s packed with the best features for
         engaging your audience, creating customer loyalty, and driving sales.
       </p>
-      <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+      <div className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-y-6 gap-x-8 sm:grid-cols-2 lg:grid-cols-3 sm:mt-20">
+        {" "}
         {tiers.map((tier, tierIdx) => (
           <div
             key={tier.id}
@@ -77,8 +93,8 @@ export default function PricingSection() {
               tier.featured
                 ? ""
                 : tierIdx === 0
-                  ? "rounded-t-3xl sm:rounded-b-none lg:rounded-bl-3xl lg:rounded-tr-none"
-                  : "sm:rounded-t-none lg:rounded-bl-none lg:rounded-tr-3xl",
+                  ? "rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10"
+                  : "rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10",
               "rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10"
             )}
           >
