@@ -17,6 +17,7 @@ interface AppUser {
   firstName?: string;
   lastName?: string;
   civility?: string | null;
+  tenantId: string;
 }
 
 interface AppToken extends JWT {
@@ -68,6 +69,7 @@ export const authOptions: AuthOptions = {
             id: user.id,
             email: user.email,
             role: user.role,
+            tenantId: user.tenantId!,
             rememberMe: credentials.rememberMe === "true",
             firstName: user.firstName ?? undefined,
             lastName: user.lastName ?? undefined,
@@ -121,6 +123,7 @@ export const authOptions: AuthOptions = {
         session.user.lastName = user.lastName;
         session.user.phone = user.phone;
         session.user.civility = user.civility;
+        session.user.tenantId = user.tenantId;
       }
       return session;
     },

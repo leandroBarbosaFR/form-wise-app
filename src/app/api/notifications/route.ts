@@ -1,3 +1,5 @@
+// ✅ Multi-tenant filter added (tenantId) for each action
+
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/authOptions";
@@ -21,20 +23,32 @@ export async function POST(req: Request) {
   }
 
   try {
+    const tenantId = session.user.tenantId!;
+
     switch (targetType) {
       case "global_parents":
-        await sendNotificationToAllParents(title, message);
+        await sendNotificationToAllParents(title, message, tenantId);
         break;
       case "student":
         if (!studentId) throw new Error("studentId requis");
-        await sendNotificationToStudentParent(title, message, studentId);
+        await sendNotificationToStudentParent(
+          title,
+          message,
+          studentId,
+          tenantId
+        );
         break;
       case "global_teachers":
-        await sendNotificationToAllTeachers(title, message);
+        await sendNotificationToAllTeachers(title, message, tenantId);
         break;
       case "teacher":
         if (!teacherId) throw new Error("teacherId requis");
-        await sendNotificationToSpecificTeacher(title, message, teacherId);
+        await sendNotificationToSpecificTeacher(
+          title,
+          message,
+          teacherId,
+          tenantId
+        );
         break;
       default:
         return NextResponse.json({ error: "Type invalide" }, { status: 400 });
@@ -49,65 +63,49 @@ export async function POST(req: Request) {
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-
   if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const role = session.user.role;
   const email = session.user.email!;
+  const tenantId = session.user.tenantId!;
 
   try {
     if (role === "DIRECTOR") {
       const notifications = await prisma.notification.findMany({
+        where: { tenantId },
         orderBy: { createdAt: "desc" },
         include: {
-          student: {
-            select: {
-              firstName: true,
-              lastName: true,
-            },
-          },
+          student: { select: { firstName: true, lastName: true } },
           teacher: {
             include: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                },
-              },
+              user: { select: { firstName: true, lastName: true } },
             },
           },
           readBy: true,
           readByTeachers: true,
         },
       });
-
       return NextResponse.json({ notifications });
     }
 
     if (role === "PARENT") {
       const parent = await prisma.user.findUnique({
         where: { email },
-        include: {
-          students: true,
-        },
+        include: { students: true },
       });
 
       const studentIds = parent?.students.map((s) => s.id) || [];
 
       const notifications = await prisma.notification.findMany({
         where: {
+          tenantId,
           OR: [{ isGlobal: true }, { studentId: { in: studentIds } }],
         },
         orderBy: { createdAt: "desc" },
         include: {
-          student: {
-            select: {
-              firstName: true,
-              lastName: true,
-            },
-          },
+          student: { select: { firstName: true, lastName: true } },
           readBy: true,
         },
       });
@@ -117,7 +115,7 @@ export async function GET() {
 
     if (role === "TEACHER") {
       const teacher = await prisma.teacher.findFirst({
-        where: { user: { email } },
+        where: { user: { email }, tenantId },
       });
 
       if (!teacher) {
@@ -129,21 +127,14 @@ export async function GET() {
 
       const notifications = await prisma.notification.findMany({
         where: {
-          OR: [
-            { teacherId: teacher.id },
-            { isGlobal: true, studentId: null }, // global for teachers
-          ],
+          tenantId,
+          OR: [{ teacherId: teacher.id }, { isGlobal: true, studentId: null }],
         },
         orderBy: { createdAt: "desc" },
         include: {
           teacher: {
             select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                },
-              },
+              user: { select: { firstName: true, lastName: true } },
             },
           },
           readByTeachers: true,
@@ -160,12 +151,18 @@ export async function GET() {
   }
 }
 
-async function sendNotificationToAllParents(title: string, message: string) {
+// ✅ Updated to include tenantId
+async function sendNotificationToAllParents(
+  title: string,
+  message: string,
+  tenantId: string
+) {
   await prisma.notification.create({
     data: {
       title,
       message,
       isGlobal: true,
+      tenantId,
     },
   });
 }
@@ -173,7 +170,8 @@ async function sendNotificationToAllParents(title: string, message: string) {
 async function sendNotificationToStudentParent(
   title: string,
   message: string,
-  studentId: string
+  studentId: string,
+  tenantId: string
 ) {
   await prisma.notification.create({
     data: {
@@ -181,11 +179,16 @@ async function sendNotificationToStudentParent(
       message,
       isGlobal: false,
       studentId,
+      tenantId,
     },
   });
 }
 
-async function sendNotificationToAllTeachers(title: string, message: string) {
+async function sendNotificationToAllTeachers(
+  title: string,
+  message: string,
+  tenantId: string
+) {
   await prisma.notification.create({
     data: {
       title,
@@ -193,6 +196,7 @@ async function sendNotificationToAllTeachers(title: string, message: string) {
       isGlobal: true,
       studentId: null,
       teacherId: null,
+      tenantId,
     },
   });
 }
@@ -200,7 +204,8 @@ async function sendNotificationToAllTeachers(title: string, message: string) {
 async function sendNotificationToSpecificTeacher(
   title: string,
   message: string,
-  teacherId: string
+  teacherId: string,
+  tenantId: string
 ) {
   await prisma.notification.create({
     data: {
@@ -208,6 +213,7 @@ async function sendNotificationToSpecificTeacher(
       message,
       isGlobal: false,
       teacherId,
+      tenantId,
     },
   });
 }

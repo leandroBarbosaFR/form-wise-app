@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
@@ -10,6 +11,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const tenantId = session.user.tenantId;
   const { title, message, teacherId } = await req.json();
 
   if (!title || !message || !teacherId) {
@@ -25,9 +27,9 @@ export async function POST(req: Request) {
       include: { user: true },
     });
 
-    if (!teacher || !teacher.user) {
+    if (!teacher || !teacher.user || teacher.tenantId !== tenantId) {
       return NextResponse.json(
-        { error: "Professeur introuvable" },
+        { error: "Professeur introuvable ou accès interdit" },
         { status: 404 }
       );
     }
@@ -37,6 +39,9 @@ export async function POST(req: Request) {
         title,
         message,
         isGlobal: false,
+        tenant: {
+          connect: { id: tenantId },
+        },
         teacher: {
           connect: { id: teacherId },
         },

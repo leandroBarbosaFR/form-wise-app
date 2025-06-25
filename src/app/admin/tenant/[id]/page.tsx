@@ -13,9 +13,9 @@ import { Slash } from "lucide-react";
 import TenantDetailCard from "components/TenantDetailCard";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function TenantDetailPage({ params }: PageProps) {
@@ -24,8 +24,11 @@ export default async function TenantDetailPage({ params }: PageProps) {
     redirect("/login");
   }
 
+  // Await the params Promise in Next.js 15
+  const { id } = await params;
+
   const tenant = await prisma.tenant.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       users: {
         where: { role: "DIRECTOR" },

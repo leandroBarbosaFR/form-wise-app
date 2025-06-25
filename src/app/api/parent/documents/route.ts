@@ -1,4 +1,5 @@
-// app/api/parent/documents/route.ts
+// ✅ Multi-tenant filter added (tenantId)
+
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
@@ -12,9 +13,11 @@ export async function GET() {
   }
 
   const parentEmail = session.user.email!;
+  const tenantId = session.user.tenantId;
 
   const students = await prisma.student.findMany({
     where: {
+      tenantId, // ✅ isolate by school
       parent: {
         email: parentEmail,
       },

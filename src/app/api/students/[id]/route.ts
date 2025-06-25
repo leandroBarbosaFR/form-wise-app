@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { getServerSession } from "next-auth";
@@ -20,7 +21,12 @@ export async function DELETE(
     include: { parent: true },
   });
 
-  if (!student || student.parent.email !== session.user.email) {
+  // ✅ Vérifie aussi le tenant
+  if (
+    !student ||
+    student.parent.email !== session.user.email ||
+    student.tenantId !== session.user.tenantId
+  ) {
     return NextResponse.json(
       { error: "Élève non trouvé ou non autorisé" },
       { status: 404 }

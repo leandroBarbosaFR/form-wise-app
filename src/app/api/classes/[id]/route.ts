@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
@@ -16,9 +17,20 @@ export async function DELETE(
   const { id } = await params;
 
   try {
-    await prisma.class.delete({
-      where: { id },
+    // ✅ Delete only if class belongs to the director's tenant
+    const deleted = await prisma.class.deleteMany({
+      where: {
+        id,
+        tenantId: session.user.tenantId,
+      },
     });
+
+    if (deleted.count === 0) {
+      return NextResponse.json(
+        { error: "Classe non trouvée" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

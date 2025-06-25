@@ -8,13 +8,13 @@ import { fr } from "date-fns/locale";
 import { Tenant } from "@prisma/client";
 
 interface Props {
-  tenant: Tenant & {
-    status?: string;
+  tenant: Omit<Tenant, "status"> & {
+    status: string | null;
     users: {
       email: string;
       firstName: string;
       lastName: string;
-      phoneNumber?: string | null;
+      phone?: string | null;
       address?: string | null;
     }[];
   };
@@ -136,10 +136,10 @@ export default function TenantDetailCard({ tenant }: Props) {
                   <td className="px-4 py-3 font-semibold">Email</td>
                   <td className="px-4 py-3">{director.email}</td>
                 </tr>
-                {director.phoneNumber && (
+                {director.phone && (
                   <tr className="border-b">
                     <td className="px-4 py-3 font-semibold">Téléphone</td>
-                    <td className="px-4 py-3">{director.phoneNumber}</td>
+                    <td className="px-4 py-3">{director.phone}</td>
                   </tr>
                 )}
                 {director.address && (
@@ -175,8 +175,8 @@ export default function TenantDetailCard({ tenant }: Props) {
               Directeur : {director.firstName} {director.lastName}
             </p>
             <p className="text-sm">Email : {director.email}</p>
-            {director.phoneNumber && (
-              <p className="text-sm">Téléphone : {director.phoneNumber}</p>
+            {director.phone && (
+              <p className="text-sm">Téléphone : {director.phone}</p>
             )}
             {director.address && (
               <p className="text-sm">Adresse : {director.address}</p>

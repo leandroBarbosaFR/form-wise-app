@@ -1,24 +1,39 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../../lib/authOptions";
 
 export async function GET() {
   try {
-    // Récupérer tous les parents
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user.tenantId) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
+    const tenantId = session.user.tenantId;
+
+    // 🔐 Ne récupérer que les parents de ce tenant
     const allParents = await prisma.user.findMany({
-      where: { role: "PARENT" },
+      where: {
+        role: "PARENT",
+        tenantId,
+      },
       select: { id: true },
     });
     const totalParents = allParents.length;
 
-    // Récupérer toutes les notifications globales
+    // 🔐 Ne récupérer que les notifications globales de ce tenant
     const globalNotifications = await prisma.notification.findMany({
-      where: { isGlobal: true },
+      where: {
+        isGlobal: true,
+        tenantId,
+      },
       include: {
         readBy: true,
       },
     });
 
-    // Calculer combien ont été lues par tous les parents
     let totalLu = 0;
     let totalNonLu = 0;
 

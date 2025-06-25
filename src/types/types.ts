@@ -18,4 +18,5 @@ export type DashboardSection =
   | "tenants"
   | "chartsAdmin"
   | "settingsAdmin"
+  | "inviteParent"
   | "rib";

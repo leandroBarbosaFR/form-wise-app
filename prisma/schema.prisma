@@ -26,6 +26,7 @@ model User {
   civility         String?
   tenantId         String?
   tenant           Tenant?            @relation(fields: [tenantId], references: [id])
+  address          String?
 }
 
 model Student {
@@ -120,6 +121,8 @@ model Notification {
   student        Student?                  @relation(fields: [studentId], references: [id])
   teacherId      String?
   teacher        Teacher?                  @relation(fields: [teacherId], references: [id])
+  tenantId       String?
+  tenant         Tenant?                   @relation(fields: [tenantId], references: [id]) // ← RELATION
   createdAt      DateTime                  @default(now())
   readBy         NotificationRead[]
   readByTeachers NotificationReadTeacher[]
@@ -148,13 +151,13 @@ model NotificationReadTeacher {
 }
 
 model Tenant {
-  id               String       @id @default(cuid())
+  id               String          @id @default(cuid())
   name             String
-  uniqueNumber     Int?         @unique // ex: 123456
+  uniqueNumber     Int?            @unique // ex: 123456
   stripeCustomerId String?
-  billingPlan      BillingPlan  @default(FREE_TRIAL)
+  billingPlan      BillingPlan     @default(FREE_TRIAL)
   trialEndsAt      DateTime?
-  createdAt        DateTime     @default(now())
+  createdAt        DateTime        @default(now())
   status           String?
   users            User[]
   students         Student[]
@@ -164,6 +167,19 @@ model Tenant {
   years            SchoolYear[]
   phone            String?
   address          String?
+  Notification     Notification[]
+  schoolCode       String?         @unique // ex: ABC123
+  InvitedParent    InvitedParent[]
+}
+
+model InvitedParent {
+  id        String   @id @default(cuid())
+  email     String
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  firstName String?
 }
 
 enum BillingPlan {

@@ -5,6 +5,7 @@ import gsap from "gsap";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import TabsShowcase from "./TabsShowcase";
+import { Zap } from "lucide-react";
 
 export default function HeroSection() {
   const titleRef = useRef(null);
@@ -34,8 +35,10 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="bg-white relative isolate pt-14" aria-label="Introduction Formwise">
-
+    <section
+      className="bg-white relative isolate pt-14"
+      aria-label="Introduction Formwise"
+    >
       {/* Backgrounds */}
       <div
         aria-hidden="true"
@@ -74,15 +77,18 @@ export default function HeroSection() {
               ref={buttonsRef}
               className="mt-10 flex items-center justify-center gap-x-6"
             >
+              <Link href="/register/free-trial" target="_blank">
+                <Button className="cursor-pointer">
+                  <Zap />
+                  Profitez de 20 jours gratuitement
+                </Button>
+              </Link>
               <Link
                 href="https://calendly.com/hello1367studio/30min"
                 target="_blank"
               >
-                <Button className="cursor-pointer">Réserver une démo</Button>
-              </Link>
-              <Link href="https://wa.me/+330763858388" target="_blank">
                 <Button className="cursor-pointer" variant="outline">
-                  Nous contacter
+                  Réserver une démo
                 </Button>
               </Link>
             </div>

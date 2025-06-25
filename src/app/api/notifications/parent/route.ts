@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
@@ -12,6 +13,9 @@ export async function GET() {
 
   try {
     const students = await prisma.student.findMany({
+      where: {
+        tenantId: session.user.tenantId, // ✅ ensure isolation by tenant
+      },
       select: {
         id: true,
         firstName: true,

@@ -128,6 +128,13 @@ export default function Sidebar({
             setActiveSection={setActiveSectionAction}
             icon={<Settings className="w-4 h-4" />}
           />
+          <SidebarBtn
+            label="Inviter Parents"
+            section="inviteParent"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<User className="w-4 h-4" />}
+          />
         </>
       )}
       {role === "PARENT" && (

@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
 import { prisma } from "../../../../lib/prisma";
@@ -10,8 +11,11 @@ export async function GET() {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
-  const teacher = await prisma.teacher.findUnique({
-    where: { userId: session.user.id },
+  const teacher = await prisma.teacher.findFirst({
+    where: {
+      userId: session.user.id,
+      tenantId: session.user.tenantId, // ✅ ajout ici aussi
+    },
     include: {
       class: true,
       subject: true,
@@ -24,7 +28,10 @@ export async function GET() {
   }
 
   const students = await prisma.student.findMany({
-    where: { classId: teacher.classId },
+    where: {
+      classId: teacher.classId,
+      tenantId: session.user.tenantId, // ✅ important pour ne pas voir d’élèves d’autres écoles
+    },
     include: { parent: true },
   });
 

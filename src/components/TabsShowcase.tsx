@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { cn } from "../lib/utils";
 import Image from "next/image";
-import {
-  Layers,
-  List,
-  BarChart2,
-  Users,
-  LayoutGrid,
-  Bell,
-} from "lucide-react";
+import { Layers, List, BarChart2, Users, LayoutGrid, Bell } from "lucide-react";
 
 const tabs = [
   {
@@ -69,7 +62,7 @@ export default function TabsShowcase() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition",
+              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium cursor-pointer transition",
               activeTab === tab.id
                 ? "bg-gray-100 text-black shadow-sm"
                 : "bg-white text-gray-700 hover:bg-gray-50"

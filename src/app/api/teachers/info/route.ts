@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
 import { prisma } from "../../../../lib/prisma";
@@ -10,8 +11,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const teacher = await prisma.teacher.findUnique({
-    where: { id: session.user.id },
+  const tenantId = session.user.tenantId;
+
+  const teacher = await prisma.teacher.findFirst({
+    where: {
+      userId: session.user.id, // ✅ corrige la recherche
+      tenantId, // ✅ multi-tenant
+    },
     include: {
       class: true,
       subject: true,

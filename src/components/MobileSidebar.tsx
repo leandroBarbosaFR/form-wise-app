@@ -111,6 +111,11 @@ const getSections = (role?: string): Section[] => {
         label: "Paramètres",
         icon: <Settings className="w-4 h-4" />,
       },
+      {
+        key: "inviteParent",
+        label: "Inviter Parent",
+        icon: <User className="w-4 h-4" />,
+      },
     ];
   }
 

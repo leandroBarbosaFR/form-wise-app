@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { prisma } from "../../../lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -44,6 +45,7 @@ export async function POST(req: Request) {
           userId: user.id,
           classId: classId,
           subjectId: subjectId,
+          tenantId: user.tenantId!, // ✅ assignation directe
         },
       });
       console.log("✅ Professeur ajouté à la table Teacher");

@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/authOptions";
@@ -13,9 +14,9 @@ export async function GET() {
 
   const userEmail = session.user?.email;
 
-  if (!userEmail) {
+  if (!userEmail || !session.user.tenantId) {
     return NextResponse.json(
-      { error: "Email manquant dans la session" },
+      { error: "Informations manquantes dans la session" },
       { status: 400 }
     );
   }
@@ -25,6 +26,7 @@ export async function GET() {
       parent: {
         email: userEmail,
       },
+      tenantId: session.user.tenantId,
     },
     orderBy: {
       createdAt: "desc",
@@ -56,10 +58,11 @@ export async function POST(req: Request) {
   }
 
   const userEmail = session.user?.email;
+  const tenantId = session.user?.tenantId;
 
-  if (!userEmail) {
+  if (!userEmail || !tenantId) {
     return NextResponse.json(
-      { error: "Email manquant dans la session" },
+      { error: "Informations manquantes dans la session" },
       { status: 400 }
     );
   }
@@ -83,8 +86,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const targetClass = await prisma.class.findUnique({
-    where: { id: classId },
+  const targetClass = await prisma.class.findFirst({
+    where: {
+      id: classId,
+      tenantId: tenantId,
+    },
   });
 
   if (!targetClass) {
@@ -104,6 +110,9 @@ export async function POST(req: Request) {
       canLeaveAlone,
       code,
       status: "PENDING",
+      tenant: {
+        connect: { id: tenantId },
+      },
       parent: {
         connect: { email: userEmail },
       },

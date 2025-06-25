@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Zap } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -25,6 +26,12 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [civility, setCivility] = useState<"M." | "Mme" | "">("");
+  const [schoolCode, setSchoolCode] = useState("");
+  const [schoolCheck, setSchoolCheck] = useState<null | {
+    valid: boolean;
+    name?: string;
+    error?: string;
+  }>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +45,7 @@ export default function RegisterForm() {
       email,
       password,
       civility,
+      schoolCode: schoolCode.trim(),
     };
 
     try {
@@ -166,11 +174,45 @@ export default function RegisterForm() {
                 )}
               </button>
             </div>
+            <Label htmlFor="schoolCode">
+              Code de l&apos;école (si fourni par le directeur)
+            </Label>
+            <input
+              type="text"
+              placeholder="Code de l’école (si reçu)"
+              value={schoolCode}
+              onChange={(e) => setSchoolCode(e.target.value)}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+            />
+            <div className="flex gap-2 items-center">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={async () => {
+                  setSchoolCheck(null);
+                  const res = await fetch(`/api/check-code?code=${schoolCode}`);
+                  const result = await res.json();
+                  setSchoolCheck(result);
+                }}
+              >
+                Vérifier le code
+              </Button>
+              {schoolCheck?.valid && (
+                <p className="text-green-600 text-sm">
+                  École trouvée : {schoolCheck.name}
+                </p>
+              )}
+              {schoolCheck?.valid === false && (
+                <p className="text-red-600 text-sm">
+                  ❌ {schoolCheck.error || "Code invalide"}
+                </p>
+              )}
+            </div>
             <input type="hidden" value="PARENT" readOnly name="role" />
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || (Boolean(schoolCode) && !schoolCheck?.valid)}
               className="w-full cursor-pointer"
             >
               {loading ? "Chargement..." : "S’inscrire"}

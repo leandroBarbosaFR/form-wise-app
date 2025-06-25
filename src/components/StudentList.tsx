@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserX } from "lucide-react";
+import EmptyState from "./EmptyState";
 
 type Student = {
   id: string;
@@ -43,9 +44,13 @@ export default function StudentList({
 
   if (students.length === 0) {
     return (
-      <p className="text-muted-foreground">
-        Aucun élève inscrit pour le moment.
-      </p>
+      <EmptyState
+        message="Aucun élève inscrit pour le moment."
+        actionLabel="Ajouter un élève"
+        onAction={() => {
+          console.log("Ajouter un élève");
+        }}
+      />
     );
   }
 

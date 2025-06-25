@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
@@ -16,8 +17,11 @@ export async function DELETE(
   const { id } = await context.params;
 
   try {
-    await prisma.schoolYear.delete({
-      where: { id },
+    await prisma.schoolYear.deleteMany({
+      where: {
+        id,
+        tenantId: session.user.tenantId, // ✅ filtrage tenant
+      },
     });
 
     return NextResponse.json({ success: true });

@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
@@ -14,11 +15,20 @@ export async function DELETE(
   }
 
   const { id: teacherId } = await params;
+  const tenantId = session.user.tenantId;
 
   try {
-    await prisma.teacher.delete({
+    // Ensure the teacher belongs to the same tenant
+    const teacher = await prisma.teacher.findUnique({
       where: { id: teacherId },
+      include: { tenant: true },
     });
+
+    if (!teacher || teacher.tenantId !== tenantId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    await prisma.teacher.delete({ where: { id: teacherId } });
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -32,15 +42,27 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
+
   if (!session || session.user.role !== "DIRECTOR") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
+  const tenantId = session.user.tenantId;
   const body = await req.json();
   const { firstName, lastName, subjectId, classId } = body;
 
   try {
+    // Ensure the teacher belongs to the same tenant
+    const teacher = await prisma.teacher.findUnique({
+      where: { id },
+      include: { tenant: true },
+    });
+
+    if (!teacher || teacher.tenantId !== tenantId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
     const updatedTeacher = await prisma.teacher.update({
       where: { id },
       data: {

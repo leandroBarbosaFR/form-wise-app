@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/authOptions";
@@ -11,6 +12,9 @@ export async function GET() {
   }
 
   const schoolYears = await prisma.schoolYear.findMany({
+    where: {
+      tenantId: session.user.tenantId, // ✅ filtrage tenant
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -33,6 +37,7 @@ export async function POST(req: Request) {
         name,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        tenantId: session.user.tenantId, // ✅ assignation tenant
       },
     });
 

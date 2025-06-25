@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { getServerSession } from "next-auth";
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
       data: {
         name,
         classId,
+        tenantId: session.user.tenantId, // ✅ assign tenant
       },
     });
     return NextResponse.json({ success: true, subject });
@@ -34,7 +36,15 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== "DIRECTOR") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const subjects = await prisma.subject.findMany({
+    where: {
+      tenantId: session.user.tenantId, // ✅ filtrage tenant
+    },
     include: {
       class: true,
       teachers: {

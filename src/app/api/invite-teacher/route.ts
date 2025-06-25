@@ -42,6 +42,7 @@ export async function POST(req: Request) {
         password: null,
         role: "TEACHER",
         inviteToken,
+        tenantId: user.tenantId,
       },
     });
   } catch (err) {

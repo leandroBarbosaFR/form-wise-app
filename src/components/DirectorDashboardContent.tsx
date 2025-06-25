@@ -23,6 +23,8 @@ import CenteredSpinner from "./CenteredSpinner";
 import PendingStudents from "./PendingStudents";
 import DirectorDocumentList from "./DirectorDocumentList";
 import AccountSettings from "./AccountSettings";
+import InviteParentsPage from "../app/dashboard/director/invite-parents/page";
+import { InvitedParentList } from "./InvitedParentList";
 
 export default function DirectorDashboardContent() {
   const { data: session, status } = useSession();
@@ -96,6 +98,12 @@ export default function DirectorDashboardContent() {
         {activeSection === "documents" && <DirectorDocumentList />}
         {activeSection === "pendingStudents" && <PendingStudents />}
         {activeSection === "charts" && <DashboardCharts />}
+        {activeSection === "inviteParent" && (
+          <>
+            <InviteParentsPage />
+            <InvitedParentList />
+          </>
+        )}
         {activeSection === "settings" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Paramètres du compte</h2>

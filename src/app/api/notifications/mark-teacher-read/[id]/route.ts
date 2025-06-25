@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
@@ -14,8 +15,13 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const tenantId = session.user.tenantId;
+
   const teacher = await prisma.teacher.findFirst({
-    where: { user: { email: session.user.email! } },
+    where: {
+      user: { email: session.user.email! },
+      tenantId,
+    },
   });
 
   if (!teacher) {
@@ -26,7 +32,6 @@ export async function POST(
   }
 
   try {
-    // Await the params since it's now a Promise
     const { id } = await params;
 
     await prisma.notificationReadTeacher.upsert({

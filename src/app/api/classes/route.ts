@@ -1,3 +1,4 @@
+// ✅ Multi-tenant filter added (tenantId)
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/authOptions";
@@ -10,15 +11,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const { name, monthlyFee, schoolYearId } = body;
+  const { name, monthlyFee, schoolYearId } = await req.json();
 
   try {
     const newClass = await prisma.class.create({
       data: {
         name,
         monthlyFee,
-        schoolYearId,
+        schoolYear: { connect: { id: schoolYearId } }, // ✅ correction ici
+        tenant: { connect: { id: session.user.tenantId } },
       },
     });
 
@@ -38,6 +39,9 @@ export async function GET() {
 
   try {
     const classes = await prisma.class.findMany({
+      where: {
+        tenantId: session.user.tenantId, // ✅ filtre par tenant
+      },
       include: {
         schoolYear: true,
       },
