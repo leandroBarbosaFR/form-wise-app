@@ -18,6 +18,9 @@ interface AppUser {
   lastName?: string;
   civility?: string | null;
   tenantId: string;
+
+  subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
+  trialEndsAt?: string | null;
 }
 
 interface AppToken extends JWT {
@@ -30,7 +33,7 @@ export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60, // 30 jours
   },
   providers: [
     CredentialsProvider({
@@ -40,15 +43,13 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
         rememberMe: { label: "Rester connecté", type: "checkbox" },
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      authorize: async (credentials, _req) => {
-        console.log("Tentative de connexion avec :", credentials);
-
+      authorize: async (credentials) => {
         if (!credentials?.email || !credentials?.password) return null;
 
         try {
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
+            include: { tenant: true },
           });
 
           if (!user || !user.password) return null;
@@ -58,12 +59,6 @@ export const authOptions: AuthOptions = {
             user.password
           );
           if (!isValid) return null;
-
-          console.log("✅ Returning user:", {
-            id: user.id,
-            email: user.email,
-            role: user.role,
-          });
 
           return {
             id: user.id,
@@ -75,7 +70,9 @@ export const authOptions: AuthOptions = {
             lastName: user.lastName ?? undefined,
             civility: user.civility ?? undefined,
             phone: user.phone ?? undefined,
-          };
+            subscriptionStatus: user.tenant?.subscriptionStatus ?? "FREE_TRIAL",
+            trialEndsAt: user.tenant?.trialEndsAt?.toISOString() ?? null,
+          } as AppUser;
         } catch (error) {
           console.error("❌ Erreur dans authorize:", error);
           return null;
@@ -88,6 +85,7 @@ export const authOptions: AuthOptions = {
       console.log("➡️ signIn callback, user:", user);
       return true;
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async jwt({ token, user, trigger, session }) {
       const typedToken = token as AppToken;
 
@@ -100,19 +98,34 @@ export const authOptions: AuthOptions = {
         }
       }
 
-      // Handle session updates (when update() is called)
-      if (trigger === "update" && session) {
-        // Merge the updated session data
-        if (typedToken.user && session.user) {
-          typedToken.user = {
-            ...typedToken.user,
-            ...session.user,
-          };
+      // ✅ Mise à jour après paiement
+      if (trigger === "update" && typedToken.user?.tenantId) {
+        const tenant = await prisma.tenant.findUnique({
+          where: { id: typedToken.user.tenantId },
+        });
+
+        const isValidStatus = (
+          status: string
+        ): status is "ACTIVE" | "FREE_TRIAL" | "EXPIRED" =>
+          ["ACTIVE", "FREE_TRIAL", "EXPIRED"].includes(status);
+
+        if (tenant) {
+          const status = tenant.subscriptionStatus;
+
+          if (status && isValidStatus(status)) {
+            typedToken.user.subscriptionStatus = status;
+          } else {
+            typedToken.user.subscriptionStatus = "FREE_TRIAL";
+          }
+
+          typedToken.user.trialEndsAt =
+            tenant.trialEndsAt?.toISOString() ?? null;
         }
       }
 
       return typedToken;
     },
+
     session({ session, token }) {
       const user = (token as AppToken).user;
       if (user && session.user) {
@@ -124,6 +137,8 @@ export const authOptions: AuthOptions = {
         session.user.phone = user.phone;
         session.user.civility = user.civility;
         session.user.tenantId = user.tenantId;
+        session.user.subscriptionStatus = user.subscriptionStatus;
+        session.user.trialEndsAt = user.trialEndsAt;
       }
       return session;
     },

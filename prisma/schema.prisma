@@ -151,25 +151,27 @@ model NotificationReadTeacher {
 }
 
 model Tenant {
-  id               String          @id @default(cuid())
-  name             String
-  uniqueNumber     Int?            @unique // ex: 123456
-  stripeCustomerId String?
-  billingPlan      BillingPlan     @default(FREE_TRIAL)
-  trialEndsAt      DateTime?
-  createdAt        DateTime        @default(now())
-  status           String?
-  users            User[]
-  students         Student[]
-  classes          Class[]
-  teachers         Teacher[]
-  subjects         Subject[]
-  years            SchoolYear[]
-  phone            String?
-  address          String?
-  Notification     Notification[]
-  schoolCode       String?         @unique // ex: ABC123
-  InvitedParent    InvitedParent[]
+  id                   String          @id @default(cuid())
+  name                 String
+  uniqueNumber         Int?            @unique // ex: 123456
+  stripeCustomerId     String?
+  billingPlan          BillingPlan     @default(FREE_TRIAL)
+  trialEndsAt          DateTime?
+  createdAt            DateTime        @default(now())
+  status               String?
+  users                User[]
+  students             Student[]
+  classes              Class[]
+  teachers             Teacher[]
+  subjects             Subject[]
+  years                SchoolYear[]
+  phone                String?
+  address              String?
+  Notification         Notification[]
+  schoolCode           String?         @unique // ex: ABC123
+  InvitedParent        InvitedParent[]
+  subscriptionStatus   String? // ex: "ACTIVE", "TRIAL", "EXPIRED"
+  stripeSubscriptionId String?
 }
 
 model InvitedParent {

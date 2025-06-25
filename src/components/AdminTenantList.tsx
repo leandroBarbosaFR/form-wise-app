@@ -11,6 +11,8 @@ type Tenant = {
   uniqueNumber: string;
   billingPlan: string;
   createdAt: string;
+  plan: string;
+  subscriptionStatus?: "FREE_TRIAL" | "ACTIVE" | "EXPIRED";
   users: {
     firstName: string;
     lastName: string;
@@ -20,16 +22,29 @@ type Tenant = {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function getPlanBadge(plan: string) {
+function getPlanBadge(
+  plan: string,
+  status?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED"
+) {
+  if (status === "ACTIVE") {
+    return (
+      <Badge className="bg-green-100 text-green-800">Abonnement actif</Badge>
+    );
+  }
+  if (status === "EXPIRED") {
+    return <Badge className="bg-red-100 text-red-800">Expiré</Badge>;
+  }
+  if (status === "FREE_TRIAL") {
+    return <Badge className="bg-yellow-500 text-white">Essai gratuit</Badge>;
+  }
+
   switch (plan) {
-    case "FREE_TRIAL":
-      return <Badge className="bg-yellow-500 text-white">Essai gratuit</Badge>;
     case "MONTHLY":
       return <Badge className="bg-green-600 text-white">Mensuel</Badge>;
     case "YEARLY":
       return <Badge className="bg-blue-600 text-white">Annuel</Badge>;
     default:
-      return <Badge className="bg-gray-400 text-white">Inconnu</Badge>;
+      return <Badge className="bg-gray-400 text-white">Essai gratuit</Badge>;
   }
 }
 
@@ -81,7 +96,7 @@ export default function AdminTenantList() {
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  {getPlanBadge(tenant.billingPlan)}
+                  {getPlanBadge(tenant.billingPlan, tenant.subscriptionStatus)}
                 </td>
                 <td className="px-4 py-3">
                   {new Date(tenant.createdAt).toLocaleDateString()}
@@ -123,7 +138,10 @@ export default function AdminTenantList() {
               )}
             </div>
             <div className="text-sm flex items-center gap-2 mb-1">
-              Plan : {getPlanBadge(tenant.billingPlan)}
+              <div className="text-sm flex items-center gap-2 mb-1">
+                Plan :{" "}
+                {getPlanBadge(tenant.billingPlan, tenant.subscriptionStatus)}
+              </div>
             </div>
             <div className="text-sm text-gray-600 mb-2">
               Créé le : {new Date(tenant.createdAt).toLocaleDateString()}
