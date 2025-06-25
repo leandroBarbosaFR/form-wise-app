@@ -20,7 +20,8 @@ export default function AppHeader() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  const schoolCode = session?.user?.schoolCode || null;
+  console.log("schoolCode", schoolCode);
   useEffect(() => {
     const success = searchParams.get("success");
 
@@ -36,7 +37,7 @@ export default function AppHeader() {
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
           // Force session refresh with trigger
-          const result = await update();
+          const result = await update({ trigger: "update" });
           console.log("📊 Update result:", result);
 
           // Wait for the update to propagate
@@ -130,7 +131,40 @@ export default function AppHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
+      {schoolCode && (
+        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+          <span>Code établissement :</span>
+          <span className="font-medium">{schoolCode}</span>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(schoolCode);
+              toast.success("Code copié !");
+            }}
+            className="hover:text-black transition cursor-pointer"
+            title="Copier le code"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 16h8a2 2 0 002-2V6a2 2 0 00-2-2H8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16 8h2a2 2 0 012 2v8a2 2 0 01-2 2H10a2 2 0 01-2-2v-2"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
       <SupportButton />
     </header>
   );

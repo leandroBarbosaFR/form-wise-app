@@ -44,7 +44,7 @@ export default function SubjectList() {
     };
 
     const fetchSubjects = async () => {
-      const res = await fetch("/api/subjects");
+      const res = await fetch("/api/subjects", { credentials: "include" });
       const data = await res.json();
       setSubjects(data.subjects || []);
     };
@@ -54,7 +54,7 @@ export default function SubjectList() {
   }, []);
 
   const filteredSubjects = subjects.filter(
-    (s) => s.class.id === selectedClassId
+    (s) => s.class?.id === selectedClassId
   );
 
   return (
@@ -66,7 +66,7 @@ export default function SubjectList() {
         >
           Choisir une classe
         </Label>
-        <Select onValueChange={setSelectedClassId}>
+        <Select value={selectedClassId} onValueChange={setSelectedClassId}>
           <SelectTrigger id="class-select" className="w-48">
             <SelectValue placeholder="Sélectionner une classe" />
           </SelectTrigger>
@@ -81,7 +81,7 @@ export default function SubjectList() {
       </div>
 
       {selectedClassId && (
-        <div className="space-y-4">
+        <div key={selectedClassId} className="space-y-4">
           <h2 className="text-sm font-semibold text-muted-foreground">
             Matières de la classe{" "}
             {classes.find((c) => c.id === selectedClassId)?.name}

@@ -5,11 +5,12 @@ import { useState, useEffect } from "react";
 import { Zap, Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import NavDrawerMobile from "./NavDrawerMobile";
+import { Button } from "@/components/ui/button";
 
-const navigation = [
-  { name: "Contactez-nous", href: "/contact" },
-  // { name: "Fonctionnalités", href: "#" },
-];
+// const navigation = [
+//   // { name: "Contactez-nous", href: "/contact" },
+//   // { name: "Fonctionnalités", href: "#" },
+// ];
 
 export default function SiteHeader() {
   const [showSticky, setShowSticky] = useState(false);
@@ -33,26 +34,30 @@ export default function SiteHeader() {
         {showSticky && (
           <div className="fixed top-4 left-1/2 z-40 -translate-x-1/2 w-[90%] max-w-6xl rounded-full bg-white/10 backdrop-blur-3xl backdrop-saturate-200 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)] ring-1 ring-white/20 transition-all duration-300">
             <div className="flex items-center justify-between px-6 py-1 lg:py-3">
-              <Link href="/" className="flex items-center gap-2 font-semibold text-gray-900">
-                <Zap className="h-5 w-5" />
-                Formwise
+              <Link
+                href="/"
+                className="flex fancy-gradient-text items-center font-semibold text-gray-900"
+              >
+                <Zap className="h-5 w-5 mr-1" />
+                Form<span className="font-bold">wise</span>
               </Link>
 
               <div className="hidden lg:flex gap-6 items-center">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-sm font-semibold text-gray-900 hover:text-indigo-600 transition"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-                <Link href="/login" className="text-sm font-semibold text-gray-900 hover:text-indigo-600">
-                  Connexion →
+                <Link
+                  href="/register/free-trial"
+                  className="text-sm flex font-semibold text-white-700 hover:text-indigo-600"
+                >
+                  <Button className="cursor-pointer">S&apos;inscrire</Button>
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-sm flex font-semibold text-white-700 hover:text-indigo-600"
+                >
+                  <Button className="cursor-pointer" variant={"outline"}>
+                    Se connecter
+                  </Button>
                 </Link>
               </div>
-
               <div className="flex lg:hidden">
                 <button
                   onClick={() => setMobileMenuOpen(true)}
@@ -67,16 +72,22 @@ export default function SiteHeader() {
         )}
 
         {/* Normal Header */}
-        <div className="flex items-center justify-between p-6 lg:px-8">
+        <div
+          className="flex items-center justify-between p-6 lg:px-8"
+          style={{ maxWidth: "1200px", margin: "0 auto" }}
+        >
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2 -m-1.5 p-1.5">
-              <Zap className="h-5 w-5" />
-              <span className="font-semibold text-gray-900">Formwise</span>
+            <Link
+              href="/"
+              className="flex font-semibold items-center fancy-gradient-text -m-1.5 p-1.5"
+            >
+              <Zap className="h-5 w-5 mr-1" />
+              Form<span className="font-bold">wise</span>
             </Link>
           </div>
 
           <nav className="flex items-center gap-6">
-            <div className="hidden lg:flex lg:gap-x-12">
+            {/* <div className="hidden lg:flex lg:gap-x-12">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
@@ -86,11 +97,21 @@ export default function SiteHeader() {
                   {item.name}
                 </Link>
               ))}
-            </div>
-
-            <div className="hidden lg:flex">
-              <Link href="/login" className="text-sm font-semibold text-gray-900 hover:text-indigo-600">
-                Connexion →
+            </div> */}
+            <div className="hidden lg:flex gap-6 items-center">
+              <Link
+                href="/register/free-trial"
+                className="text-sm flex font-semibold text-white-700 hover:text-indigo-600"
+              >
+                <Button className="cursor-pointer">S&apos;inscrire</Button>
+              </Link>
+              <Link
+                href="/login"
+                className="text-sm flex font-semibold text-white-700 hover:text-indigo-600"
+              >
+                <Button className="cursor-pointer" variant={"outline"}>
+                  Se connecter
+                </Button>
               </Link>
             </div>
 

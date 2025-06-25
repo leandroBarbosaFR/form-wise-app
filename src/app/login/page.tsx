@@ -9,8 +9,10 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginForm />;
-    </Suspense>
+    <section style={{ height: "100vh" }}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LoginForm />
+      </Suspense>
+    </section>
   );
 }

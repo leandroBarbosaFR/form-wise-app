@@ -16,7 +16,7 @@ const navigation = {
   social: [
     {
       name: "Instagram",
-      href: "#",
+      href: "https://www.instagram.com/formwise.fr/",
       icon: (props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
@@ -45,7 +45,7 @@ export default function SiteFooter() {
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
-            <Link href="/" className="flex justify-center items-center gap-2">
+            <Link href="/" className="flex justify-start items-center gap-2">
               <Zap className="text-indigo-600" />
               <h1 className="text-xl font-bold text-white">Formwise</h1>
             </Link>

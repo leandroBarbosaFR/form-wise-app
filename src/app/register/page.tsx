@@ -7,5 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterPage() {
-  return <RegisterForm />;
+  return (
+    <section style={{ height: "100vh" }}>
+      <RegisterForm />
+    </section>
+  );
 }

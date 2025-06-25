@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
 import { Eye, EyeOff, Zap } from "lucide-react";
 import { toast } from "sonner";
-import Link from "next/link";
+
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectTrigger,
@@ -15,7 +18,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-export default function RegisterForm() {
+export default function RegisterPage() {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -77,172 +80,166 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8 pt-[200px] relative">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-      >
-        <div
-          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] 
-              -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr 
-              from-[#ff80b5] to-[#9089fc] opacity-30 
-              sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-        />
-      </div>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center items-center gap-2">
-          <Link href={"/"} className="flex justify-center items-center gap-2">
-            <Zap className="text-indigo-600" />
+    <div className="flex min-h-full flex-1">
+      {/* LEFT */}
+      <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="mx-auto w-full max-w-sm lg:w-96">
+          <Link href="/" className="flex justify-center items-center gap-2">
+            <Zap className="text-gray-900" />
             <h1 className="text-xl font-bold text-gray-900">Formwise</h1>
           </Link>
-        </div>
-        <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">
-          Créer un compte
-        </h2>
-      </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <Select
-              value={civility}
-              onValueChange={(value) => setCivility(value as "M." | "Mme")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Civilité" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="M.">M.</SelectItem>
-                <SelectItem value="Mme">Mme</SelectItem>
-              </SelectContent>
-            </Select>
-            <input
-              type="text"
-              placeholder="Prénom"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Nom"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-              required
-            />
-            <input
-              type="tel"
-              placeholder="Numéro de portable"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-              required
-            />
-            <input
-              type="email"
-              placeholder="Adresse e-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-              required
-            />
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Mot de passe"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 pr-10 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800"
-                aria-label="Afficher ou masquer le mot de passe"
-              >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
-            </div>
-            <Label htmlFor="schoolCode">
-              Code de l&apos;école (si fourni par le directeur)
-            </Label>
-            <input
-              type="text"
-              placeholder="Code de l’école (si reçu)"
-              value={schoolCode}
-              onChange={(e) => setSchoolCode(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-            />
-            <div className="flex gap-2 items-center">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={async () => {
-                  setSchoolCheck(null);
-                  const res = await fetch(`/api/check-code?code=${schoolCode}`);
-                  const result = await res.json();
-                  setSchoolCheck(result);
-                }}
-              >
-                Vérifier le code
-              </Button>
-              {schoolCheck?.valid && (
-                <p className="text-green-600 text-sm">
-                  École trouvée : {schoolCheck.name}
-                </p>
-              )}
-              {schoolCheck?.valid === false && (
-                <p className="text-red-600 text-sm">
-                  ❌ {schoolCheck.error || "Code invalide"}
-                </p>
-              )}
-            </div>
-            <input type="hidden" value="PARENT" readOnly name="role" />
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <Button
-              type="submit"
-              disabled={loading || (Boolean(schoolCode) && !schoolCheck?.valid)}
-              className="w-full cursor-pointer"
-            >
-              {loading ? "Chargement..." : "S’inscrire"}
-            </Button>
-          </form>
-
-          <p className="mt-10 text-center text-sm text-gray-500">
+          <h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900">
+            Créer un compte
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
             Vous avez déjà un compte ?{" "}
             <Link
               href="/login"
-              className="font-semibold text-indigo-600 hover:text-indigo-500"
+              className="font-semibold text-primary hover:underline"
             >
               Se connecter
             </Link>
           </p>
+
+          <form onSubmit={handleSubmit} className="mt-10 space-y-6">
+            <div className="space-y-2">
+              <Label>Civilité</Label>
+              <Select
+                value={civility}
+                onValueChange={(value) => setCivility(value as "M." | "Mme")}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Civilité" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="M.">M.</SelectItem>
+                  <SelectItem value="Mme">Mme</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Prénom</Label>
+              <Input
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Nom</Label>
+              <Input
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Numéro de portable</Label>
+              <Input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                type="tel"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Adresse e-mail</Label>
+              <Input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Mot de passe</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="schoolCode">Code de l&apos;école</Label>
+              <Input
+                id="schoolCode"
+                value={schoolCode}
+                onChange={(e) => setSchoolCode(e.target.value)}
+              />
+              <div className="flex gap-2 items-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    setSchoolCheck(null);
+                    const res = await fetch(
+                      `/api/check-code?code=${schoolCode}`
+                    );
+                    const result = await res.json();
+                    setSchoolCheck(result);
+                  }}
+                >
+                  Vérifier le code
+                </Button>
+                {schoolCheck?.valid && (
+                  <p className="text-green-600 text-sm">
+                    École trouvée : {schoolCheck.name}
+                  </p>
+                )}
+                {schoolCheck?.valid === false && (
+                  <p className="text-red-600 text-sm">
+                    {schoolCheck.error || "Code invalide"}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+
+            <Button
+              type="submit"
+              disabled={loading || (Boolean(schoolCode) && !schoolCheck?.valid)}
+              className="w-full"
+            >
+              {loading ? "Chargement..." : "S’inscrire"}
+            </Button>
+          </form>
         </div>
       </div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-      >
-        <div
-          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] 
-              -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 
-              sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-        />
+
+      {/* RIGHT */}
+      <div className="relative hidden w-0 flex-1 lg:block">
+        <div className="absolute inset-0 my-auto -m-2 flex items-center justify-center rounded-xl bg-white-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:rounded-2xl lg:p-4">
+          <Image
+            alt="Formwise illustration"
+            src="https://cdn.sanity.io/media-libraries/mllo1PEUbcwG/images/42483ea186e093dc722e37d638cf07d825273595-5114x2624.png"
+            width={1500}
+            height={1598}
+            className="rounded-md shadow-2xl ring-1 ring-gray-900/10 object-contain max-h-[90vh]"
+          />
+        </div>
       </div>
     </div>
   );

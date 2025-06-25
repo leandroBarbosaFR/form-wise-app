@@ -14,6 +14,7 @@ declare module "next-auth" {
       civility?: string | null;
       subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
       trialEndsAt?: string | null;
+      schoolCode?: string | null;
     };
   }
 
@@ -28,6 +29,7 @@ declare module "next-auth" {
     civility?: string | null;
     subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
     trialEndsAt?: string | null;
+    schoolCode?: string | null;
   }
 }
 
@@ -44,6 +46,7 @@ declare module "next-auth/jwt" {
       civility?: string | null;
       subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
       trialEndsAt?: string | null;
+      schoolCode?: string | null;
     };
   }
 }

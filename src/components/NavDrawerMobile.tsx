@@ -16,7 +16,7 @@ export default function NavDrawerMobile({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm">
       <div
-        className="fixed  w-full h-full bg-white shadow-xl p-6 z-50"
+        className="fixed w-full h-full bg-white shadow-xl p-6 z-50"
         style={{
           background: "linear-gradient(0deg, #DEE9EE 0%, #F3F7F9 100%)",
         }}

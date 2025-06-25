@@ -22,10 +22,14 @@ export default function SubjectForm() {
   const [selectedClassId, setSelectedClassId] = useState<string>("");
   const [subjectName, setSubjectName] = useState("");
 
+  const loadClasses = async () => {
+    const res = await fetch("/api/classes");
+    const data = await res.json();
+    setClasses(data.classes || []);
+  };
+
   useEffect(() => {
-    fetch("/api/classes")
-      .then((res) => res.json())
-      .then((data) => setClasses(data.classes));
+    loadClasses();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +44,8 @@ export default function SubjectForm() {
 
     setSubjectName("");
     setSelectedClassId("");
+
+    await loadClasses(); // 🔁 mise à jour propre ici
   };
 
   return (

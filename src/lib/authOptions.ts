@@ -20,6 +20,7 @@ interface AppUser {
   civility?: string | null;
   subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
   trialEndsAt?: string | null;
+  schoolCode?: string | null;
 }
 
 interface AppToken extends JWT {
@@ -49,7 +50,10 @@ export const authOptions: AuthOptions = {
           where: { email: credentials.email },
           include: { tenant: true },
         });
-
+        console.log(
+          "📦 user.tenant.schoolCode from authorize:",
+          user?.tenant?.schoolCode
+        );
         if (!user || !user.password) return null;
 
         const isValid = await bcrypt.compare(
@@ -64,10 +68,13 @@ export const authOptions: AuthOptions = {
           role: user.role,
           phone: user.phone ?? undefined,
           tenantId: user.tenantId!,
-          rememberMe: credentials.rememberMe === "true",
+          rememberMe:
+            credentials.rememberMe === "true" ||
+            credentials.rememberMe === "on",
           firstName: user.firstName ?? undefined,
           lastName: user.lastName ?? undefined,
           civility: user.civility ?? undefined,
+          schoolCode: user.tenant?.schoolCode ?? null,
           subscriptionStatus: user.tenant?.subscriptionStatus ?? "FREE_TRIAL",
           trialEndsAt: user.tenant?.trialEndsAt?.toISOString() ?? null,
         } as AppUser;
@@ -79,32 +86,31 @@ export const authOptions: AuthOptions = {
       console.log("➡️ signIn callback:", user?.email);
       return true;
     },
+
     async jwt({ token, user, trigger }) {
+      const typedToken = token as AppToken;
+
       console.log("🔥 JWT callback triggered with:", {
         trigger,
         hasUser: !!user,
-        tokenUserId: (token as AppToken).user?.id,
+        tokenUserId: typedToken.user?.id,
       });
 
-      const typedToken = token as AppToken;
-
-      // Première connexion
+      // ➤ Première connexion
       if (user) {
         console.log("👤 New user login detected");
         typedToken.user = user as AppUser;
         typedToken.rememberMe = (user as AppUser).rememberMe ?? true;
 
-        // Si l'utilisateur n'a pas coché "se souvenir de moi"
         if (!typedToken.rememberMe) {
-          typedToken.exp = Math.floor(Date.now() / 1000) + 4 * 60 * 60; // 4h
+          typedToken.exp = Math.floor(Date.now() / 1000) + 4 * 60 * 60;
         }
       }
 
-      // ALWAYS refresh tenant data when update is triggered AND we have an existing user token
-      if (trigger === "update" && typedToken.user?.tenantId) {
+      // ➤ Rafraîchissement manuel ou automatique
+      if ((trigger === "update" || !user) && typedToken.user?.tenantId) {
         console.log(
-          "🔄 UPDATE triggered - Refreshing tenant data for:",
-          typedToken.user.tenantId
+          "🔄 Trigger is 'update' or user is undefined → refresh tenant data"
         );
 
         try {
@@ -120,26 +126,17 @@ export const authOptions: AuthOptions = {
               ? (status as AppUser["subscriptionStatus"])
               : "FREE_TRIAL";
 
-            console.log("🔍 Database status:", status);
-            console.log(
-              "🔍 Current token status:",
-              typedToken.user.subscriptionStatus
-            );
-            console.log("🔍 New status:", newStatus);
+            typedToken.user.subscriptionStatus = newStatus;
+            typedToken.user.trialEndsAt =
+              tenant.trialEndsAt?.toISOString() ?? null;
+            typedToken.user.schoolCode = tenant.schoolCode ?? null;
 
-            // Force update the token
-            typedToken.user = {
-              ...typedToken.user,
+            console.log("✅ Token refreshed from DB:", {
+              tenantId: tenant.id,
               subscriptionStatus: newStatus,
-              trialEndsAt: tenant.trialEndsAt?.toISOString() ?? null,
-            };
-
-            console.log(
-              "✅ Token updated with new subscription status:",
-              typedToken.user.subscriptionStatus
-            );
-          } else {
-            console.warn("⚠️ Tenant not found in database");
+              trialEndsAt: tenant.trialEndsAt,
+              schoolCode: tenant.schoolCode,
+            });
           }
         } catch (error) {
           console.error("❌ Error refreshing tenant data:", error);
@@ -148,6 +145,7 @@ export const authOptions: AuthOptions = {
 
       return typedToken;
     },
+
     session({ session, token }) {
       const user = (token as AppToken).user;
 
@@ -163,6 +161,10 @@ export const authOptions: AuthOptions = {
         session.user.subscriptionStatus =
           user.subscriptionStatus ?? "FREE_TRIAL";
         session.user.trialEndsAt = user.trialEndsAt ?? null;
+        session.user.schoolCode = user.schoolCode ?? null;
+
+        console.log("📦 Final session user:", session.user);
+        console.log("📦 Final session schoolCode:", user.schoolCode);
       }
 
       return session;
