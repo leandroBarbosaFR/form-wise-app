@@ -168,7 +168,7 @@ model Tenant {
   phone                String?
   address              String?
   Notification         Notification[]
-  schoolCode           String?         @unique // ex: ABC123
+  schoolCode           String          @unique
   InvitedParent        InvitedParent[]
   subscriptionStatus   String? // ex: "ACTIVE", "TRIAL", "EXPIRED"
   stripeSubscriptionId String?

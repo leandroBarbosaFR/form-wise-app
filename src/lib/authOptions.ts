@@ -13,12 +13,11 @@ interface AppUser {
   email: string;
   role: UserRole;
   phone: string;
+  tenantId: string;
   rememberMe?: boolean;
   firstName?: string;
   lastName?: string;
   civility?: string | null;
-  tenantId: string;
-
   subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
   trialEndsAt?: string | null;
 }
@@ -46,100 +45,126 @@ export const authOptions: AuthOptions = {
       authorize: async (credentials) => {
         if (!credentials?.email || !credentials?.password) return null;
 
-        try {
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-            include: { tenant: true },
-          });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+          include: { tenant: true },
+        });
 
-          if (!user || !user.password) return null;
+        if (!user || !user.password) return null;
 
-          const isValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-          if (!isValid) return null;
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+        if (!isValid) return null;
 
-          return {
-            id: user.id,
-            email: user.email,
-            role: user.role,
-            tenantId: user.tenantId!,
-            rememberMe: credentials.rememberMe === "true",
-            firstName: user.firstName ?? undefined,
-            lastName: user.lastName ?? undefined,
-            civility: user.civility ?? undefined,
-            phone: user.phone ?? undefined,
-            subscriptionStatus: user.tenant?.subscriptionStatus ?? "FREE_TRIAL",
-            trialEndsAt: user.tenant?.trialEndsAt?.toISOString() ?? null,
-          } as AppUser;
-        } catch (error) {
-          console.error("❌ Erreur dans authorize:", error);
-          return null;
-        }
+        return {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          phone: user.phone ?? undefined,
+          tenantId: user.tenantId!,
+          rememberMe: credentials.rememberMe === "true",
+          firstName: user.firstName ?? undefined,
+          lastName: user.lastName ?? undefined,
+          civility: user.civility ?? undefined,
+          subscriptionStatus: user.tenant?.subscriptionStatus ?? "FREE_TRIAL",
+          trialEndsAt: user.tenant?.trialEndsAt?.toISOString() ?? null,
+        } as AppUser;
       },
     }),
   ],
   callbacks: {
     async signIn({ user }) {
-      console.log("➡️ signIn callback, user:", user);
+      console.log("➡️ signIn callback:", user?.email);
       return true;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger }) {
+      console.log("🔥 JWT callback triggered with:", {
+        trigger,
+        hasUser: !!user,
+        tokenUserId: (token as AppToken).user?.id,
+      });
+
       const typedToken = token as AppToken;
 
-      // Initial sign in
+      // Première connexion
       if (user) {
+        console.log("👤 New user login detected");
         typedToken.user = user as AppUser;
         typedToken.rememberMe = (user as AppUser).rememberMe ?? true;
+
+        // Si l'utilisateur n'a pas coché "se souvenir de moi"
         if (!typedToken.rememberMe) {
-          typedToken.exp = Math.floor(Date.now() / 1000) + 60 * 60 * 4;
+          typedToken.exp = Math.floor(Date.now() / 1000) + 4 * 60 * 60; // 4h
         }
       }
 
-      // ✅ Mise à jour après paiement
+      // ALWAYS refresh tenant data when update is triggered AND we have an existing user token
       if (trigger === "update" && typedToken.user?.tenantId) {
-        const tenant = await prisma.tenant.findUnique({
-          where: { id: typedToken.user.tenantId },
-        });
+        console.log(
+          "🔄 UPDATE triggered - Refreshing tenant data for:",
+          typedToken.user.tenantId
+        );
 
-        const isValidStatus = (
-          status: string
-        ): status is "ACTIVE" | "FREE_TRIAL" | "EXPIRED" =>
-          ["ACTIVE", "FREE_TRIAL", "EXPIRED"].includes(status);
+        try {
+          const tenant = await prisma.tenant.findUnique({
+            where: { id: typedToken.user.tenantId },
+          });
 
-        if (tenant) {
-          const status = tenant.subscriptionStatus;
+          if (tenant) {
+            const validStatuses = ["ACTIVE", "FREE_TRIAL", "EXPIRED"];
+            const status = tenant.subscriptionStatus ?? "";
 
-          if (status && isValidStatus(status)) {
-            typedToken.user.subscriptionStatus = status;
+            const newStatus = validStatuses.includes(status)
+              ? (status as AppUser["subscriptionStatus"])
+              : "FREE_TRIAL";
+
+            console.log("🔍 Database status:", status);
+            console.log(
+              "🔍 Current token status:",
+              typedToken.user.subscriptionStatus
+            );
+            console.log("🔍 New status:", newStatus);
+
+            // Force update the token
+            typedToken.user = {
+              ...typedToken.user,
+              subscriptionStatus: newStatus,
+              trialEndsAt: tenant.trialEndsAt?.toISOString() ?? null,
+            };
+
+            console.log(
+              "✅ Token updated with new subscription status:",
+              typedToken.user.subscriptionStatus
+            );
           } else {
-            typedToken.user.subscriptionStatus = "FREE_TRIAL";
+            console.warn("⚠️ Tenant not found in database");
           }
-
-          typedToken.user.trialEndsAt =
-            tenant.trialEndsAt?.toISOString() ?? null;
+        } catch (error) {
+          console.error("❌ Error refreshing tenant data:", error);
         }
       }
 
       return typedToken;
     },
-
     session({ session, token }) {
       const user = (token as AppToken).user;
+
       if (user && session.user) {
         session.user.id = user.id;
         session.user.email = user.email;
         session.user.role = user.role;
-        session.user.firstName = user.firstName;
-        session.user.lastName = user.lastName;
         session.user.phone = user.phone;
         session.user.civility = user.civility;
+        session.user.firstName = user.firstName;
+        session.user.lastName = user.lastName;
         session.user.tenantId = user.tenantId;
-        session.user.subscriptionStatus = user.subscriptionStatus;
-        session.user.trialEndsAt = user.trialEndsAt;
+        session.user.subscriptionStatus =
+          user.subscriptionStatus ?? "FREE_TRIAL";
+        session.user.trialEndsAt = user.trialEndsAt ?? null;
       }
+
       return session;
     },
   },

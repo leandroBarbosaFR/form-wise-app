@@ -3,6 +3,7 @@ import { prisma } from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { sendEmailWithTempPassword } from "../../../../lib/email";
 import { addDays } from "date-fns";
+import { nanoid } from "nanoid";
 
 export async function POST(req: Request) {
   console.log("🔵 API /register/free-trial called");
@@ -30,6 +31,8 @@ export async function POST(req: Request) {
     const tempPassword = Math.random().toString(36).slice(-10);
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
+    const schoolCode = nanoid(6).toUpperCase();
+
     const tenant = await prisma.tenant.create({
       data: {
         name: schoolName,
@@ -37,6 +40,7 @@ export async function POST(req: Request) {
         address,
         status: "TRIAL",
         trialEndsAt,
+        schoolCode,
       },
     });
 

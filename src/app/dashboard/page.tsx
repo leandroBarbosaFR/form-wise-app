@@ -1,17 +1,28 @@
-import { Suspense } from "react";
-import DashboardSuccessDialog from "../../components/DashboardSuccessDialog";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
-  return (
-    <>
-      <Suspense fallback={null}>
-        <DashboardSuccessDialog />
-      </Suspense>
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-      <div className="p-6">
-        {/* Le contenu réel de ton dashboard ici */}
-        <h1>Bienvenue sur le Dashboard</h1>
-      </div>
-    </>
-  );
+  useEffect(() => {
+    if (status !== "authenticated") return;
+
+    const role = session.user?.role;
+
+    if (role === "SUPER_ADMIN") {
+      router.replace("/admin/dashboard");
+    } else if (role === "DIRECTOR") {
+      router.replace("/dashboard/director");
+    } else if (role === "TEACHER") {
+      router.replace("/dashboard/teacher");
+    } else {
+      router.replace("/dashboard/parent");
+    }
+  }, [status, session, router]);
+
+  return null;
 }

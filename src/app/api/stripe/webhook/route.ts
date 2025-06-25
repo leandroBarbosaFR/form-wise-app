@@ -20,21 +20,17 @@ export async function POST(req: NextRequest) {
       console.error("❌ Webhook signature error:", err.message);
       return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 });
     }
-
     return new NextResponse("Webhook Error", { status: 400 });
   }
 
   console.log(`🎯 Stripe Event Received: ${event.type}`);
 
-  // Cas important : le paiement est validé
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    // 🧠 Important : on log tout ce que Stripe t'envoie
     console.log("🧾 Stripe session metadata:", session.metadata);
     console.log("🆔 Subscription ID:", session.subscription);
     console.log("👤 Customer:", session.customer);
-
-    console.log("🎯 SESSION OBJECT:", session); // 👈 Ajoute ça !
+    console.log("🎯 SESSION OBJECT:", session);
 
     const tenantId = session.metadata?.tenantId;
     const subscriptionId = session.subscription as string;
@@ -49,6 +45,7 @@ export async function POST(req: NextRequest) {
       data: {
         subscriptionStatus: "ACTIVE",
         stripeSubscriptionId: subscriptionId,
+        trialEndsAt: null, // <- reset trial si besoin
       },
     });
 

@@ -65,6 +65,26 @@ export async function POST(req: Request) {
       );
     }
 
+    // 🔒 Vérifie que le parent a bien été invité
+    const invited = await prisma.invitedParent.findFirst({
+      where: {
+        email,
+        tenantId: tenant.id,
+        used: false,
+      },
+    });
+
+    if (!invited) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Aucune invitation valide trouvée pour cet email et cette école.",
+        },
+        { status: 401 }
+      );
+    }
+
     // Hash du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -81,17 +101,11 @@ export async function POST(req: Request) {
       },
     });
 
-    const invited = await prisma.invitedParent.findFirst({
-      where: { email, tenantId: tenant.id },
+    // ✅ Marque l'invitation comme utilisée
+    await prisma.invitedParent.update({
+      where: { id: invited.id },
+      data: { used: true, firstName },
     });
-
-    if (invited) {
-      console.log("📌 Mise à jour invité parent...");
-      await prisma.invitedParent.updateMany({
-        where: { email, tenantId: tenant.id },
-        data: { used: true, firstName },
-      });
-    }
 
     // Envoi de l'email de bienvenue
     await resend.emails.send({

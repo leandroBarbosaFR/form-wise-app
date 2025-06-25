@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?canceled=true`,
       metadata: {
-        tenantId: tenant.id,
+        tenantId: tenant.id, // ✅ CORRECT
       },
     });
 

@@ -13,6 +13,7 @@ type Tenant = {
   createdAt: string;
   plan: string;
   subscriptionStatus?: "FREE_TRIAL" | "ACTIVE" | "EXPIRED";
+  schoolCode: string;
   users: {
     firstName: string;
     lastName: string;
@@ -79,7 +80,7 @@ export default function AdminTenantList() {
             {tenants.map((tenant: Tenant) => (
               <tr key={tenant.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-gray-600 font-medium">
-                  {tenant.uniqueNumber}
+                  {tenant.schoolCode}
                 </td>
                 <td className="px-4 py-3">{tenant.name}</td>
                 <td className="px-4 py-3">
