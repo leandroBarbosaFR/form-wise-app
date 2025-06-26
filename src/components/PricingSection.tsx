@@ -28,7 +28,7 @@ const tiers = [
     name: "Annuel",
     id: "tier-annuel",
     href: "/contact",
-    priceMonthly: "1290",
+    priceMonthly: "1290€",
     billingCycle: "an",
     description:
       "2 mois offert + services exclusifs pour les structures engagées.",

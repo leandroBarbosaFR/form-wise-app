@@ -10,6 +10,8 @@ export default function ConditionalBanner() {
   const isDashboard =
     pathname?.startsWith("/dashboard") ||
     pathname?.startsWith("/app") ||
+    pathname?.startsWith("/register") ||
+    pathname?.startsWith("/login") ||
     pathname?.startsWith("/admin");
 
   if (isDashboard) return null;

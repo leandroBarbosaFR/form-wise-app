@@ -8,7 +8,6 @@ import type { Metadata } from "next";
 import ConditionalFooter from "components/ConditionalFooter";
 import ConditionalHeader from "components/ConditionalHeader";
 import ConditionalBanner from "components/ConditionalBanner";
-import ConditionalFooterPublic from "components/ConditionalFooterPublic";
 
 const geistSans = Inter({
   variable: "--font-geist-sans",
@@ -41,7 +40,6 @@ export default async function RootLayout({
           <main className="flex-1">{children}</main>
         </AuthProvider>
         <Toaster position="top-center" richColors />
-        <ConditionalFooterPublic />
         <ConditionalFooter />
       </body>
     </html>
