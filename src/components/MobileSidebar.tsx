@@ -207,27 +207,36 @@ export default function MobileSidebar({
   const sections = getSections(role);
 
   return (
-    <div className="fixed top-4 right-4 z-50 md:hidden p-4">
+    <div className="fixed top-4 right-4 z-50 md:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" className="cursor-pointer">
             ☰ Menu
           </Button>
         </SheetTrigger>
-        <SheetContent className="p-4" side="left">
-          <SheetTitle className="text-lg font-semibold mb-4">Menu</SheetTitle>
-          <div className="flex flex-col gap-2 mt-4">
-            {sections.map((section) => (
-              <Button
-                key={section.key}
-                variant={activeSection === section.key ? "default" : "ghost"}
-                onClick={() => setActiveSection(section.key)}
-                className="flex items-center justify-start gap-2 w-full px-4 py-2 text-sm cursor-pointer"
-              >
-                {section.icon}
-                <span>{section.label}</span>
-              </Button>
-            ))}
+        <SheetContent className="p-4 pt-6 pr-2 h-screen" side="left">
+          <div className="flex flex-col h-full">
+            <SheetTitle className="text-lg font-semibold mb-4 px-2">
+              Menu
+            </SheetTitle>
+            <div className="flex-1 overflow-y-auto pr-1">
+              <div className="flex flex-col gap-2">
+                {sections.map((section) => (
+                  <Button
+                    key={section.key}
+                    variant={
+                      activeSection === section.key ? "default" : "ghost"
+                    }
+                    onClick={() => setActiveSection(section.key)}
+                    className="flex items-center justify-start gap-2 w-full px-4 py-2 text-sm cursor-pointer"
+                  >
+                    {section.icon}
+                    <span>{section.label}</span>
+                  </Button>
+                ))}
+              </div>
+              <div className="pointer-events-none absolute bottom-8 left-0 w-full h-20 bg-gradient-to-t from-white/90 via-white/70 to-transparent" />
+            </div>
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
