@@ -7,7 +7,6 @@ import { resend } from "../../../lib/resend";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    console.log("📦 Données reçues /api/register:", body);
 
     const {
       email,

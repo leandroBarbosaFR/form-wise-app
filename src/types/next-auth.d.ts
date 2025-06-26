@@ -6,7 +6,7 @@ declare module "next-auth" {
     user: {
       id: string;
       email: string;
-      role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN";
+      role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
       tenantId: string;
       firstName?: string;
       lastName?: string;
@@ -15,13 +15,15 @@ declare module "next-auth" {
       subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
       trialEndsAt?: string | null;
       schoolCode?: string | null;
+      billingPlan?: string;
     };
   }
 
   interface User extends DefaultUser {
     id: string;
     email: string;
-    role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN";
+    role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
+    tenantId: string;
     tenantId: string;
     firstName?: string;
     lastName?: string;
@@ -30,6 +32,7 @@ declare module "next-auth" {
     subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
     trialEndsAt?: string | null;
     schoolCode?: string | null;
+    billingPlan?: string;
   }
 }
 
@@ -38,7 +41,8 @@ declare module "next-auth/jwt" {
     user?: {
       id: string;
       email: string;
-      role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN";
+      role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
+      tenantId: string;
       tenantId: string;
       firstName?: string;
       lastName?: string;
@@ -47,6 +51,7 @@ declare module "next-auth/jwt" {
       subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
       trialEndsAt?: string | null;
       schoolCode?: string | null;
+      billingPlan?: string;
     };
   }
 }

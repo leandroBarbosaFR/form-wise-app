@@ -1,9 +1,9 @@
 "use client";
+
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useState, useEffect } from "react";
 import { DashboardSection } from "../types/types";
-
 import { useMediaQuery } from "../app/hooks/useMediaQuery";
 
 import Sidebar from "./Sidebar";
@@ -25,12 +25,43 @@ import DirectorDocumentList from "./DirectorDocumentList";
 import AccountSettings from "./AccountSettings";
 import InviteParentsPage from "../app/dashboard/director/invite-parents/page";
 import { InvitedParentList } from "./InvitedParentList";
+import StaffForm from "./StaffForm";
+import InvitedStaffList from "./InvitedStaffList";
+
+export type InvitedStaff = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  roleLabel: string;
+  createdAt: string;
+  accepted: boolean;
+};
 
 export default function DirectorDashboardContent() {
   const { data: session, status } = useSession();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [activeSection, setActiveSection] =
     useState<DashboardSection>("schoolYear");
+  const [invitedStaffList, setInvitedStaffList] = useState<InvitedStaff[]>([]);
+
+  // Récupérer les staff invités
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const res = await fetch("/api/invited-staff");
+        const data = await res.json();
+        setInvitedStaffList(data.staff || []);
+      } catch (error) {
+        console.error("Erreur lors du chargement du staff invité :", error);
+      }
+    };
+
+    if (activeSection === "inviteStaff") {
+      fetchStaff();
+    }
+  }, [activeSection]);
 
   // Charger depuis localStorage
   useEffect(() => {
@@ -73,37 +104,52 @@ export default function DirectorDashboardContent() {
             <SchoolYearList />
           </>
         )}
+
         {activeSection === "classes" && (
           <>
             <ClassForm onCreated={() => location.reload()} />
             <ClassList />
           </>
         )}
+
         {activeSection === "subjects" && (
-          <>
-            <div className="flex flex-col gap-4">
-              <SubjectForm />
-              <SubjectList />
-            </div>
-          </>
+          <div className="flex flex-col gap-4">
+            <SubjectForm />
+            <SubjectList />
+          </div>
         )}
+
         {activeSection === "teachers" && <TeacherList />}
+
         {activeSection === "notification" && (
           <>
             <NotificationForm onSent={() => location.reload()} />
             <DirectorNotificationList />
           </>
         )}
+
         {activeSection === "eleves" && <StudentListWithFilter />}
         {activeSection === "documents" && <DirectorDocumentList />}
         {activeSection === "pendingStudents" && <PendingStudents />}
         {activeSection === "charts" && <DashboardCharts />}
+
         {activeSection === "inviteParent" && (
           <>
             <InviteParentsPage />
             <InvitedParentList />
           </>
         )}
+
+        {activeSection === "inviteStaff" && (
+          <>
+            <StaffForm />
+            <InvitedStaffList
+              staffList={invitedStaffList}
+              setStaffList={setInvitedStaffList}
+            />
+          </>
+        )}
+
         {activeSection === "settings" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Paramètres du compte</h2>

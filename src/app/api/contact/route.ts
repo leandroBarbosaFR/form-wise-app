@@ -71,9 +71,8 @@ export async function POST(req: Request) {
 
     // Parse and validate request body
     const body = await req.json();
-    console.log("📦 Données reçues dans le body :", body);
+
     const validatedData = contactSchema.parse(body);
-    console.log("✅ Données validées :", validatedData);
 
     const { name, email, phone, role, subject, message } = validatedData;
 

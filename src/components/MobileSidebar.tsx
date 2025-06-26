@@ -24,6 +24,7 @@ import {
   UserLock,
   Settings,
   LogOut,
+  UserPlus,
 } from "lucide-react";
 
 type Section = {
@@ -116,6 +117,11 @@ const getSections = (role?: string): Section[] => {
         label: "Inviter Parent",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        key: "inviteStaff",
+        label: "Inviter du personnels",
+        icon: <UserPlus className="w-4 h-4" />,
+      },
     ];
   }
 
@@ -159,6 +165,27 @@ const getSections = (role?: string): Section[] => {
       },
       {
         key: "settingsAdmin",
+        label: "Paramètres",
+        icon: <Settings className="w-4 h-4" />,
+      },
+    ];
+  }
+
+  if (role === "STAFF") {
+    return [
+      { key: "eleves", label: "Élèves", icon: <Users className="w-4 h-4" /> },
+      {
+        key: "notification",
+        label: "Notifications",
+        icon: <Bell className="w-4 h-4" />,
+      },
+      {
+        key: "documents",
+        label: "Documents",
+        icon: <FileText className="w-4 h-4" />,
+      },
+      {
+        key: "settings",
         label: "Paramètres",
         icon: <Settings className="w-4 h-4" />,
       },

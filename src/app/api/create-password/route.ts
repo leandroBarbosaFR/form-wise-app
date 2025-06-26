@@ -6,13 +6,6 @@ import bcrypt from "bcryptjs";
 export async function POST(req: Request) {
   try {
     const { token, password, classId, subjectId } = await req.json();
-    console.log("🔐 Reçu dans create-password:", {
-      token,
-      password,
-      classId,
-      subjectId,
-    });
-
     if (!token || !password) {
       return NextResponse.json(
         { success: false, error: "Champs requis manquants" },
@@ -39,7 +32,6 @@ export async function POST(req: Request) {
     }
 
     try {
-      console.log("📥 Création teacher pour:", user.email);
       await prisma.teacher.create({
         data: {
           userId: user.id,

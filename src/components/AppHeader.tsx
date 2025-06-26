@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { toast } from "sonner"; // Optional, if you're using Sonner
+import { toast } from "sonner";
 
 export default function AppHeader() {
   const { data: session, status, update } = useSession();
@@ -21,7 +21,7 @@ export default function AppHeader() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const schoolCode = session?.user?.schoolCode || null;
-  console.log("schoolCode", schoolCode);
+
   useEffect(() => {
     const success = searchParams.get("success");
 
@@ -30,15 +30,12 @@ export default function AppHeader() {
 
       (async () => {
         try {
-          console.log("🔄 Forcing session update after payment success...");
-          console.log("📊 Current session before update:", session);
-
           // Wait a bit to ensure webhook has processed
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
           // Force session refresh with trigger
           const result = await update({ trigger: "update" });
-          console.log("📊 Update result:", result);
+          console.log("Update result:", result);
 
           // Wait for the update to propagate
           await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -58,10 +55,6 @@ export default function AppHeader() {
     }
   }, [searchParams, update, router, isRefreshing, session]);
 
-  // Add debugging
-  console.log("🔍 Session data:", session);
-  console.log("🔍 Subscription status:", session?.user?.subscriptionStatus);
-
   if (status === "loading") return null;
 
   const firstName = session?.user?.firstName || "";
@@ -73,20 +66,26 @@ export default function AppHeader() {
     .join("")
     .toUpperCase();
 
+  const billingPlan = session?.user?.billingPlan || "MONTHLY";
   const subscriptionStatus = session?.user?.subscriptionStatus || "FREE_TRIAL";
   const trialEndsAt = session?.user?.trialEndsAt
     ? new Date(session.user.trialEndsAt)
     : null;
-
   const formattedDate = trialEndsAt
     ? format(trialEndsAt, "dd MMMM yyyy", { locale: fr })
     : null;
 
   const label =
     subscriptionStatus === "ACTIVE"
-      ? `Abonnement actif`
+      ? billingPlan === "MONTHLY"
+        ? formattedDate
+          ? `Mensuel – Renouvelle le ${formattedDate}`
+          : "Abonnement mensuel"
+        : formattedDate
+          ? `Annuel – Renouvelle le ${formattedDate}`
+          : "Abonnement annuel"
       : trialEndsAt
-        ? `Essai jusqu'au ${formattedDate}`
+        ? `Essai jusqu’au ${formattedDate}`
         : `Plan gratuit`;
 
   return (
@@ -95,19 +94,18 @@ export default function AppHeader() {
         <div className="bg-black text-white rounded-md p-2 text-xs font-bold">
           {initials}
         </div>
-
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-medium cursor-pointer">
             <div className="text-left">
               <div className="leading-none">{fullName}</div>
-              {session?.user?.role !== "SUPER_ADMIN" &&
-                session?.user?.role !== "TEACHER" &&
-                session?.user?.role !== "PARENT" && (
-                  <div className="text-xs text-muted-foreground">
-                    {label}
-                    {isRefreshing && " (mise à jour...)"}
-                  </div>
-                )}
+              {!["SUPER_ADMIN", "TEACHER", "PARENT", "STAFF"].includes(
+                session?.user?.role || ""
+              ) && (
+                <div className="text-xs text-muted-foreground">
+                  {label}
+                  {isRefreshing && " (mise à jour...)"}
+                </div>
+              )}
             </div>
             <ChevronDown className="w-4 h-4 ml-1" />
           </DropdownMenuTrigger>
@@ -132,7 +130,7 @@ export default function AppHeader() {
         </DropdownMenu>
       </div>
       {schoolCode && (
-        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+        <div className="hidden md:flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
           <span>Code établissement :</span>
           <span className="font-medium">{schoolCode}</span>
           <button
@@ -165,7 +163,9 @@ export default function AppHeader() {
           </button>
         </div>
       )}
-      <SupportButton />
+      <div className="hidden md:block">
+        <SupportButton />
+      </div>
     </header>
   );
 }

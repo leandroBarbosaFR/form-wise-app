@@ -9,7 +9,7 @@ export async function GET() {
       lookup_keys: ["formwise-monthly", "formwise-yearly"],
       expand: ["data.product"],
     });
-    console.log("📦 Stripe prices:", prices.data);
+    console.log("Stripe prices:", prices.data);
     const data = prices.data.map((price) => {
       const product = price.product as Stripe.Product;
 

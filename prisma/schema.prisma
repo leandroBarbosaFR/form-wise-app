@@ -27,6 +27,7 @@ model User {
   tenantId         String?
   tenant           Tenant?            @relation(fields: [tenantId], references: [id])
   address          String?
+  Staff            Staff[]
 }
 
 model Student {
@@ -172,6 +173,7 @@ model Tenant {
   InvitedParent        InvitedParent[]
   subscriptionStatus   String? // ex: "ACTIVE", "TRIAL", "EXPIRED"
   stripeSubscriptionId String?
+  staff                Staff[]
 }
 
 model InvitedParent {
@@ -182,6 +184,26 @@ model InvitedParent {
   tenantId  String
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
   firstName String?
+}
+
+model Staff {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  firstName   String
+  lastName    String
+  phone       String
+  roleLabel   String // ex: "Secrétaire", "Assistant administratif"
+  used        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  validatedAt DateTime?
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  schoolCode  String?
+  accepted    Boolean   @default(false)
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      String?
+
+  @@unique([email, tenantId])
 }
 
 enum BillingPlan {
@@ -195,6 +217,7 @@ enum Role {
   TEACHER
   DIRECTOR
   SUPER_ADMIN
+  STAFF
 }
 
 enum Civility {

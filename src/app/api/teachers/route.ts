@@ -29,7 +29,7 @@ export async function GET() {
       },
     });
 
-    console.log("📦 Professeurs trouvés:", teachers);
+    console.log("Professeurs trouvés:", teachers);
     return NextResponse.json({ teachers });
   } catch (error) {
     console.error("Erreur récupération enseignants :", error);

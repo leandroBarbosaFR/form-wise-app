@@ -19,6 +19,7 @@ interface AppUser {
   lastName?: string;
   civility?: string | null;
   subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
+  billingPlan?: string;
   trialEndsAt?: string | null;
   schoolCode?: string | null;
 }
@@ -50,10 +51,7 @@ export const authOptions: AuthOptions = {
           where: { email: credentials.email },
           include: { tenant: true },
         });
-        console.log(
-          "📦 user.tenant.schoolCode from authorize:",
-          user?.tenant?.schoolCode
-        );
+
         if (!user || !user.password) return null;
 
         const isValid = await bcrypt.compare(
@@ -76,6 +74,7 @@ export const authOptions: AuthOptions = {
           civility: user.civility ?? undefined,
           schoolCode: user.tenant?.schoolCode ?? null,
           subscriptionStatus: user.tenant?.subscriptionStatus ?? "FREE_TRIAL",
+          billingPlan: user.tenant?.billingPlan ?? "MONTHLY",
           trialEndsAt: user.tenant?.trialEndsAt?.toISOString() ?? null,
         } as AppUser;
       },
@@ -99,7 +98,23 @@ export const authOptions: AuthOptions = {
       // ➤ Première connexion
       if (user) {
         console.log("👤 New user login detected");
-        typedToken.user = user as AppUser;
+
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          include: { tenant: true },
+        });
+
+        if (dbUser?.tenant) {
+          typedToken.user = {
+            ...user,
+            billingPlan: dbUser.tenant.billingPlan ?? "MONTHLY",
+            subscriptionStatus:
+              dbUser.tenant.subscriptionStatus ?? "FREE_TRIAL",
+            trialEndsAt: dbUser.tenant.trialEndsAt?.toISOString() ?? null,
+            schoolCode: dbUser.tenant.schoolCode ?? null,
+          } as AppUser;
+        }
+
         typedToken.rememberMe = (user as AppUser).rememberMe ?? true;
 
         if (!typedToken.rememberMe) {
@@ -109,9 +124,7 @@ export const authOptions: AuthOptions = {
 
       // ➤ Rafraîchissement manuel ou automatique
       if ((trigger === "update" || !user) && typedToken.user?.tenantId) {
-        console.log(
-          "🔄 Trigger is 'update' or user is undefined → refresh tenant data"
-        );
+        console.log("🔄 Refresh tenant data from DB");
 
         try {
           const tenant = await prisma.tenant.findUnique({
@@ -120,13 +133,14 @@ export const authOptions: AuthOptions = {
 
           if (tenant) {
             const validStatuses = ["ACTIVE", "FREE_TRIAL", "EXPIRED"];
-            const status = tenant.subscriptionStatus ?? "";
-
-            const newStatus = validStatuses.includes(status)
-              ? (status as AppUser["subscriptionStatus"])
+            const newStatus = validStatuses.includes(
+              tenant.subscriptionStatus ?? ""
+            )
+              ? (tenant.subscriptionStatus as AppUser["subscriptionStatus"])
               : "FREE_TRIAL";
 
             typedToken.user.subscriptionStatus = newStatus;
+            typedToken.user.billingPlan = tenant.billingPlan ?? "MONTHLY";
             typedToken.user.trialEndsAt =
               tenant.trialEndsAt?.toISOString() ?? null;
             typedToken.user.schoolCode = tenant.schoolCode ?? null;
@@ -135,6 +149,7 @@ export const authOptions: AuthOptions = {
               tenantId: tenant.id,
               subscriptionStatus: newStatus,
               trialEndsAt: tenant.trialEndsAt,
+              billingPlan: tenant.billingPlan,
               schoolCode: tenant.schoolCode,
             });
           }
@@ -160,11 +175,11 @@ export const authOptions: AuthOptions = {
         session.user.tenantId = user.tenantId;
         session.user.subscriptionStatus =
           user.subscriptionStatus ?? "FREE_TRIAL";
+        session.user.billingPlan = user.billingPlan ?? "MONTHLY";
         session.user.trialEndsAt = user.trialEndsAt ?? null;
         session.user.schoolCode = user.schoolCode ?? null;
 
         console.log("📦 Final session user:", session.user);
-        console.log("📦 Final session schoolCode:", user.schoolCode);
       }
 
       return session;

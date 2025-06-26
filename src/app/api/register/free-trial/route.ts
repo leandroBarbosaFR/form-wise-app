@@ -6,10 +6,9 @@ import { addDays } from "date-fns";
 import { nanoid } from "nanoid";
 
 export async function POST(req: Request) {
-  console.log("🔵 API /register/free-trial called");
   try {
     const body = await req.json();
-    console.log("Received body:", body);
+
     const { firstName, lastName, schoolName, phone, address, email } = body;
 
     if (!email || !firstName || !lastName || !schoolName) {

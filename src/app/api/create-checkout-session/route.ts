@@ -11,6 +11,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (session.user.role !== "DIRECTOR") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await req.json();
     const selectedPlan: "monthly" | "yearly" = body.plan || "monthly";
 

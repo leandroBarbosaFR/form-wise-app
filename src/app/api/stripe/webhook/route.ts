@@ -23,15 +23,10 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Webhook Error", { status: 400 });
   }
 
-  console.log(`🎯 Stripe Event Received: ${event.type}`);
+  console.log(`Stripe Event Received: ${event.type}`);
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    console.log("🧾 Stripe session metadata:", session.metadata);
-    console.log("🆔 Subscription ID:", session.subscription);
-    console.log("👤 Customer:", session.customer);
-    console.log("🎯 SESSION OBJECT:", session);
-
     const tenantId = session.metadata?.tenantId;
     const subscriptionId = session.subscription as string;
 
@@ -40,16 +35,22 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Missing tenantId", { status: 400 });
     }
 
+    // Récupère la subscription pour avoir le plan
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const billingInterval =
+      subscription.items.data[0]?.price?.recurring?.interval;
+
+    const billingPlan = billingInterval === "year" ? "YEARLY" : "MONTHLY";
+
     await prisma.tenant.update({
       where: { id: tenantId },
       data: {
         subscriptionStatus: "ACTIVE",
+        billingPlan: billingPlan,
         stripeSubscriptionId: subscriptionId,
-        trialEndsAt: null, // <- reset trial si besoin
+        trialEndsAt: null,
       },
     });
-
-    console.log(`✅ Subscription activated for tenant ${tenantId}`);
   }
 
   return new NextResponse("OK", { status: 200 });

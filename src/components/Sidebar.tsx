@@ -16,6 +16,7 @@ import {
   FileText,
   UserLock,
   Settings,
+  UserPlus,
 } from "lucide-react";
 import { ParentNotification } from "../types/notification";
 
@@ -135,6 +136,13 @@ export default function Sidebar({
             setActiveSection={setActiveSectionAction}
             icon={<User className="w-4 h-4" />}
           />
+          <SidebarBtn
+            label="Inviter du personnels"
+            section="inviteStaff"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<UserPlus className="w-4 h-4" />}
+          />
         </>
       )}
       {role === "PARENT" && (
@@ -235,6 +243,31 @@ export default function Sidebar({
           <SidebarBtn
             label="settings"
             section="settingsAdmin"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Settings className="w-4 h-4" />}
+          />
+        </>
+      )}
+      {role === "STAFF" && (
+        <>
+          <SidebarBtn
+            label="Élèves"
+            section="eleves"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Users className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Notifications"
+            section="notification"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<Bell className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Paramètres"
+            section="settings"
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
             icon={<Settings className="w-4 h-4" />}
