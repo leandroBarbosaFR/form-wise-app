@@ -7,7 +7,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { DashboardSection } from "../types/types";
 import {
@@ -205,6 +205,26 @@ export default function MobileSidebar({
   const { data: session } = useSession();
   const role = session?.user?.role;
   const sections = getSections(role);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [hasScroll, setHasScroll] = useState(false);
+
+  useEffect(() => {
+    const checkScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollHeight, clientHeight } = scrollContainerRef.current;
+        setHasScroll(scrollHeight > clientHeight);
+      }
+    };
+
+    checkScroll();
+
+    // Check scroll on resize
+    window.addEventListener("resize", checkScroll);
+
+    return () => {
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [sections]);
 
   return (
     <div className="fixed top-4 right-4 z-50 md:hidden">
@@ -219,7 +239,10 @@ export default function MobileSidebar({
             <SheetTitle className="text-lg font-semibold mb-4 px-2">
               Menu
             </SheetTitle>
-            <div className="flex-1 overflow-y-auto pr-1">
+            <div
+              className="flex-1 overflow-y-auto pr-1 relative"
+              ref={scrollContainerRef}
+            >
               <div className="flex flex-col gap-2">
                 {sections.map((section) => (
                   <Button
@@ -235,10 +258,12 @@ export default function MobileSidebar({
                   </Button>
                 ))}
               </div>
-              <div
-                style={{ bottom: "70px" }}
-                className="pointer-events-none absolute left-0 w-full h-20 bg-gradient-to-t from-white/90 via-white/70 to-transparent"
-              />
+              {hasScroll && (
+                <div
+                  style={{ bottom: "70px" }}
+                  className="pointer-events-none absolute left-0 w-full h-20 bg-gradient-to-t from-white/90 via-white/70 to-transparent"
+                />
+              )}
             </div>
             <Button
               variant="outline"
