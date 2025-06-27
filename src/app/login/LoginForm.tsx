@@ -47,6 +47,7 @@ export default function LoginPage() {
         break;
       case "PARENT":
         router.push("/dashboard/parent");
+        break;
       case "STAFF":
         router.push("/dashboard/staffs");
         break;

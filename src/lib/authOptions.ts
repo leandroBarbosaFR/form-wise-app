@@ -26,6 +26,7 @@ interface AppUser {
 
 interface AppToken extends JWT {
   user?: AppUser;
+  role?: UserRole;
   rememberMe?: boolean;
 }
 
@@ -95,7 +96,7 @@ export const authOptions: AuthOptions = {
       return true;
     },
 
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
       const typedToken = token as AppToken;
 
       if (user) {
@@ -107,7 +108,7 @@ export const authOptions: AuthOptions = {
         });
 
         if (dbUser) {
-          typedToken.user = {
+          const userPayload: AppUser = {
             id: dbUser.id,
             email: dbUser.email,
             role: dbUser.role as UserRole,
@@ -125,6 +126,9 @@ export const authOptions: AuthOptions = {
             billingPlan: dbUser.tenant?.billingPlan ?? "MONTHLY",
             trialEndsAt: dbUser.tenant?.trialEndsAt?.toISOString() ?? null,
           };
+
+          typedToken.user = userPayload;
+          typedToken.role = dbUser.role;
         }
 
         if (!typedToken.rememberMe) {
@@ -132,37 +136,18 @@ export const authOptions: AuthOptions = {
         }
       }
 
-      // Refresh tenant data if needed
-      if ((trigger === "update" || !user) && typedToken.user?.tenantId) {
-        try {
-          const tenant = await prisma.tenant.findUnique({
-            where: { id: typedToken.user.tenantId },
-          });
-
-          if (tenant) {
-            const validStatuses = ["ACTIVE", "FREE_TRIAL", "EXPIRED"];
-            const newStatus = validStatuses.includes(
-              tenant.subscriptionStatus ?? ""
-            )
-              ? (tenant.subscriptionStatus as AppUser["subscriptionStatus"])
-              : "FREE_TRIAL";
-
-            typedToken.user.subscriptionStatus = newStatus;
-            typedToken.user.billingPlan = tenant.billingPlan ?? "MONTHLY";
-            typedToken.user.trialEndsAt =
-              tenant.trialEndsAt?.toISOString() ?? null;
-            typedToken.user.schoolCode = tenant.schoolCode ?? null;
-          }
-        } catch (error) {
-          console.error("❌ Error refreshing tenant data:", error);
-        }
+      // ✅ Fallback: garder l'ancien user si non connecté à nouveau
+      if (!typedToken.user && (token as AppToken).user) {
+        typedToken.user = (token as AppToken).user;
+        typedToken.role = (token as AppToken).role ?? typedToken?.user?.role;
       }
 
       return typedToken;
     },
 
     session({ session, token }) {
-      const user = (token as AppToken).user;
+      const appToken = token as AppToken;
+      const user = appToken.user;
 
       if (user && session.user) {
         session.user.id = user.id;
