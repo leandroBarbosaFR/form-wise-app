@@ -45,7 +45,7 @@ export default function StaffForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mb-8">
       <div>
         <Label>Prénom</Label>
         <Input
