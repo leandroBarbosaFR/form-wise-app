@@ -51,6 +51,7 @@ export const authOptions: AuthOptions = {
           where: { email: credentials.email },
           include: { tenant: true },
         });
+
         const allowedRoles: UserRole[] = [
           "PARENT",
           "TEACHER",
@@ -59,11 +60,8 @@ export const authOptions: AuthOptions = {
           "SUPER_ADMIN",
         ];
 
-        if (!user || !allowedRoles.includes(user.role)) {
-          return null;
-        }
-
-        if (!user || !user.password) return null;
+        if (!user || !allowedRoles.includes(user.role)) return null;
+        if (!user.password) return null;
 
         const isValid = await bcrypt.compare(
           credentials.password,
@@ -75,14 +73,14 @@ export const authOptions: AuthOptions = {
           id: user.id,
           email: user.email,
           role: user.role,
-          phone: user.phone ?? undefined,
+          phone: user.phone ?? "",
           tenantId: user.tenantId!,
           rememberMe:
             credentials.rememberMe === "true" ||
             credentials.rememberMe === "on",
-          firstName: user.firstName ?? undefined,
-          lastName: user.lastName ?? undefined,
-          civility: user.civility ?? undefined,
+          firstName: user.firstName ?? "",
+          lastName: user.lastName ?? "",
+          civility: user.civility ?? null,
           schoolCode: user.tenant?.schoolCode ?? null,
           subscriptionStatus: user.tenant?.subscriptionStatus ?? "FREE_TRIAL",
           billingPlan: user.tenant?.billingPlan ?? "MONTHLY",
@@ -100,13 +98,6 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user, trigger }) {
       const typedToken = token as AppToken;
 
-      console.log("🔥 JWT callback triggered with:", {
-        trigger,
-        hasUser: !!user,
-        tokenUserId: typedToken.user?.id,
-      });
-
-      // ➤ Première connexion
       if (user) {
         console.log("👤 New user login detected");
 
@@ -115,28 +106,34 @@ export const authOptions: AuthOptions = {
           include: { tenant: true },
         });
 
-        if (dbUser?.tenant) {
+        if (dbUser) {
           typedToken.user = {
-            ...user,
-            billingPlan: dbUser.tenant.billingPlan ?? "MONTHLY",
+            id: dbUser.id,
+            email: dbUser.email,
+            role: dbUser.role as UserRole,
+            phone: dbUser.phone ?? "",
+            tenantId: dbUser.tenantId!,
+            rememberMe: (user as AppUser).rememberMe ?? true,
+            firstName: dbUser.firstName ?? "",
+            lastName: dbUser.lastName ?? "",
+            civility: dbUser.civility ?? null,
+            schoolCode: dbUser.tenant?.schoolCode ?? null,
             subscriptionStatus:
-              dbUser.tenant.subscriptionStatus ?? "FREE_TRIAL",
-            trialEndsAt: dbUser.tenant.trialEndsAt?.toISOString() ?? null,
-            schoolCode: dbUser.tenant.schoolCode ?? null,
-          } as AppUser;
+              (dbUser.tenant
+                ?.subscriptionStatus as AppUser["subscriptionStatus"]) ??
+              "FREE_TRIAL",
+            billingPlan: dbUser.tenant?.billingPlan ?? "MONTHLY",
+            trialEndsAt: dbUser.tenant?.trialEndsAt?.toISOString() ?? null,
+          };
         }
-
-        typedToken.rememberMe = (user as AppUser).rememberMe ?? true;
 
         if (!typedToken.rememberMe) {
           typedToken.exp = Math.floor(Date.now() / 1000) + 4 * 60 * 60;
         }
       }
 
-      // ➤ Rafraîchissement manuel ou automatique
+      // Refresh tenant data if needed
       if ((trigger === "update" || !user) && typedToken.user?.tenantId) {
-        console.log("🔄 Refresh tenant data from DB");
-
         try {
           const tenant = await prisma.tenant.findUnique({
             where: { id: typedToken.user.tenantId },
@@ -155,14 +152,6 @@ export const authOptions: AuthOptions = {
             typedToken.user.trialEndsAt =
               tenant.trialEndsAt?.toISOString() ?? null;
             typedToken.user.schoolCode = tenant.schoolCode ?? null;
-
-            console.log("✅ Token refreshed from DB:", {
-              tenantId: tenant.id,
-              subscriptionStatus: newStatus,
-              trialEndsAt: tenant.trialEndsAt,
-              billingPlan: tenant.billingPlan,
-              schoolCode: tenant.schoolCode,
-            });
           }
         } catch (error) {
           console.error("❌ Error refreshing tenant data:", error);
