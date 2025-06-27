@@ -59,7 +59,7 @@ export default function TeacherDashboardContent() {
       {isMobile ? (
         <MobileSidebar
           activeSection={activeSection}
-          setActiveSection={setActiveSection}
+          setActiveSectionAction={setActiveSection}
         />
       ) : (
         <Sidebar

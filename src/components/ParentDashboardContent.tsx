@@ -75,7 +75,7 @@ export default function ParentDashboardContent() {
       {isMobile ? (
         <MobileSidebar
           activeSection={activeSection}
-          setActiveSection={setActiveSection}
+          setActiveSectionAction={setActiveSection}
         />
       ) : (
         <Sidebar

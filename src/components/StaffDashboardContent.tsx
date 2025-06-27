@@ -41,7 +41,7 @@ export default function StaffDashboardContent() {
       {isMobile ? (
         <MobileSidebar
           activeSection={activeSection}
-          setActiveSection={setActiveSection}
+          setActiveSectionAction={setActiveSection}
         />
       ) : (
         <Sidebar

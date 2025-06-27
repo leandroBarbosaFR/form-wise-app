@@ -84,7 +84,7 @@ export default function DirectorDashboardContent() {
       {isMobile ? (
         <MobileSidebar
           activeSection={activeSection}
-          setActiveSection={setActiveSection}
+          setActiveSectionAction={setActiveSection}
         />
       ) : (
         <Sidebar
@@ -145,7 +145,7 @@ export default function DirectorDashboardContent() {
             <StaffForm />
             <InvitedStaffList
               staffList={invitedStaffList}
-              setStaffList={setInvitedStaffList}
+              setStaffListAction={setInvitedStaffList}
             />
           </>
         )}

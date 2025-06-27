@@ -38,7 +38,7 @@ export default function SuperAdminDashboardContent() {
       {isMobile ? (
         <MobileSidebar
           activeSection={activeSection}
-          setActiveSection={setActiveSection}
+          setActiveSectionAction={setActiveSection}
         />
       ) : (
         <Sidebar

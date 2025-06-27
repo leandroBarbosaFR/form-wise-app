@@ -197,10 +197,10 @@ const getSections = (role?: string): Section[] => {
 
 export default function MobileSidebar({
   activeSection,
-  setActiveSection,
+  setActiveSectionAction,
 }: {
   activeSection: DashboardSection;
-  setActiveSection: Dispatch<SetStateAction<DashboardSection>>;
+  setActiveSectionAction: Dispatch<SetStateAction<DashboardSection>>;
 }) {
   const { data: session } = useSession();
   const role = session?.user?.role;
@@ -250,7 +250,7 @@ export default function MobileSidebar({
                     variant={
                       activeSection === section.key ? "default" : "ghost"
                     }
-                    onClick={() => setActiveSection(section.key)}
+                    onClick={() => setActiveSectionAction(section.key)}
                     className="flex items-center justify-start gap-2 w-full px-4 py-2 text-sm cursor-pointer"
                   >
                     {section.icon}
