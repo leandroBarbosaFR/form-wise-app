@@ -58,11 +58,11 @@ export default function HeroSection() {
             </p>
             <div
               ref={buttonsRef}
-              className="mt-10 flex items-center justify-center gap-x-6"
+              className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-6"
             >
               <Link href="/register/free-trial">
-                <Button className="cursor-pointer">
-                  <Zap />
+                <Button className="cursor-pointer w-full sm:w-auto">
+                  <Zap className="mr-2 h-4 w-4" />
                   Profitez de 20 jours gratuitement
                 </Button>
               </Link>
@@ -70,7 +70,10 @@ export default function HeroSection() {
                 href="https://calendly.com/hello1367studio/30min"
                 target="_blank"
               >
-                <Button className="cursor-pointer" variant="outline">
+                <Button
+                  className="cursor-pointer w-full sm:w-auto"
+                  variant="outline"
+                >
                   Réserver une démo
                 </Button>
               </Link>
