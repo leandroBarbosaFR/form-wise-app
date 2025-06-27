@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import type { AuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 
-type UserRole = "PARENT" | "TEACHER" | "DIRECTOR";
+type UserRole = "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
 
 interface AppUser {
   id: string;
@@ -51,6 +51,17 @@ export const authOptions: AuthOptions = {
           where: { email: credentials.email },
           include: { tenant: true },
         });
+        const allowedRoles: UserRole[] = [
+          "PARENT",
+          "TEACHER",
+          "DIRECTOR",
+          "STAFF",
+          "SUPER_ADMIN",
+        ];
+
+        if (!user || !allowedRoles.includes(user.role)) {
+          return null;
+        }
 
         if (!user || !user.password) return null;
 

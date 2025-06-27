@@ -5,12 +5,14 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log("⏳ Seed started...");
+
   const existing = await prisma.user.findFirst({
     where: { role: "SUPER_ADMIN" },
   });
 
   if (existing) {
-    console.log("✅ Super admin already exists.");
+    console.log("✅ Super admin already exists:", existing.email);
     return;
   }
 
