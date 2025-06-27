@@ -235,7 +235,10 @@ export default function MobileSidebar({
                   </Button>
                 ))}
               </div>
-              <div className="pointer-events-none absolute bottom-8 left-0 w-full h-20 bg-gradient-to-t from-white/90 via-white/70 to-transparent" />
+              <div
+                style={{ bottom: "70px" }}
+                className="pointer-events-none absolute left-0 w-full h-20 bg-gradient-to-t from-white/90 via-white/70 to-transparent"
+              />
             </div>
             <Button
               variant="outline"
