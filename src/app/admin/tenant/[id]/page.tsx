@@ -2,6 +2,7 @@ import { prisma } from "../../../../lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
 import { redirect } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -10,8 +11,9 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Slash } from "lucide-react";
-import TenantDetailCard from "components/TenantDetailCard";
+import TenantDetailCard from "../../../../components/TenantDetailCard";
 
+// ✅ Interface correcte pour Next.js 15 - params est maintenant une Promise
 interface PageProps {
   params: Promise<{
     id: string;
@@ -19,12 +21,22 @@ interface PageProps {
 }
 
 export default async function TenantDetailPage({ params }: PageProps) {
+  // ✅ Récupération de la session
   const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "SUPER_ADMIN") {
+
+  console.log("🧠 SESSION DEBUG:", session);
+
+  if (!session) {
+    console.warn("🔒 Aucune session trouvée → redirection login");
     redirect("/login");
   }
 
-  // Await the params Promise in Next.js 15
+  if (session.user.role !== "SUPER_ADMIN") {
+    console.warn("⛔ Accès refusé : rôle ≠ SUPER_ADMIN → redirection login");
+    redirect("/login");
+  }
+
+  // ✅ Attendre la résolution des paramètres
   const { id } = await params;
 
   const tenant = await prisma.tenant.findUnique({
@@ -43,7 +55,7 @@ export default async function TenantDetailPage({ params }: PageProps) {
   });
 
   if (!tenant) {
-    return <div className="p-6">École introuvable.</div>;
+    return <div className="p-6">❌ École introuvable.</div>;
   }
 
   const schoolName = tenant.name;
@@ -65,6 +77,7 @@ export default async function TenantDetailPage({ params }: PageProps) {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+
       <TenantDetailCard tenant={tenant} />
     </div>
   );
