@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export default function CreatePasswordClient() {
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams?.get("token");
   const router = useRouter();
 
   const [password, setPassword] = useState("");

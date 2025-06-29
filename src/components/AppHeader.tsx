@@ -23,7 +23,7 @@ export default function AppHeader() {
   const schoolCode = session?.user?.schoolCode || null;
 
   useEffect(() => {
-    const success = searchParams.get("success");
+    const success = searchParams?.get("success") ?? null;
 
     if (success === "true" && !isRefreshing) {
       setIsRefreshing(true);
@@ -46,7 +46,7 @@ export default function AppHeader() {
           toast.error("Erreur lors de la mise à jour de la session");
         } finally {
           // Clean up URL
-          const newParams = new URLSearchParams(searchParams.toString());
+          const newParams = new URLSearchParams(searchParams?.toString());
           newParams.delete("success");
           router.replace(`?${newParams.toString()}`, { scroll: false });
           setIsRefreshing(false);

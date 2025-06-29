@@ -8,7 +8,7 @@ export default function RefreshSessionAfterPayment() {
 
   useEffect(() => {
     const url = new URL(window.location.href);
-    const isSuccess = url.searchParams.get("success");
+    const isSuccess = url.searchParams.get("success") ?? null;
 
     if (isSuccess) {
       update(); // Rafraîchir session avec nouvelles données Stripe

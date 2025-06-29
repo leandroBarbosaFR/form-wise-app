@@ -19,11 +19,11 @@ export default function DashboardSuccessDialog() {
   const { update } = useSession();
 
   useEffect(() => {
-    const success = searchParams.get("success");
+    const success = searchParams?.get("success");
     if (success === "true") {
       setOpen(true);
       update().then(() => {
-        const newParams = new URLSearchParams(searchParams.toString());
+        const newParams = new URLSearchParams(searchParams?.toString());
         newParams.delete("success");
         router.replace(`?${newParams.toString()}`);
       });

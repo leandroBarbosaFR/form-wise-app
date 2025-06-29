@@ -46,7 +46,7 @@ export default function InvitedStaffList({
   const [sortOption, setSortOption] = useState("created-desc");
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
+  const pageFromUrl = parseInt(searchParams?.get("page") || "1", 10);
   const [currentPage, setCurrentPage] = useState(pageFromUrl);
   const itemsPerPage = 10;
 
@@ -61,7 +61,7 @@ export default function InvitedStaffList({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString());
     params.set("page", page.toString());
     router.push(`?${params.toString()}`);
   };

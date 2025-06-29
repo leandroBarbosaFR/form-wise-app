@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Eye, EyeOff, Zap } from "lucide-react";
 import Link from "next/link";
+
 export const dynamic = "force-dynamic";
 
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get("token");
+  const token = searchParams?.get("token") ?? ""; // ✅ corrigé ici
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [password, setPassword] = useState("");
@@ -20,12 +22,14 @@ export default function ResetPasswordForm() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password !== confirm) {
       toast.error("Les mots de passe ne correspondent pas");
       return;
     }
 
     setLoading(true);
+
     const res = await fetch("/api/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,7 +43,7 @@ export default function ResetPasswordForm() {
       toast.success("Mot de passe réinitialisé avec succès");
       router.push("/login");
     } else {
-      toast.error(data.error || "Erreur");
+      toast.error(data.error || "Une erreur est survenue");
     }
   };
 
@@ -60,6 +64,7 @@ export default function ResetPasswordForm() {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
         <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
           <form onSubmit={handleReset} className="space-y-6">
+            {/* Password */}
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -67,11 +72,13 @@ export default function ResetPasswordForm() {
                 className="w-full px-3 py-2 border rounded pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
               />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
                 onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
               >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5" />
@@ -81,6 +88,7 @@ export default function ResetPasswordForm() {
               </button>
             </div>
 
+            {/* Confirm Password */}
             <div className="relative">
               <input
                 type={showConfirm ? "text" : "password"}
@@ -88,11 +96,13 @@ export default function ResetPasswordForm() {
                 className="w-full px-3 py-2 border rounded pr-10"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
+                disabled={loading}
               />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
                 onClick={() => setShowConfirm(!showConfirm)}
+                disabled={loading}
               >
                 {showConfirm ? (
                   <EyeOff className="w-5 h-5" />

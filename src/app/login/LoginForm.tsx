@@ -15,7 +15,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
-  const prefilledEmail = searchParams.get("email") || "";
+  const prefilledEmail = searchParams?.get("email") ?? ""; // ✅ corrigé ici
+
   const [email, setEmail] = useState(prefilledEmail);
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -28,16 +29,13 @@ export default function LoginPage() {
   const waitForSession = async (maxAttempts = 15) => {
     for (let i = 0; i < maxAttempts; i++) {
       const session = await getSession();
-      console.log(`Tentative ${i + 1}:`, session?.user?.role); // Debug log
       if (session?.user?.role) return session;
-      await new Promise((r) => setTimeout(r, 300)); // Augmenté à 300ms
+      await new Promise((r) => setTimeout(r, 300));
     }
-    console.error("Session non trouvée après", maxAttempts, "tentatives");
     return null;
   };
 
   const redirectByRole = (role: string | undefined) => {
-    console.log("Redirection pour le rôle:", role); // Debug log
     switch (role) {
       case "SUPER_ADMIN":
         router.push("/admin/dashboard");
@@ -55,7 +53,6 @@ export default function LoginPage() {
         router.push("/dashboard/staffs");
         break;
       default:
-        console.warn("Rôle non reconnu:", role);
         router.push("/");
     }
   };
@@ -64,8 +61,6 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    console.log("🔍 SUPER_ADMIN DEBUG - Tentative de connexion pour:", email);
 
     try {
       const res = await signIn("credentials", {
@@ -77,52 +72,28 @@ export default function LoginPage() {
       });
 
       if (res?.error) {
-        console.error("❌ SUPER_ADMIN DEBUG - Erreur de connexion:", res.error);
         setError("Email ou mot de passe incorrect");
         setLoading(false);
         return;
       }
 
-      // ✅ TEST DE REDIRECTION FORCÉE - Placé au bon endroit
-      if (email === "admin@formwise.app" && !res?.error) {
+      if (email === "admin@formwise.app") {
         setTimeout(() => {
           router.push("/admin/dashboard");
         }, 1000);
         setLoading(false);
-        return; // Skip le reste
+        return;
       }
 
-      // Attendre que la session soit disponible
-      console.log("⏳ SUPER_ADMIN DEBUG - Attente de la session...");
       const session = await waitForSession();
 
-      console.log("🎯 SUPER_ADMIN DEBUG - Session récupérée:", {
-        user: session?.user
-          ? {
-              id: session.user.id,
-              email: session.user.email,
-              role: session.user.role,
-              tenantId: session.user.tenantId,
-              firstName: session.user.firstName,
-              lastName: session.user.lastName,
-            }
-          : null,
-      });
-
       if (session?.user?.role) {
-        console.log(
-          "✅ SUPER_ADMIN DEBUG - Redirection vers:",
-          session.user.role
-        );
         redirectByRole(session.user.role);
       } else {
-        console.error(
-          "❌ SUPER_ADMIN DEBUG - Impossible de récupérer la session utilisateur"
-        );
         setError("Erreur lors de la connexion. Veuillez réessayer.");
       }
     } catch (err) {
-      console.error("💥 SUPER_ADMIN DEBUG - Erreur lors de la connexion:", err);
+      console.log("Une erreur est survenue. Veuillez réessayer.", err);
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
       setLoading(false);
@@ -153,7 +124,6 @@ export default function LoginPage() {
           </p>
 
           <form onSubmit={handleSubmit} className="mt-10 space-y-6">
-            {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Adresse e-mail</Label>
               <Input
@@ -167,7 +137,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Mot de passe</Label>
               <div className="relative">
@@ -196,7 +165,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Options */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -215,14 +183,12 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            {/* Error */}
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            {/* Submit */}
             <Button
               type="submit"
               disabled={loading}
