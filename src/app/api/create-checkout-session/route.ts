@@ -35,10 +35,23 @@ export async function POST(req: NextRequest) {
     }
 
     const tenant = user.tenant;
-    let stripeCustomerId = tenant.stripeCustomerId;
+    let stripeCustomerId: string | null | undefined = tenant.stripeCustomerId;
 
+    // Vérifie si le stripeCustomerId est encore valide côté Stripe
+    if (stripeCustomerId) {
+      try {
+        await stripe.customers.retrieve(stripeCustomerId as string);
+      } catch (err) {
+        console.log("stripeCustomerId invalide, on le réinitialise", err);
+        console.warn("⚠️ stripeCustomerId invalide, on le réinitialise");
+        stripeCustomerId = undefined;
+      }
+    }
+
+    // Si aucun customer valide => on le crée
     if (!stripeCustomerId) {
       console.log("🏗️ Création d'un nouveau customer Stripe");
+
       const customer = await stripe.customers.create({
         email: user.email!,
         name: `${user.firstName} ${user.lastName}`,
