@@ -8,8 +8,25 @@ import { Prisma } from "@prisma/client";
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.role !== "DIRECTOR") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+
+  // Vérifier les permissions
+  const allowedRoles = ["SUPER_ADMIN", "DIRECTOR"];
+  if (!allowedRoles.includes(session.user.role)) {
+    return NextResponse.json(
+      { error: "Permissions insuffisantes" },
+      { status: 403 }
+    );
+  }
+
+  // Vérifier que les non-SUPER_ADMIN ont un tenantId
+  if (session.user.role !== "SUPER_ADMIN" && !session.user.tenantId) {
+    return NextResponse.json(
+      { error: "Utilisateur sans tenant" },
+      { status: 403 }
+    );
   }
 
   const { searchParams } = new URL(req.url);
@@ -18,9 +35,15 @@ export async function GET(req: Request) {
   const page = parseInt(searchParams.get("page") || "1", 10);
   const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
 
+  // Construction conditionnelle du filtre tenant
+  const tenantFilter =
+    session.user.role === "SUPER_ADMIN"
+      ? {}
+      : { tenantId: session.user.tenantId as string };
+
   const where: Prisma.StudentWhereInput = {
     AND: [
-      { tenantId: session.user.tenantId }, // ✅ Filtrage multi-tenant
+      tenantFilter, // ✅ Filtrage multi-tenant conditionnel
       search
         ? {
             OR: [
@@ -62,6 +85,16 @@ export async function GET(req: Request) {
         documents: {
           select: { id: true },
         },
+        // Inclure tenantId pour SUPER_ADMIN pour le contexte
+        ...(session.user.role === "SUPER_ADMIN" && {
+          tenantId: true,
+          tenant: {
+            select: {
+              name: true,
+              schoolCode: true,
+            },
+          },
+        }),
       },
     }),
     prisma.student.count({ where }),

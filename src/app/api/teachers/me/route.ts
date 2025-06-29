@@ -8,17 +8,38 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
-  if (!user || user.role !== "TEACHER") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
 
-  const tenantId = user.tenantId;
+  // Vérifier les permissions
+  const allowedRoles = ["SUPER_ADMIN", "TEACHER"];
+  if (!allowedRoles.includes(user.role)) {
+    return NextResponse.json(
+      { error: "Permissions insuffisantes" },
+      { status: 403 }
+    );
+  }
+
+  // Vérifier que les non-SUPER_ADMIN ont un tenantId
+  if (user.role !== "SUPER_ADMIN" && !user.tenantId) {
+    return NextResponse.json(
+      { error: "Utilisateur sans tenant" },
+      { status: 403 }
+    );
+  }
+
+  // Construction conditionnelle du filtre selon le rôle
+  const teacherWhereClause =
+    user.role === "SUPER_ADMIN"
+      ? { userId: user.id }
+      : {
+          userId: user.id,
+          tenantId: user.tenantId as string, // ✅ filtration multi-tenant
+        };
 
   const teacher = await prisma.teacher.findFirst({
-    where: {
-      userId: user.id,
-      tenantId, // ✅ filtration multi-tenant
-    },
+    where: teacherWhereClause,
     include: {
       class: true,
       subject: true,

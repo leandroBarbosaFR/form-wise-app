@@ -10,18 +10,41 @@ export async function DELETE(
 ) {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.role !== "DIRECTOR") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+
+  // Vérifier les permissions
+  const allowedRoles = ["SUPER_ADMIN", "DIRECTOR"];
+  if (!allowedRoles.includes(session.user.role)) {
+    return NextResponse.json(
+      { error: "Permissions insuffisantes" },
+      { status: 403 }
+    );
+  }
+
+  // Vérifier que les non-SUPER_ADMIN ont un tenantId
+  if (session.user.role !== "SUPER_ADMIN" && !session.user.tenantId) {
+    return NextResponse.json(
+      { error: "Utilisateur sans tenant" },
+      { status: 403 }
+    );
   }
 
   const { id } = await context.params;
 
   try {
+    // Construction conditionnelle du filtre selon le rôle
+    const whereClause =
+      session.user.role === "SUPER_ADMIN"
+        ? { id }
+        : {
+            id,
+            tenantId: session.user.tenantId as string, // ✅ filtrage tenant
+          };
+
     await prisma.schoolYear.deleteMany({
-      where: {
-        id,
-        tenantId: session.user.tenantId, // ✅ filtrage tenant
-      },
+      where: whereClause,
     });
 
     return NextResponse.json({ success: true });

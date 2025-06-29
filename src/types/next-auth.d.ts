@@ -7,7 +7,7 @@ declare module "next-auth" {
       id: string;
       email: string;
       role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
-      tenantId: string;
+      tenantId: string | null;
       firstName?: string;
       lastName?: string;
       phone?: string | null;
@@ -23,8 +23,7 @@ declare module "next-auth" {
     id: string;
     email: string;
     role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
-    tenantId: string;
-    tenantId: string;
+    tenantId: string | null;
     firstName?: string;
     lastName?: string;
     phone?: string | null;
@@ -42,8 +41,7 @@ declare module "next-auth/jwt" {
       id: string;
       email: string;
       role: "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
-      tenantId: string;
-      tenantId: string;
+      tenantId: string | null;
       firstName?: string;
       lastName?: string;
       phone?: string | null;

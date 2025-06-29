@@ -1,4 +1,4 @@
-// ✅ Multi-tenant: envoi du code école par mail
+// ✅ Multi-tenant: envoi du code école par mail avec support SUPER_ADMIN
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/authOptions";
@@ -9,11 +9,20 @@ export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
-  if (!user || user.role !== "DIRECTOR") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+  if (!user) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
 
-  const { emails } = await req.json();
+  // Vérifier les permissions
+  const allowedRoles = ["SUPER_ADMIN", "DIRECTOR"];
+  if (!allowedRoles.includes(user.role)) {
+    return NextResponse.json(
+      { error: "Permissions insuffisantes" },
+      { status: 403 }
+    );
+  }
+
+  const { emails, tenantId } = await req.json();
 
   if (!emails || !Array.isArray(emails) || emails.length === 0) {
     return NextResponse.json(
@@ -22,8 +31,31 @@ export async function POST(req: Request) {
     );
   }
 
+  // Déterminer le tenantId à utiliser
+  let targetTenantId: string;
+
+  if (user.role === "SUPER_ADMIN") {
+    // SUPER_ADMIN doit spécifier le tenantId dans le body
+    if (!tenantId) {
+      return NextResponse.json(
+        { error: "tenantId requis pour les SUPER_ADMIN" },
+        { status: 400 }
+      );
+    }
+    targetTenantId = tenantId;
+  } else {
+    // DIRECTOR utilise son propre tenantId
+    if (!user.tenantId) {
+      return NextResponse.json(
+        { error: "Utilisateur sans tenant" },
+        { status: 403 }
+      );
+    }
+    targetTenantId = user.tenantId;
+  }
+
   const tenant = await prisma.tenant.findUnique({
-    where: { id: user.tenantId },
+    where: { id: targetTenantId },
     select: { schoolCode: true, name: true },
   });
 
@@ -55,7 +87,7 @@ export async function POST(req: Request) {
   await prisma.invitedParent.createMany({
     data: emails.map((email: string) => ({
       email,
-      tenantId: user.tenantId,
+      tenantId: targetTenantId,
       used: false,
     })),
     skipDuplicates: true, // évite les doublons

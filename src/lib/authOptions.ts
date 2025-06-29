@@ -3,27 +3,31 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { Adapter } from "next-auth/adapters";
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcryptjs";
-import type { AuthOptions } from "next-auth";
+import type { AuthOptions, User } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 
+// ----- Strict Enums -----
 type UserRole = "PARENT" | "TEACHER" | "DIRECTOR" | "SUPER_ADMIN" | "STAFF";
+type SubscriptionStatus = "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
 
+// ----- AppUser Token Shape -----
 interface AppUser {
   id: string;
   email: string;
   role: UserRole;
   phone: string;
-  tenantId: string;
+  tenantId: string | null; // Garder null pour les SUPER_ADMIN
   rememberMe?: boolean;
   firstName?: string;
   lastName?: string;
   civility?: string | null;
-  subscriptionStatus?: "ACTIVE" | "FREE_TRIAL" | "EXPIRED";
+  subscriptionStatus?: SubscriptionStatus;
   billingPlan?: string;
   trialEndsAt?: string | null;
   schoolCode?: string | null;
 }
 
+// ----- JWT Token Shape -----
 interface AppToken extends JWT {
   user?: AppUser;
   role?: UserRole;
@@ -35,7 +39,7 @@ export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 jours
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   providers: [
     CredentialsProvider({
@@ -70,23 +74,18 @@ export const authOptions: AuthOptions = {
         );
         if (!isValid) return null;
 
+        const rememberMe =
+          credentials.rememberMe === "true" || credentials.rememberMe === "on";
+
+        // Retourner un objet compatible avec le type User
+        // Pour les SUPER_ADMIN sans tenant, on peut avoir tenantId null
         return {
           id: user.id,
           email: user.email,
           role: user.role,
-          phone: user.phone ?? "",
-          tenantId: user.tenantId!,
-          rememberMe:
-            credentials.rememberMe === "true" ||
-            credentials.rememberMe === "on",
-          firstName: user.firstName ?? "",
-          lastName: user.lastName ?? "",
-          civility: user.civility ?? null,
-          schoolCode: user.tenant?.schoolCode ?? null,
-          subscriptionStatus: user.tenant?.subscriptionStatus ?? "FREE_TRIAL",
-          billingPlan: user.tenant?.billingPlan ?? "MONTHLY",
-          trialEndsAt: user.tenant?.trialEndsAt?.toISOString() ?? null,
-        } as AppUser;
+          tenantId: user.tenantId, // Garder la valeur originale (peut être null)
+          rememberMe,
+        } as User;
       },
     }),
   ],
@@ -96,50 +95,61 @@ export const authOptions: AuthOptions = {
       return true;
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user }): Promise<JWT> {
+      // Spécifier explicitement le type de retour
       const typedToken = token as AppToken;
 
       if (user) {
-        console.log("👤 New user login detected");
-
         const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
           include: { tenant: true },
         });
 
-        if (dbUser) {
-          const userPayload: AppUser = {
-            id: dbUser.id,
-            email: dbUser.email,
-            role: dbUser.role as UserRole,
-            phone: dbUser.phone ?? "",
-            tenantId: dbUser.tenantId!,
-            rememberMe: (user as AppUser).rememberMe ?? true,
-            firstName: dbUser.firstName ?? "",
-            lastName: dbUser.lastName ?? "",
-            civility: dbUser.civility ?? null,
-            schoolCode: dbUser.tenant?.schoolCode ?? null,
-            subscriptionStatus:
-              (dbUser.tenant
-                ?.subscriptionStatus as AppUser["subscriptionStatus"]) ??
-              "FREE_TRIAL",
-            billingPlan: dbUser.tenant?.billingPlan ?? "MONTHLY",
-            trialEndsAt: dbUser.tenant?.trialEndsAt?.toISOString() ?? null,
-          };
-
-          typedToken.user = userPayload;
-          typedToken.role = dbUser.role;
+        if (!dbUser) {
+          return typedToken;
         }
+
+        const allowedStatuses = ["ACTIVE", "FREE_TRIAL", "EXPIRED"] as const;
+        const subStatus = dbUser.tenant?.subscriptionStatus;
+        const isValidStatus = allowedStatuses.includes(
+          subStatus as SubscriptionStatus
+        );
+        const subscriptionStatus = isValidStatus
+          ? (subStatus as SubscriptionStatus)
+          : "FREE_TRIAL";
+
+        const userPayload: AppUser = {
+          id: dbUser.id,
+          email: dbUser.email,
+          role: dbUser.role as UserRole,
+          phone: dbUser.phone ?? "",
+          tenantId: dbUser.tenantId, // Garder null pour les SUPER_ADMIN
+          rememberMe:
+            (user as User & { rememberMe?: boolean }).rememberMe ?? true,
+          firstName: dbUser.firstName ?? "",
+          lastName: dbUser.lastName ?? "",
+          civility: dbUser.civility ?? null,
+          schoolCode: dbUser.tenant?.schoolCode ?? null,
+          subscriptionStatus:
+            dbUser.role === "SUPER_ADMIN" ? "ACTIVE" : subscriptionStatus,
+          billingPlan: dbUser.tenant?.billingPlan ?? "MONTHLY",
+          trialEndsAt: dbUser.tenant?.trialEndsAt?.toISOString() ?? null,
+        };
+
+        typedToken.user = userPayload;
+        typedToken.role = dbUser.role as UserRole;
+        typedToken.rememberMe =
+          (user as User & { rememberMe?: boolean }).rememberMe ?? true;
 
         if (!typedToken.rememberMe) {
           typedToken.exp = Math.floor(Date.now() / 1000) + 4 * 60 * 60;
         }
       }
 
-      // ✅ Fallback: garder l'ancien user si non connecté à nouveau
+      // Réutiliser le token existant si pas de nouvelle connexion
       if (!typedToken.user && (token as AppToken).user) {
         typedToken.user = (token as AppToken).user;
-        typedToken.role = (token as AppToken).role ?? typedToken?.user?.role;
+        typedToken.role = (token as AppToken).role ?? typedToken.user?.role;
       }
 
       return typedToken;
@@ -163,8 +173,6 @@ export const authOptions: AuthOptions = {
         session.user.billingPlan = user.billingPlan ?? "MONTHLY";
         session.user.trialEndsAt = user.trialEndsAt ?? null;
         session.user.schoolCode = user.schoolCode ?? null;
-
-        console.log("📦 Final session user:", session.user);
       }
 
       return session;

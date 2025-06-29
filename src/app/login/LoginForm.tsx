@@ -25,16 +25,19 @@ export default function LoginPage() {
 
   const router = useRouter();
 
-  const waitForSession = async () => {
-    for (let i = 0; i < 10; i++) {
+  const waitForSession = async (maxAttempts = 15) => {
+    for (let i = 0; i < maxAttempts; i++) {
       const session = await getSession();
+      console.log(`Tentative ${i + 1}:`, session?.user?.role); // Debug log
       if (session?.user?.role) return session;
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 300)); // Augmenté à 300ms
     }
+    console.error("Session non trouvée après", maxAttempts, "tentatives");
     return null;
   };
 
   const redirectByRole = (role: string | undefined) => {
+    console.log("Redirection pour le rôle:", role); // Debug log
     switch (role) {
       case "SUPER_ADMIN":
         router.push("/admin/dashboard");
@@ -52,6 +55,7 @@ export default function LoginPage() {
         router.push("/dashboard/staffs");
         break;
       default:
+        console.warn("Rôle non reconnu:", role);
         router.push("/");
     }
   };
@@ -61,23 +65,42 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      rememberMe,
-      callbackUrl: "/",
-    });
+    console.log("Tentative de connexion pour:", email); // Debug log
 
-    if (res?.error) {
-      setError("Email ou mot de passe incorrect");
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        rememberMe: rememberMe.toString(), // Conversion explicite en string
+        callbackUrl: "/",
+      });
+
+      console.log("Résultat signIn:", res); // Debug log
+
+      if (res?.error) {
+        console.error("Erreur de connexion:", res.error);
+        setError("Email ou mot de passe incorrect");
+        setLoading(false);
+        return;
+      }
+
+      // Attendre que la session soit disponible
+      const session = await waitForSession();
+
+      if (session?.user?.role) {
+        console.log("Session récupérée:", session.user);
+        redirectByRole(session.user.role);
+      } else {
+        console.error("Impossible de récupérer la session utilisateur");
+        setError("Erreur lors de la connexion. Veuillez réessayer.");
+      }
+    } catch (err) {
+      console.error("Erreur lors de la connexion:", err);
+      setError("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const session = await waitForSession();
-    redirectByRole(session?.user?.role);
-    setLoading(false);
   };
 
   return (
@@ -114,6 +137,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
               />
             </div>
 
@@ -129,11 +153,13 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pr-10"
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground cursor-pointer"
+                  disabled={loading}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -151,6 +177,7 @@ export default function LoginPage() {
                   id="remember"
                   checked={rememberMe}
                   onCheckedChange={(checked) => setRememberMe(Boolean(checked))}
+                  disabled={loading}
                 />
                 <Label htmlFor="remember">Rester connecté</Label>
               </div>
@@ -170,7 +197,11 @@ export default function LoginPage() {
             )}
 
             {/* Submit */}
-            <Button type="submit" disabled={loading} className="w-full">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full cursor-pointer"
+            >
               {loading ? "Connexion..." : "Se connecter"}
             </Button>
           </form>
@@ -185,6 +216,7 @@ export default function LoginPage() {
             src="https://cdn.sanity.io/media-libraries/mllo1PEUbcwG/images/2fd0af2464672b561c6723175f359c3274473381-2868x1598.png"
             width={1500}
             height={1598}
+            priority
             className="rounded-md shadow-2xl ring-1 ring-gray-900/10 object-contain max-h-[90vh]"
           />
         </div>

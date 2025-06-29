@@ -21,9 +21,7 @@ const nextConfig = {
       "axldybsfbwwcwjekojpw.supabase.co",
     ],
   },
-  experimental: {
-    serverExternalPackages: ["@prisma/client", "prisma"],
-  },
+  serverExternalPackages: ["@prisma/client", "prisma"],
 };
 
 export default nextConfig;

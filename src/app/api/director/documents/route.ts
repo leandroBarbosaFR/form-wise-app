@@ -1,4 +1,4 @@
-// ✅ Multi-tenant filter added (tenantId)
+// ✅ Multi-tenant filter added (tenantId) with SUPER_ADMIN support
 import { NextResponse } from "next/server";
 import { authOptions } from "../../../../lib/authOptions";
 import { getServerSession } from "next-auth";
@@ -8,8 +8,25 @@ import { Prisma } from "@prisma/client";
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.role !== "DIRECTOR") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+
+  // Vérifier les permissions
+  const allowedRoles = ["SUPER_ADMIN", "DIRECTOR"];
+  if (!allowedRoles.includes(session.user.role)) {
+    return NextResponse.json(
+      { error: "Permissions insuffisantes" },
+      { status: 403 }
+    );
+  }
+
+  // Vérifier que les non-SUPER_ADMIN ont un tenantId
+  if (session.user.role !== "SUPER_ADMIN" && !session.user.tenantId) {
+    return NextResponse.json(
+      { error: "Utilisateur sans tenant" },
+      { status: 403 }
+    );
   }
 
   const { searchParams } = new URL(req.url);
@@ -20,8 +37,14 @@ export async function GET(req: Request) {
   const code = searchParams.get("code");
 
   try {
+    // Construction conditionnelle du filtre tenant
+    const tenantFilter =
+      session.user.role === "SUPER_ADMIN"
+        ? {} // SUPER_ADMIN voit tous les étudiants
+        : { tenantId: session.user.tenantId as string };
+
     const where: Prisma.StudentWhereInput = {
-      tenantId: session.user.tenantId,
+      ...tenantFilter,
       ...(search && {
         OR: [
           {
@@ -49,6 +72,16 @@ export async function GET(req: Request) {
           documents: {
             orderBy: { createdAt: "desc" },
           },
+          // Inclure les infos du tenant pour SUPER_ADMIN
+          ...(session.user.role === "SUPER_ADMIN" && {
+            tenant: {
+              select: {
+                id: true,
+                name: true,
+                schoolCode: true,
+              },
+            },
+          }),
         },
         orderBy: { lastName: "asc" },
         skip: (page - 1) * pageSize,

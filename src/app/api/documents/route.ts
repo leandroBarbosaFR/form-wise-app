@@ -7,8 +7,25 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session || session.user.role !== "PARENT") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+    }
+
+    // Vérifier les permissions
+    const allowedRoles = ["SUPER_ADMIN", "PARENT"];
+    if (!allowedRoles.includes(session.user.role)) {
+      return NextResponse.json(
+        { error: "Permissions insuffisantes" },
+        { status: 403 }
+      );
+    }
+
+    // Vérifier que les non-SUPER_ADMIN ont un tenantId
+    if (session.user.role !== "SUPER_ADMIN" && !session.user.tenantId) {
+      return NextResponse.json(
+        { error: "Utilisateur sans tenant" },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();
@@ -18,12 +35,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Champs manquants" }, { status: 400 });
     }
 
-    const student = await prisma.student.findFirst({
-      where: {
+    // Construction conditionnelle de la requête selon le rôle
+    let studentWhereClause;
+
+    if (session.user.role === "SUPER_ADMIN") {
+      // SUPER_ADMIN peut créer un document pour n'importe quel étudiant
+      studentWhereClause = {
+        id: studentId,
+      };
+    } else {
+      // PARENT ne peut créer que pour ses enfants dans son tenant
+      studentWhereClause = {
         id: studentId,
         parentId: session.user.id,
-        tenantId: session.user.tenantId,
-      },
+        tenantId: session.user.tenantId as string,
+      };
+    }
+
+    const student = await prisma.student.findFirst({
+      where: studentWhereClause,
     });
 
     if (!student) {

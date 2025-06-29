@@ -8,12 +8,21 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session || session.user.role !== "DIRECTOR") {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+    }
+
+    // Vérifier les permissions
+    const allowedRoles = ["SUPER_ADMIN", "DIRECTOR"];
+    if (!allowedRoles.includes(session.user.role)) {
+      return NextResponse.json(
+        { error: "Permissions insuffisantes" },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();
-    const { email, firstName, lastName, phone, roleLabel } = body;
+    const { email, firstName, lastName, phone, roleLabel, tenantId } = body;
 
     if (!email || !firstName || !lastName || !phone || !roleLabel) {
       return NextResponse.json(
@@ -31,9 +40,32 @@ export async function POST(req: Request) {
       );
     }
 
+    // Déterminer le tenantId à utiliser
+    let targetTenantId: string;
+
+    if (session.user.role === "SUPER_ADMIN") {
+      // SUPER_ADMIN doit spécifier le tenantId dans le body
+      if (!tenantId) {
+        return NextResponse.json(
+          { error: "tenantId requis pour les SUPER_ADMIN" },
+          { status: 400 }
+        );
+      }
+      targetTenantId = tenantId;
+    } else {
+      // DIRECTOR utilise son propre tenantId
+      if (!session.user.tenantId) {
+        return NextResponse.json(
+          { error: "Utilisateur sans tenant" },
+          { status: 403 }
+        );
+      }
+      targetTenantId = session.user.tenantId;
+    }
+
     const tenant = await prisma.tenant.findUnique({
       where: {
-        id: session.user.tenantId,
+        id: targetTenantId,
       },
       select: {
         schoolCode: true,
@@ -51,7 +83,7 @@ export async function POST(req: Request) {
     const existingStaff = await prisma.staff.findFirst({
       where: {
         email,
-        tenantId: session.user.tenantId,
+        tenantId: targetTenantId,
       },
     });
 
@@ -98,7 +130,7 @@ export async function POST(req: Request) {
         lastName,
         phone,
         roleLabel,
-        tenantId: session.user.tenantId!,
+        tenantId: targetTenantId,
         schoolCode,
       },
     });

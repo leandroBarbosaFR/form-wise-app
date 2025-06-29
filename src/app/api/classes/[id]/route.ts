@@ -1,4 +1,4 @@
-// ✅ Multi-tenant filter added (tenantId)
+// ✅ Multi-tenant filter added (tenantId) with SUPER_ADMIN support
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/authOptions";
@@ -10,19 +10,33 @@ export async function DELETE(
 ): Promise<Response> {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.role !== "DIRECTOR") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+
+  // Vérifier les permissions
+  const allowedRoles = ["SUPER_ADMIN", "DIRECTOR"];
+  if (!allowedRoles.includes(session.user.role)) {
+    return NextResponse.json(
+      { error: "Permissions insuffisantes" },
+      { status: 403 }
+    );
   }
 
   const { id } = await params;
 
   try {
-    // ✅ Delete only if class belongs to the director's tenant
+    // ✅ Construction conditionnelle de la clause where selon le rôle
+    const whereClause =
+      session.user.role === "SUPER_ADMIN"
+        ? { id } // SUPER_ADMIN peut supprimer n'importe quelle classe
+        : {
+            id,
+            tenantId: session.user.tenantId as string, // Safe car non-null pour DIRECTOR
+          };
+
     const deleted = await prisma.class.deleteMany({
-      where: {
-        id,
-        tenantId: session.user.tenantId,
-      },
+      where: whereClause,
     });
 
     if (deleted.count === 0) {
