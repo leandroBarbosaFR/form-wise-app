@@ -24,7 +24,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data });
   } catch (err) {
-    console.error("❌ Stripe price fetch error:", err);
+    console.error("Stripe price fetch error:", err);
     return NextResponse.json(
       { success: false, error: "Erreur Stripe" },
       { status: 500 }
