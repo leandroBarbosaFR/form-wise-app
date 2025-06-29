@@ -22,8 +22,11 @@ export default withAuth({
         return token.role === "TEACHER";
       }
 
-      // Protection pour super admin
-      if (pathname.startsWith("/dashboard/admin")) {
+      // Protection pour super admin - DEUX CHEMINS
+      if (
+        pathname.startsWith("/admin/dashboard") ||
+        pathname.startsWith("/dashboard/admin")
+      ) {
         return token.role === "SUPER_ADMIN";
       }
 
@@ -42,5 +45,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/admin/:path*"], // Ajouter /admin aussi
 };
