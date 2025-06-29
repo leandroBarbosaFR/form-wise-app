@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     // ✅ Récupérer les prix avec lookup keys
     const prices = await stripe.prices.list({
-      lookup_keys: ["test", "formwise-yearly"],
+      lookup_keys: ["formwise-monthly", "formwise-yearly"],
       expand: ["data.product"],
     });
 
@@ -71,18 +71,11 @@ export async function POST(req: NextRequest) {
     );
 
     // Trouver le bon prix selon le plan
-    const targetPrice = prices.data.find((price) => {
-      if (selectedPlan === "monthly") {
-        return (
-          price.lookup_key === "test" || price.recurring?.interval === "month"
-        );
-      } else {
-        return (
-          price.lookup_key === "formwise-yearly" ||
-          price.recurring?.interval === "year"
-        );
-      }
-    });
+    const lookupKey =
+      selectedPlan === "monthly" ? "formwise-monthly" : "formwise-yearly";
+    const targetPrice = prices.data.find(
+      (price) => price.lookup_key === lookupKey
+    );
 
     if (!targetPrice) {
       console.log("❌ Prix non trouvé pour le plan:", selectedPlan);
