@@ -36,20 +36,60 @@ export default function BillingPlans() {
   }, []);
 
   const handleCheckout = async (plan: "monthly" | "yearly") => {
+    console.log("🚀 Début checkout pour:", plan);
     setRedirectingPlan(plan);
-    const res = await fetch("/api/create-checkout-session", {
-      method: "POST",
-      body: JSON.stringify({ plan }),
-    });
 
-    if (!res.ok) {
-      console.error("Erreur Stripe");
+    try {
+      console.log("📤 Envoi de la requête à /api/create-checkout-session");
+
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ plan }),
+      });
+
+      console.log("📥 Réponse reçue:", {
+        status: res.status,
+        statusText: res.statusText,
+        ok: res.ok,
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("❌ Erreur serveur:", {
+          status: res.status,
+          statusText: res.statusText,
+          body: errorText,
+        });
+
+        // Essayer de parser comme JSON si possible
+        try {
+          const errorJson = JSON.parse(errorText);
+          console.error("📋 Détails de l'erreur:", errorJson);
+        } catch {
+          console.error("📋 Réponse brute:", errorText);
+        }
+
+        setRedirectingPlan(null);
+        return;
+      }
+
+      const data = await res.json();
+      console.log("✅ Données reçues:", data);
+
+      if (data.url) {
+        console.log("🔗 Redirection vers:", data.url);
+        window.location.href = data.url;
+      } else {
+        console.error("❌ Pas d'URL dans la réponse:", data);
+        setRedirectingPlan(null);
+      }
+    } catch (error) {
+      console.error("💥 Erreur lors de la requête:", error);
       setRedirectingPlan(null);
-      return;
     }
-
-    const data = await res.json();
-    window.location.href = data.url;
   };
 
   if (loading) {
@@ -100,7 +140,7 @@ export default function BillingPlans() {
                     )
                   }
                   disabled={redirectingPlan !== null}
-                  className="mt-10 w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 cursor-pointer"
+                  className="mt-10 w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {redirectingPlan ===
                   (tier.interval === "year" ? "yearly" : "monthly")
