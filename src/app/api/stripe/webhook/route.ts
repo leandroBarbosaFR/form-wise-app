@@ -23,16 +23,17 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Webhook Error", { status: 400 });
   }
 
-  console.log(`Stripe Event Received: ${event.type}`);
+  console.log(`✅ Stripe Event Received: ${event.type}`);
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const tenantId = session.metadata?.tenantId;
     const subscriptionId = session.subscription as string;
+    const customerId = session.customer as string;
 
-    if (!tenantId) {
-      console.warn("❌ Missing tenantId in session metadata");
-      return new NextResponse("Missing tenantId", { status: 400 });
+    if (!tenantId || !customerId || !subscriptionId) {
+      console.warn("❌ Missing info in session metadata");
+      return new NextResponse("Missing data", { status: 400 });
     }
 
     // Récupère la subscription pour avoir le plan
@@ -47,10 +48,13 @@ export async function POST(req: NextRequest) {
       data: {
         subscriptionStatus: "ACTIVE",
         billingPlan: billingPlan,
+        stripeCustomerId: customerId, // 👈 C'était ça qui manquait
         stripeSubscriptionId: subscriptionId,
         trialEndsAt: null,
       },
     });
+
+    console.log("✅ Tenant updated:", tenantId);
   }
 
   return new NextResponse("OK", { status: 200 });

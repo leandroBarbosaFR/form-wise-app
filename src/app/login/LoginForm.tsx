@@ -76,13 +76,6 @@ export default function LoginPage() {
         callbackUrl: "/",
       });
 
-      console.log("📤 SUPER_ADMIN DEBUG - Résultat signIn:", {
-        ok: res?.ok,
-        status: res?.status,
-        error: res?.error,
-        url: res?.url,
-      });
-
       if (res?.error) {
         console.error("❌ SUPER_ADMIN DEBUG - Erreur de connexion:", res.error);
         setError("Email ou mot de passe incorrect");
@@ -92,9 +85,6 @@ export default function LoginPage() {
 
       // ✅ TEST DE REDIRECTION FORCÉE - Placé au bon endroit
       if (email === "admin@formwise.app" && !res?.error) {
-        console.log(
-          "🚀 SUPER_ADMIN DEBUG - FORCE REDIRECT vers admin dashboard"
-        );
         setTimeout(() => {
           router.push("/admin/dashboard");
         }, 1000);
