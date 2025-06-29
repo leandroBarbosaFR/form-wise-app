@@ -50,6 +50,17 @@ export async function POST(req: NextRequest) {
         ? process.env.STRIPE_PRICE_YEARLY
         : process.env.STRIPE_PRICE_MONTHLY;
 
+    // ✅ Vérification et nettoyage de l'URL
+    const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!rawAppUrl || !rawAppUrl.startsWith("https://")) {
+      console.error(
+        "❌ NEXT_PUBLIC_APP_URL invalide ou manquante :",
+        rawAppUrl
+      );
+      return NextResponse.json({ error: "Invalid app URL" }, { status: 500 });
+    }
+    const appUrl = rawAppUrl.replace(/\/+$/, ""); // remove trailing slash
+
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       payment_method_types: ["card"],
@@ -60,10 +71,10 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "subscription",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?canceled=true`,
+      success_url: `${appUrl}/dashboard?success=true`,
+      cancel_url: `${appUrl}/dashboard?canceled=true`,
       metadata: {
-        tenantId: tenant.id, // ✅ CORRECT
+        tenantId: tenant.id,
       },
     });
 
