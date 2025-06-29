@@ -65,38 +65,74 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    console.log("Tentative de connexion pour:", email); // Debug log
+    console.log("🔍 SUPER_ADMIN DEBUG - Tentative de connexion pour:", email);
 
     try {
       const res = await signIn("credentials", {
         email,
         password,
         redirect: false,
-        rememberMe: rememberMe.toString(), // Conversion explicite en string
+        rememberMe: rememberMe.toString(),
         callbackUrl: "/",
       });
 
-      console.log("Résultat signIn:", res); // Debug log
+      console.log("📤 SUPER_ADMIN DEBUG - Résultat signIn:", {
+        ok: res?.ok,
+        status: res?.status,
+        error: res?.error,
+        url: res?.url,
+      });
 
       if (res?.error) {
-        console.error("Erreur de connexion:", res.error);
+        console.error("❌ SUPER_ADMIN DEBUG - Erreur de connexion:", res.error);
         setError("Email ou mot de passe incorrect");
         setLoading(false);
         return;
       }
 
+      // ✅ TEST DE REDIRECTION FORCÉE - Placé au bon endroit
+      if (email === "admin@formwise.app" && !res?.error) {
+        console.log(
+          "🚀 SUPER_ADMIN DEBUG - FORCE REDIRECT vers admin dashboard"
+        );
+        setTimeout(() => {
+          router.push("/admin/dashboard");
+        }, 1000);
+        setLoading(false);
+        return; // Skip le reste
+      }
+
       // Attendre que la session soit disponible
+      console.log("⏳ SUPER_ADMIN DEBUG - Attente de la session...");
       const session = await waitForSession();
 
+      console.log("🎯 SUPER_ADMIN DEBUG - Session récupérée:", {
+        user: session?.user
+          ? {
+              id: session.user.id,
+              email: session.user.email,
+              role: session.user.role,
+              tenantId: session.user.tenantId,
+              firstName: session.user.firstName,
+              lastName: session.user.lastName,
+            }
+          : null,
+      });
+
       if (session?.user?.role) {
-        console.log("Session récupérée:", session.user);
+        console.log(
+          "✅ SUPER_ADMIN DEBUG - Redirection vers:",
+          session.user.role
+        );
         redirectByRole(session.user.role);
       } else {
-        console.error("Impossible de récupérer la session utilisateur");
+        console.error(
+          "❌ SUPER_ADMIN DEBUG - Impossible de récupérer la session utilisateur"
+        );
         setError("Erreur lors de la connexion. Veuillez réessayer.");
       }
     } catch (err) {
-      console.error("Erreur lors de la connexion:", err);
+      console.error("💥 SUPER_ADMIN DEBUG - Erreur lors de la connexion:", err);
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
       setLoading(false);
