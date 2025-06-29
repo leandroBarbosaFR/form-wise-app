@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
       selectedPlan === "yearly"
         ? process.env.STRIPE_PRICE_YEARLY
         : process.env.STRIPE_PRICE_MONTHLY;
-
+    console.log("💳 Selected Plan:", selectedPlan);
+    console.log("💰 Stripe Price ID:", priceId);
     // ✅ Vérification et nettoyage de l'URL
     const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL;
     if (!rawAppUrl || !rawAppUrl.startsWith("https://")) {
