@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     const resetLink = `${
       process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
+        ? "https://formwise.fr"
         : "https://formwise.fr"
     }/reset-password?token=${token}`;
 

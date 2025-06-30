@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle, Gift } from "lucide-react";
+import Link from "next/link";
 
 type StripePrice = {
   id: string;
@@ -168,6 +169,14 @@ export default function BillingPlans() {
             ))}
           </div>
         </div>
+      </div>
+      <div className="mt-16 flex justify-center">
+        <Link
+          href="/dashboard/director"
+          className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+        >
+          Retourner au tableau de bord
+        </Link>
       </div>
     </div>
   );

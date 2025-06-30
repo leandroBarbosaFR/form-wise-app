@@ -3,12 +3,11 @@ import { prisma } from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { sendEmailWithTempPassword } from "../../../../lib/email";
 import { addDays } from "date-fns";
-import { nanoid } from "nanoid";
+import { generateSchoolCode } from "../../../../lib/generateSchoolCode";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
     const { firstName, lastName, schoolName, phone, address, email } = body;
 
     if (!email || !firstName || !lastName || !schoolName) {
@@ -30,7 +29,15 @@ export async function POST(req: Request) {
     const tempPassword = Math.random().toString(36).slice(-10);
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-    const schoolCode = nanoid(6).toUpperCase();
+    // ✅ Génère un code école unique
+    let schoolCode = generateSchoolCode(schoolName);
+    let existingCode = await prisma.tenant.findUnique({
+      where: { schoolCode },
+    });
+    while (existingCode) {
+      schoolCode = generateSchoolCode(schoolName);
+      existingCode = await prisma.tenant.findUnique({ where: { schoolCode } });
+    }
 
     const tenant = await prisma.tenant.create({
       data: {
@@ -54,8 +61,8 @@ export async function POST(req: Request) {
         phone,
       },
     });
-    console.log("User created:", user);
-    console.log("Sending temp password email to", email);
+    console.log("Utilisateur créé :", user);
+
     await sendEmailWithTempPassword({
       to: email,
       name: firstName,

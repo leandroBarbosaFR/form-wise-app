@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     html: `
       <p>Bonjour ${firstName},</p>
       <p>Vous avez été invité à rejoindre Formwise en tant que professeur.</p>
-      <p><a href="http://localhost:3000/create-password?token=${inviteToken}">Cliquez ici pour activer votre compte</a></p>
+      <p><a href="https://formwise.fr/create-password?token=${inviteToken}">Cliquez ici pour activer votre compte</a></p>
     `,
   });
 

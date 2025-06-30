@@ -77,7 +77,7 @@ export async function POST(req: Request) {
           <p>Vous avez été invité à rejoindre <strong>${tenant.name}</strong> sur Formwise.</p>
           <p>Pour créer votre compte, utilisez ce code établissement :</p>
           <h2>${tenant.schoolCode}</h2>
-          <p>👉 <a href="http://localhost:3000/register">Cliquez ici pour vous inscrire</a></p>
+          <p>👉 <a href="https://formwise.fr/register">Cliquez ici pour vous inscrire</a></p>
         `,
       })
     )

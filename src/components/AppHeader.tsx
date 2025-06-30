@@ -5,8 +5,17 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, LogOut, Crown } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  Crown,
+  Ban,
+  FileText,
+  ShieldCheck,
+  Gavel,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import SupportButton from "./SupportButton";
 import { format } from "date-fns";
@@ -30,22 +39,14 @@ export default function AppHeader() {
 
       (async () => {
         try {
-          // Wait a bit to ensure webhook has processed
           await new Promise((resolve) => setTimeout(resolve, 2000));
-
-          // Force session refresh with trigger
-          const result = await update({ trigger: "update" });
-          console.log("Update result:", result);
-
-          // Wait for the update to propagate
+          await update({ trigger: "update" });
           await new Promise((resolve) => setTimeout(resolve, 1000));
-
           toast.success("Abonnement activé avec succès !");
         } catch (err) {
-          console.error("Failed to refresh session:", err);
+          console.error("Erreur de mise à jour de session :", err);
           toast.error("Erreur lors de la mise à jour de la session");
         } finally {
-          // Clean up URL
           const newParams = new URLSearchParams(searchParams?.toString());
           newParams.delete("success");
           router.replace(`?${newParams.toString()}`, { scroll: false });
@@ -53,14 +54,13 @@ export default function AppHeader() {
         }
       })();
     }
-  }, [searchParams, update, router, isRefreshing, session]);
+  }, [searchParams, update, router, isRefreshing]);
 
   if (status === "loading") return null;
 
   const firstName = session?.user?.firstName || "";
   const lastName = session?.user?.lastName || "";
   const fullName = `${firstName} ${lastName}`.trim() || "Utilisateur";
-
   const initials = [firstName, lastName]
     .map((n) => n?.[0] || "")
     .join("")
@@ -111,24 +111,64 @@ export default function AppHeader() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             {session?.user?.role === "DIRECTOR" && (
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => router.push("/dashboard/billing")}
-              >
-                <Crown className="w-4 h-4 ml-1" />
-                <span className="text-sm">Upgrade mon forfait</span>
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push("/dashboard/billing")}
+                >
+                  <Crown className="w-4 h-4 mr-2" />
+                  <span className="text-sm">Upgrade mon forfait</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push("/dashboard/resiliation")}
+                >
+                  <Ban className="w-4 h-4 mr-2" />
+                  <span className="text-sm">Résilier mon abonnement</span>
+                </DropdownMenuItem>
+              </>
             )}
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => router.push("/politique-de-confidentialite")}
+            >
+              <ShieldCheck className="w-4 h-4 mr-2" />
+              <span className="text-sm">Politique de confidentialité</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => router.push("/conditions-utilisation")}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              <span className="text-sm">Conditions d&apos;utilisation</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => router.push("/conditions-generales")}
+            >
+              <Gavel className="w-4 h-4 mr-2" />
+              <span className="text-sm">Conditions générales de service</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => signOut()}
             >
-              <LogOut className="w-4 h-4 mr-2 cursor-pointer" />
+              <LogOut className="w-4 h-4 mr-2" />
               Se déconnecter
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       {schoolCode && (
         <div className="hidden md:flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
           <span>Code établissement :</span>
@@ -163,6 +203,7 @@ export default function AppHeader() {
           </button>
         </div>
       )}
+
       <div className="hidden md:block">
         <SupportButton />
       </div>

@@ -22,7 +22,7 @@ export async function sendEmailWithTempPassword({
         <li><strong>Email :</strong> ${to}</li>
         <li><strong>Mot de passe temporaire :</strong> ${password}</li>
       </ul>
-      <p>Connectez-vous ici : <a href="http://localhost:3000/login">formwise.fr/login</a></p>
+      <p>Connectez-vous ici : <a href="https://formwise.fr/login">formwise.fr/login</a></p>
       <p>À bientôt,</p>
       <p>L’équipe Formwise</p>
     `,
