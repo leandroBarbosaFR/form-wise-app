@@ -46,8 +46,8 @@ export default function HeroSection() {
               ref={titleRef}
               className="fancy-gradient-text text-balance text-5xl sm:text-7xl leading-[57px] sm:leading-[83px] font-semibold tracking-tight text-gray-900"
             >
-              Plateforme SaaS pour centraliser, simplifier et{" "}
-              <span className="fancy-gradient-span">gagner du temps.</span>
+              Divisez par 5 le temps de vos inscriptions scolaires{" "}
+              <span className="fancy-gradient-span">dès aujourd&apos;hui.</span>
             </h1>
             <p
               ref={paragraphRef}
