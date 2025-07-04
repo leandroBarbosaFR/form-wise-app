@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import ConditionalFooter from "components/ConditionalFooter";
 import ConditionalHeader from "components/ConditionalHeader";
-import ConditionalBanner from "components/ConditionalBanner";
+// import ConditionalBanner from "components/ConditionalBanner";
 
 const geistSans = Inter({
   variable: "--font-geist-sans",
@@ -34,7 +34,7 @@ export default async function RootLayout({
       <body
         className={`flex min-h-screen flex-col ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ConditionalBanner />
+        {/* <ConditionalBanner /> */}
         <ConditionalHeader />
         <AuthProvider>
           <main className="flex-1">{children}</main>

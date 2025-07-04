@@ -15,6 +15,7 @@ import {
   FileText,
   ShieldCheck,
   Gavel,
+  Copy,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import SupportButton from "./SupportButton";
@@ -168,39 +169,40 @@ export default function AppHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-      {schoolCode && (
-        <div className="hidden md:flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-          <span>Code établissement :</span>
-          <span className="font-medium">{schoolCode}</span>
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(schoolCode);
-              toast.success("Code copié !");
-            }}
-            className="hover:text-black transition cursor-pointer"
-            title="Copier le code"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
+      {schoolCode && session?.user?.role === "DIRECTOR" && (
+        <div className="hidden md:flex flex-col items-start ml-6 text-xs text-muted-foreground gap-1">
+          <div className="flex items-center gap-1">
+            <span>Code établissement :</span>
+            <span className="font-medium">{schoolCode}</span>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(schoolCode);
+                toast.success("Code copié !");
+              }}
+              className="hover:text-black transition cursor-pointer"
+              title="Copier le code"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 16h8a2 2 0 002-2V6a2 2 0 00-2-2H8a2 2 0 00-2 2v8a2 2 0 002 2z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 8h2a2 2 0 012 2v8a2 2 0 01-2 2H10a2 2 0 01-2-2v-2"
-              />
-            </svg>
-          </button>
+              <Copy className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex items-center gap-1">
+            <span>Lien d’inscription :</span>
+            <span className="font-medium">
+              https://formwise.app/preinscription?schoolCode={schoolCode}
+            </span>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `https://formwise.app/preinscription?schoolCode=${schoolCode}`
+                );
+                toast.success("Lien d'inscription copié !");
+              }}
+              className="hover:text-black transition cursor-pointer"
+              title="Copier le lien"
+            >
+              <Copy className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
 

@@ -25,6 +25,7 @@ import {
   Settings,
   LogOut,
   UserPlus,
+  ShieldAlert,
 } from "lucide-react";
 
 type Section = {
@@ -96,6 +97,11 @@ const getSections = (role?: string): Section[] => {
         key: "pendingStudents",
         label: "Élèves en attente",
         icon: <UserLock className="w-4 h-4" />,
+      },
+      {
+        key: "pendingPreinscriptions",
+        label: "Inscriptions en attente",
+        icon: <ShieldAlert className="w-4 h-4" />,
       },
       {
         key: "documents",

@@ -19,6 +19,8 @@ export default function ConditionalFooter() {
     pathname?.startsWith("/app") ||
     pathname?.startsWith("/login") ||
     pathname?.startsWith("/register") ||
+    pathname?.startsWith("/preinscription-success") ||
+    pathname?.startsWith("/preinscription") ||
     pathname?.startsWith("/admin");
 
   if (isDashboard) return null;

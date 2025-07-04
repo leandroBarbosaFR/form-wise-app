@@ -27,6 +27,7 @@ import InviteParentsPage from "../app/dashboard/director/invite-parents/page";
 import { InvitedParentList } from "./InvitedParentList";
 import StaffForm from "./StaffForm";
 import InvitedStaffList from "./InvitedStaffList";
+import PendingPreinscriptionsTable from "./PendingPreinscriptionsTable";
 
 export type InvitedStaff = {
   id: string;
@@ -137,6 +138,12 @@ export default function DirectorDashboardContent() {
           <>
             <InviteParentsPage />
             <InvitedParentList />
+          </>
+        )}
+
+        {activeSection === "pendingPreinscriptions" && (
+          <>
+            <PendingPreinscriptionsTable />
           </>
         )}
 

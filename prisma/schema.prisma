@@ -152,13 +152,14 @@ model NotificationReadTeacher {
 }
 
 model Tenant {
-  id                   String          @id @default(cuid())
+  id                   String                  @id @default(cuid())
   name                 String
-  uniqueNumber         Int?            @unique // ex: 123456
+  email                String?
+  uniqueNumber         Int?                    @unique // ex: 123456
   stripeCustomerId     String?
-  billingPlan          BillingPlan     @default(FREE_TRIAL)
+  billingPlan          BillingPlan             @default(FREE_TRIAL)
   trialEndsAt          DateTime?
-  createdAt            DateTime        @default(now())
+  createdAt            DateTime                @default(now())
   status               String?
   users                User[]
   students             Student[]
@@ -169,11 +170,12 @@ model Tenant {
   phone                String?
   address              String?
   Notification         Notification[]
-  schoolCode           String          @unique
+  schoolCode           String                  @unique
   InvitedParent        InvitedParent[]
   subscriptionStatus   String? // ex: "ACTIVE", "TRIAL", "EXPIRED"
   stripeSubscriptionId String?
   staff                Staff[]
+  preRegistrations     PreRegistrationParent[]
 }
 
 model InvitedParent {
@@ -206,6 +208,51 @@ model Staff {
   @@unique([email, tenantId])
 }
 
+model PreRegistrationParent {
+  id        String                   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  address   String
+  createdAt DateTime                 @default(now())
+  status    PreRegistrationStatus    @default(PENDING)
+  tenantId  String
+  tenant    Tenant                   @relation(fields: [tenantId], references: [id])
+  children  PreRegistrationChild[]
+  documents PreRegistrationDocument?
+}
+
+model PreRegistrationDocument {
+  id                  String                @id @default(cuid())
+  motivationLetterUrl String?
+  schoolResultsUrl    String?
+  familyBookUrl       String?
+  parentId            String                @unique
+  parent              PreRegistrationParent @relation(fields: [parentId], references: [id])
+}
+
+model PreRegistrationChild {
+  id            String                @id @default(cuid())
+  firstName     String
+  lastName      String
+  gender        String
+  birthDate     DateTime
+  birthCity     String
+  birthCountry  String
+  currentSchool String
+  desiredClass  String
+  status        PreRegistrationStatus @default(PENDING)
+  parent        PreRegistrationParent @relation(fields: [parentId], references: [id])
+  parentId      String
+  createdAt     DateTime              @default(now())
+}
+
+enum Gender {
+  FILLE
+  GARÇON
+}
+
 enum BillingPlan {
   FREE_TRIAL
   MONTHLY
@@ -224,4 +271,10 @@ enum Civility {
   M
   Mme
   Mlle
+}
+
+enum PreRegistrationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

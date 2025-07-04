@@ -4,6 +4,7 @@ import AppHeaderWithSuspense from "components/AppHeaderWithSuspense";
 import { ReactNode, Suspense } from "react";
 import RefreshSessionAfterPayment from "../../../components/RefreshSessionAfterPayment";
 import DashboardSuccessDialog from "../../../components/DashboardSuccessDialog";
+import AIChatBotWidget from "../../../components/AIChatBotWidget";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </Suspense>
 
       <Suspense fallback={null}>
+        <AIChatBotWidget />
         <DashboardSuccessDialog />
       </Suspense>
 

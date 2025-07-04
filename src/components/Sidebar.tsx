@@ -17,6 +17,7 @@ import {
   UserLock,
   Settings,
   UserPlus,
+  ShieldAlert,
 } from "lucide-react";
 import { ParentNotification } from "../types/notification";
 
@@ -56,7 +57,7 @@ export default function Sidebar({
   }, [role, session?.user?.id]);
 
   return (
-    <aside className="w-64 h-auto bg-[white] border-r p-4 space-y-4">
+    <aside className="w-70 h-auto bg-[white] border-r p-4 space-y-4">
       {role === "DIRECTOR" && (
         <>
           <SidebarBtn
@@ -107,6 +108,13 @@ export default function Sidebar({
             activeSection={activeSection}
             setActiveSection={setActiveSectionAction}
             icon={<UserLock className="w-4 h-4" />}
+          />
+          <SidebarBtn
+            label="Inscriptions en attente"
+            section="pendingPreinscriptions"
+            activeSection={activeSection}
+            setActiveSection={setActiveSectionAction}
+            icon={<ShieldAlert className="w-4 h-4" />}
           />
           <SidebarBtn
             label="Documents"

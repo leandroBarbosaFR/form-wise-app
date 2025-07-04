@@ -12,6 +12,8 @@ export default function ConditionalHeader() {
     pathname?.startsWith("/app") ||
     pathname?.startsWith("/register") ||
     pathname?.startsWith("/login") ||
+    pathname?.startsWith("/preinscription-success") ||
+    pathname?.startsWith("/preinscription") ||
     pathname?.startsWith("/admin");
 
   if (isDashboard) return null;

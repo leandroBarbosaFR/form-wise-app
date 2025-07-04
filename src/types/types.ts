@@ -20,4 +20,5 @@ export type DashboardSection =
   | "settingsAdmin"
   | "inviteParent"
   | "inviteStaff"
+  | "pendingPreinscriptions"
   | "rib";
