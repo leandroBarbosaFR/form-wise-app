@@ -1,6 +1,6 @@
 "use client";
 
-import { UserPlus, MessagesSquare, Fingerprint, Landmark } from "lucide-react";
+import { UserPlus, MessagesSquare, Bot, Landmark } from "lucide-react";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,10 +27,10 @@ const features = [
     icon: MessagesSquare,
   },
   {
-    name: "Rôles et accès sécurisés",
+    name: "Assistant intelligent (IA)",
     description:
-      "Parents, professeurs, directeurs : chacun accède uniquement aux infos qui le concernent, avec une interface dédiée et facile à utiliser.",
-    icon: Fingerprint,
+      "Un chatbot intégré vous guide pas à pas : parents, direction ou professeurs, chacun trouve rapidement les réponses à ses questions.",
+    icon: Bot,
   },
 ];
 

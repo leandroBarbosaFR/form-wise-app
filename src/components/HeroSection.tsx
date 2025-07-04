@@ -46,15 +46,15 @@ export default function HeroSection() {
               ref={titleRef}
               className="fancy-gradient-text text-balance text-5xl sm:text-7xl leading-[57px] sm:leading-[83px] font-semibold tracking-tight text-gray-900"
             >
-              Inscriptions scolaires : 40 à 60 % de temps gagné dès la{" "}
-              <span className="fancy-gradient-span">première utilisation</span>
+              Réduisez de 80% le temps passé sur les inscriptions
+              <span className="fancy-gradient-span">scolaires.</span>
             </h1>
             <p
               ref={paragraphRef}
               className="fancy-gradient-text mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8"
             >
-              Formwise vous aide à digitaliser et fiabiliser les inscriptions
-              scolaires pour les établissements et les familles.
+              Simplifiez la gestion des élèves, des paiements et des documents
+              en une seule plateforme.
             </p>
             <div
               ref={buttonsRef}
