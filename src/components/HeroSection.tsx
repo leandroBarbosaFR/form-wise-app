@@ -46,7 +46,7 @@ export default function HeroSection() {
               ref={titleRef}
               className="fancy-gradient-text text-balance text-5xl sm:text-7xl leading-[57px] sm:leading-[83px] font-semibold tracking-tight text-gray-900"
             >
-              Réduisez de 80% le temps passé sur les inscriptions
+              Réduisez de 80% le temps passé sur les inscriptions{" "}
               <span className="fancy-gradient-span">scolaires.</span>
             </h1>
             <p
