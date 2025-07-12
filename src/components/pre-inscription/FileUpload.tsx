@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface FileUploadProps {
   onUploadCompleteAction: (uploadedUrls: {
@@ -110,14 +111,14 @@ export default function FileUpload({
         />
       </div>
 
-      <button
+      <Button
         type="button"
         onClick={handleUpload}
         disabled={uploading}
-        className="mt-2 rounded bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 transition"
+        className="cursor-pointer"
       >
         {uploading ? "Envoi en cours..." : "Uploader les fichiers"}
-      </button>
+      </Button>
     </div>
   );
 }

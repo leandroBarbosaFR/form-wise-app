@@ -69,6 +69,7 @@ export default function RegisterStaffPage() {
 
       <Button
         onClick={handleSubmit}
+        className="cursor-pointer"
         disabled={submitted || !email || !schoolCode || !password}
       >
         Créer mon compte

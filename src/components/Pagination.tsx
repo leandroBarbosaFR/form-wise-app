@@ -21,6 +21,7 @@ export default function Pagination({
           size="sm"
           onClick={() => onPageChangeAction(currentPage - 1)}
           disabled={currentPage === 1}
+          className="cursor-pointer"
         >
           Précédent
         </Button>
@@ -32,6 +33,7 @@ export default function Pagination({
           size="sm"
           onClick={() => onPageChangeAction(currentPage + 1)}
           disabled={currentPage === totalPages}
+          className="cursor-pointer"
         >
           Suivant
         </Button>

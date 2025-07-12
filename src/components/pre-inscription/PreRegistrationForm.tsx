@@ -97,12 +97,14 @@ export default function PreRegistrationForm({
 
       <ParentForm registerAction={register} />
 
-      <div className="space-y-4">
-        <h3 className="font-bold text-lg">Élève(s)</h3>
-        <Accordion type="multiple">
+      <div className="space-y-4 bg-[#0f172b] p-8 rounded">
+        <h3 className="font-bold text-lg text-white">Élève(s)</h3>
+        <Accordion type="multiple" defaultValue={["child-0"]}>
           {fields.map((field, index) => (
             <AccordionItem key={field.id} value={`child-${index}`}>
-              <AccordionTrigger>Élève {index + 1}</AccordionTrigger>
+              <AccordionTrigger className="text-white">
+                Élève {index + 1}
+              </AccordionTrigger>
               <AccordionContent>
                 <ChildForm index={index} registerAction={register} />
               </AccordionContent>
@@ -111,6 +113,7 @@ export default function PreRegistrationForm({
         </Accordion>
         <Button
           type="button"
+          className="cursor-pointer"
           onClick={() =>
             append({
               firstName: "",
@@ -124,7 +127,7 @@ export default function PreRegistrationForm({
             })
           }
         >
-          <Plus /> Ajouter un élève
+          <Plus /> Ajouter un autre élève
         </Button>
       </div>
 
@@ -132,7 +135,11 @@ export default function PreRegistrationForm({
         onUploadCompleteAction={(urls) => setValue("uploadedFiles", urls)}
       />
 
-      <Button type="submit" disabled={isSubmitting} className="w-full">
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full cursor-pointer"
+      >
         {isSubmitting ? "Envoi en cours..." : "Envoyer la pré-inscription"}
       </Button>
     </form>

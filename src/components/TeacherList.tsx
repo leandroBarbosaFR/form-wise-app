@@ -113,7 +113,11 @@ export default function TeacherList({
       )}
 
       {/* Toggle liste */}
-      <Button onClick={() => setShowList(!showList)} variant="outline">
+      <Button
+        className="cursor-pointer"
+        onClick={() => setShowList(!showList)}
+        variant="outline"
+      >
         {showList
           ? "Masquer la liste des professeurs"
           : "Voir tous les professeurs"}

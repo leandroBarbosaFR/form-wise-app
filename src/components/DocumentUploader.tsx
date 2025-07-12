@@ -90,7 +90,11 @@ export default function DocumentUploader({ studentId }: Props) {
         onChange={(e) => setFile(e.target.files?.[0] || null)}
       />
 
-      <Button onClick={handleUpload} disabled={uploading || !file}>
+      <Button
+        className="cursor-pointer"
+        onClick={handleUpload}
+        disabled={uploading || !file}
+      >
         {uploading ? "Envoi en cours..." : "Envoyer"}
       </Button>
 

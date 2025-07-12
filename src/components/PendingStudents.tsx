@@ -86,6 +86,7 @@ export default function PendingStudents() {
                 <td className="p-3 space-x-2">
                   <Button
                     variant="outline"
+                    className="cursor-pointer"
                     onClick={() => updateStatus(student.id, "APPROVED")}
                     disabled={loading}
                   >
@@ -93,6 +94,7 @@ export default function PendingStudents() {
                   </Button>
                   <Button
                     variant="destructive"
+                    className="cursor-pointer"
                     onClick={() => updateStatus(student.id, "REJECTED")}
                     disabled={loading}
                   >
@@ -124,6 +126,7 @@ export default function PendingStudents() {
               <div className="flex gap-2 pt-2">
                 <Button
                   variant="outline"
+                  className="cursor-pointer"
                   onClick={() => updateStatus(student.id, "APPROVED")}
                   disabled={loading}
                 >
@@ -131,6 +134,7 @@ export default function PendingStudents() {
                 </Button>
                 <Button
                   variant="destructive"
+                  className="cursor-pointer"
                   onClick={() => updateStatus(student.id, "REJECTED")}
                   disabled={loading}
                 >

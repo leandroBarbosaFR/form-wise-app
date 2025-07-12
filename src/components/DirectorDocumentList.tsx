@@ -164,7 +164,7 @@ export default function DirectorDocumentList() {
                             <td className="p-2">{doc.fileType}</td>
                             <td className="p-2">
                               <button onClick={() => handlePreview(doc)}>
-                                <Eye className="w-4 h-4 hover:scale-110 transition" />
+                                <Eye className="w-4 h-4 hover:scale-110 cursor-pointer transition" />
                               </button>
                             </td>
                           </tr>
@@ -187,7 +187,7 @@ export default function DirectorDocumentList() {
                         <p className="text-xs">{doc.fileType}</p>
                         <button
                           onClick={() => handlePreview(doc)}
-                          className="text-blue-500 text-sm mt-1 flex items-center gap-1"
+                          className="text-blue-500 text-sm mt-1 flex items-center cursor-pointer gap-1"
                         >
                           <Eye className="w-4 h-4" />
                           Aperçu
@@ -206,6 +206,7 @@ export default function DirectorDocumentList() {
               <Button
                 onClick={() => setPage((p) => Math.max(p - 1, 1))}
                 disabled={page === 1}
+                className="cursor-pointer"
               >
                 Précédent
               </Button>
@@ -214,6 +215,7 @@ export default function DirectorDocumentList() {
               </span>
               <Button
                 onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                className="cursor-pointer"
                 disabled={page === totalPages}
               >
                 Suivant

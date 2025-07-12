@@ -96,7 +96,7 @@ export default function StaffForm() {
         />
       </div>
 
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={loading} className="cursor-pointer">
         {loading ? "Envoi en cours..." : "Inviter le staff"}
       </Button>
     </form>

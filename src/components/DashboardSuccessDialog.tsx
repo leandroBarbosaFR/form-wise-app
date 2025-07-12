@@ -45,7 +45,9 @@ export default function DashboardSuccessDialog() {
           Merci pour votre souscription à Formwise 🎉
         </p>
         <DialogFooter className="mt-4 justify-center">
-          <Button onClick={handleRedirect}>Accéder à mon dashboard</Button>
+          <Button className="cursor-pointer" onClick={handleRedirect}>
+            Accéder à mon dashboard
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

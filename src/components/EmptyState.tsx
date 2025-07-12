@@ -22,7 +22,7 @@ export default function EmptyState({
         {message}
       </p>
       {actionLabel && onAction && (
-        <Button variant="default" onClick={onAction}>
+        <Button className="cursor-pointer" variant="default" onClick={onAction}>
           {actionLabel}
         </Button>
       )}

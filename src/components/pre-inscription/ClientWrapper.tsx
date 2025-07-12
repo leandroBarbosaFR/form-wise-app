@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import ClientWrapper from "../../components/pre-inscription/ClientWrapper";
+import PreRegistrationForm from "./PreRegistrationForm";
 
 export default function PreinscriptionPage() {
   return (
@@ -10,7 +10,7 @@ export default function PreinscriptionPage() {
         </div>
       }
     >
-      <ClientWrapper />
+      <PreRegistrationForm schoolCode={""} />
     </Suspense>
   );
 }

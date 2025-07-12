@@ -15,7 +15,9 @@ export default function PreinscriptionSuccessPage() {
         Merci pour votre demande. L&apos;établissement vous contactera très
         bientôt.
       </p>
-      <Button onClick={() => router.push("/")}>Retour à l&apos;accueil</Button>
+      <Button className="cursor-pointer" onClick={() => router.push("/")}>
+        Retour à l&apos;accueil
+      </Button>
     </div>
   );
 }

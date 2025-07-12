@@ -49,7 +49,7 @@ export default function AIChatBotWidget() {
             {/* Header */}
             <div className="bg-black text-white px-4 py-3 flex items-center justify-between">
               <span className="text-sm font-medium">Assistant Formwise 🤖</span>
-              <button onClick={() => setOpen(false)}>
+              <button onClick={() => setOpen(false)} className="cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -78,7 +78,7 @@ export default function AIChatBotWidget() {
                     <Button
                       key={idx}
                       variant="outline"
-                      className="text-xs"
+                      className="text-xs cursor-pointer"
                       onClick={() => handleAsk(sugg)}
                     >
                       {sugg}
@@ -100,6 +100,7 @@ export default function AIChatBotWidget() {
                 size="icon"
                 onClick={() => handleAsk()}
                 disabled={loading}
+                className="cursor-pointer"
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -110,7 +111,7 @@ export default function AIChatBotWidget() {
         {/* Floating button */}
         <Button
           size="icon"
-          className="rounded-full shadow-lg bg-black text-white hover:bg-black/80"
+          className="rounded-full shadow-lg bg-black text-white cursor-pointer hover:bg-black/80"
           onClick={() => setOpen(!open)}
         >
           <Bot className="h-5 w-5" />

@@ -81,7 +81,7 @@ export default function SchoolYearForm({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-full justify-start text-left font-normal"
+              className="w-full cursor-pointer justify-start text-left font-normal"
             >
               <CalendarDays className="mr-2 h-4 w-4" />
               {formData.startDate
@@ -109,7 +109,7 @@ export default function SchoolYearForm({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-full justify-start text-left font-normal"
+              className="w-full justify-start text-left font-normal cursor-pointer"
             >
               <CalendarDays className="mr-2 h-4 w-4" />
               {formData.endDate

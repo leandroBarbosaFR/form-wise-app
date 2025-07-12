@@ -123,7 +123,11 @@ export default function AccountSettings() {
         <Input value={user.email} disabled />
       </div>
 
-      <Button onClick={handleUpdate} disabled={updating}>
+      <Button
+        className="cursor-pointer"
+        onClick={handleUpdate}
+        disabled={updating}
+      >
         {updating ? "Mise à jour..." : "Enregistrer"}
       </Button>
     </div>

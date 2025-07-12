@@ -137,7 +137,7 @@ export default function TeacherNotificationList() {
                       variant="secondary"
                       size="sm"
                       disabled
-                      className="opacity-60 cursor-default"
+                      className="opacity-60 cursor-pointer"
                     >
                       Déjà lue
                     </Button>

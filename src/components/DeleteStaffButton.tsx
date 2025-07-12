@@ -66,7 +66,11 @@ export default function DeleteStaffButton({
           membre ?
         </p>
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button
+            className="cursor-pointer"
+            variant="outline"
+            onClick={() => setOpen(false)}
+          >
             Annuler
           </Button>
           <Button

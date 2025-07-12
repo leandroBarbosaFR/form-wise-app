@@ -132,7 +132,7 @@ export default function TeacherForm({
         </Select>
       </div>
 
-      <Button type="submit" disabled={loading}>
+      <Button className="cursor-pointer" type="submit" disabled={loading}>
         {loading ? "Enregistrement..." : "Enregistrer"}
       </Button>
     </form>

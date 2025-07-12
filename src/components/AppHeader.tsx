@@ -188,12 +188,12 @@ export default function AppHeader() {
           <div className="flex items-center gap-1">
             <span>Lien d’inscription :</span>
             <span className="font-medium">
-              https://formwise.app/preinscription?schoolCode={schoolCode}
+              https://www.formwise.fr/preinscription?schoolCode={schoolCode}
             </span>
             <button
               onClick={() => {
                 navigator.clipboard.writeText(
-                  `https://formwise.app/preinscription?schoolCode=${schoolCode}`
+                  `https://www.formwise.fr/preinscription?schoolCode=${schoolCode}`
                 );
                 toast.success("Lien d'inscription copié !");
               }}

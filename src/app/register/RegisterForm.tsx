@@ -170,7 +170,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -192,6 +192,7 @@ export default function RegisterPage() {
                 <Button
                   type="button"
                   variant="outline"
+                  className="cursor-pointer"
                   onClick={async () => {
                     setSchoolCheck(null);
                     const res = await fetch(
@@ -221,7 +222,7 @@ export default function RegisterPage() {
             <Button
               type="submit"
               disabled={loading || (Boolean(schoolCode) && !schoolCheck?.valid)}
-              className="w-full"
+              className="w-full cursor-pointer"
             >
               {loading ? "Chargement..." : "S’inscrire"}
             </Button>

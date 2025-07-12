@@ -120,6 +120,7 @@ export default function PendingPreinscriptionsTable() {
                       onClick={() =>
                         setExpanded(expanded === entry.id ? null : entry.id)
                       }
+                      className="cursor-pointer"
                     >
                       <Eye className="w-5 h-5" />
                     </Button>
@@ -132,6 +133,7 @@ export default function PendingPreinscriptionsTable() {
                         <Button
                           variant="default"
                           size="sm"
+                          className="cursor-pointer"
                           disabled={entry.children.every(
                             (child) => child.status !== "PENDING"
                           )}
@@ -164,7 +166,10 @@ export default function PendingPreinscriptionsTable() {
                             <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button variant="secondary">
+                                  <Button
+                                    variant="secondary"
+                                    className="cursor-pointer"
+                                  >
                                     <Eye className="w-4 h-4" />
                                   </Button>
                                 </DialogTrigger>
@@ -240,6 +245,7 @@ export default function PendingPreinscriptionsTable() {
                                   <Button
                                     size="sm"
                                     variant="default"
+                                    className="cursor-pointer"
                                     onClick={() =>
                                       handleDecision(child.id, "ACCEPTED")
                                     }
@@ -249,6 +255,7 @@ export default function PendingPreinscriptionsTable() {
                                   <Button
                                     size="sm"
                                     variant="destructive"
+                                    className="cursor-pointer"
                                     onClick={() =>
                                       handleDecision(child.id, "REJECTED")
                                     }

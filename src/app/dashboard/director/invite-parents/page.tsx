@@ -54,7 +54,11 @@ export default function InviteParentsPage() {
         onChange={(e) => setEmails(e.target.value)}
         rows={6}
       />
-      <Button onClick={handleInvite} className="mt-4" disabled={loading}>
+      <Button
+        onClick={handleInvite}
+        className="mt-4 cursor-pointer"
+        disabled={loading}
+      >
         {loading ? "Envoi..." : "Envoyer les invitations"}
       </Button>
     </div>

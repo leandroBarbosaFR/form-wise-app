@@ -61,7 +61,7 @@ export default function SiteHeader() {
               <div className="flex lg:hidden">
                 <button
                   onClick={() => setMobileMenuOpen(true)}
-                  className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-white/10 transition"
+                  className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 cursor-pointer hover:bg-white/10 transition"
                 >
                   <span className="sr-only">Ouvrir le menu</span>
                   <Menu className="h-6 w-6" />
@@ -118,7 +118,7 @@ export default function SiteHeader() {
             <div className="flex lg:hidden">
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                className="-m-2.5 inline-flex items-center justify-center rounded-md cursor-pointer p-2.5 text-gray-700"
               >
                 <span className="sr-only">Menu mobile</span>
                 <Menu className="h-6 w-6" />
