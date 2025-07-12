@@ -1,16 +1,11 @@
-import { Suspense } from "react";
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import PreRegistrationForm from "./PreRegistrationForm";
 
-export default function PreinscriptionPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="text-center py-10 text-gray-500">
-          Chargement du formulaire...
-        </div>
-      }
-    >
-      <PreRegistrationForm schoolCode={""} />
-    </Suspense>
-  );
+export default function ClientWrapper() {
+  const searchParams = useSearchParams();
+  const schoolCode = searchParams?.get("schoolCode") || "";
+
+  return <PreRegistrationForm schoolCode={schoolCode} />;
 }

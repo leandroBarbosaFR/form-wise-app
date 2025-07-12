@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
     const baseUrl =
       process.env.NODE_ENV === "production"
         ? process.env.NEXT_PUBLIC_APP_URL
-        : "https://formwise.fr";
+        : "https://www.formwise.fr";
 
     console.log("🌍 Environment:", process.env.NODE_ENV);
     console.log("🔗 Base URL:", baseUrl);

@@ -115,6 +115,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, parentId: parent.id });
   } catch (error) {
     console.error("❌ Erreur préinscription :", error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Erreur inconnue" },
+      { status: 500 }
+    );
   }
+}
+export async function GET() {
+  return NextResponse.json({ ping: "pong" });
 }
